@@ -91,15 +91,16 @@
     }
   }
 
-  onMount(() => {
-    // Start clock animation
+  // Animate arc from Maghrib to current time when clock opens
+  $: if (showFullClock) {
     animatedAngle.set(0, { duration: 0 });
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        animatedAngle.set(currentTimeAngle);
-      });
-    });
+    // Small delay to ensure the element is mounted
+    setTimeout(() => {
+      animatedAngle.set(currentTimeAngle, { duration: 1500 });
+    }, 50);
+  }
 
+  onMount(() => {
     // Breathing animation - slower, more meditative (4-second cycle)
     breathInterval = setInterval(() => {
       breathPhase = (breathPhase + 1) % 360;
