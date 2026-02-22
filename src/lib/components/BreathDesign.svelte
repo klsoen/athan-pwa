@@ -88,16 +88,15 @@
   function toggleClock() {
     if (!$citySelectorOpen) {
       showFullClock = !showFullClock;
-    }
-  }
 
-  // Animate arc from Maghrib to current time when clock opens
-  $: if (showFullClock) {
-    animatedAngle.set(0, { duration: 0 });
-    // Small delay to ensure the element is mounted
-    setTimeout(() => {
-      animatedAngle.set(currentTimeAngle, { duration: 1500 });
-    }, 50);
+      // Animate arc when opening clock
+      if (showFullClock) {
+        animatedAngle.set(0, { duration: 0 });
+        setTimeout(() => {
+          animatedAngle.set(currentTimeAngle, { duration: 1500 });
+        }, 50);
+      }
+    }
   }
 
   onMount(() => {
