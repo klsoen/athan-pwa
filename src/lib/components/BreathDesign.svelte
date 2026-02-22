@@ -795,16 +795,8 @@
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
   }
 
-  .clock-label.last-third .clock-label-name {
-    color: rgba(212, 175, 55, 0.65);
-  }
-
-  .clock-label.last-third .clock-label-time {
-    color: rgba(212, 175, 55, 0.75);
-  }
-
   .clock-label.last-third.active .clock-label-name {
-    color: #e8c252;
+    color: rgba(232, 194, 82, 0.95);
     text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
   }
 
