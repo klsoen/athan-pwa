@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Athan App - 5 Revolutionary Designs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=DM+Serif+Display&family=Outfit:wght@200;300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #0a0a0a;
+      color: white;
+      min-height: 100vh;
+      padding: 3rem 1rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #d4af37, #f5e6a3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-header p {
+      color: #666;
+      font-weight: 300;
+    }
+
+    .designs-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .design-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .design-label {
+      text-align: center;
+    }
+
+    .design-label h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 0.25rem;
+    }
+
+    .design-label p {
+      font-size: 0.75rem;
+      color: #666;
+      font-weight: 300;
+      max-width: 280px;
+    }
+
+    .phone-frame {
+      width: 280px;
+      height: 580px;
+      border-radius: 36px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    /* ========================================
+       DESIGN 1: THE BREATH - Zen Minimalist
+       ======================================== */
+    .design-breath {
+      background: #0d0d0d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .design-breath::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(0.8); opacity: 0.5; }
+      50% { transform: scale(1.3); opacity: 1; }
+    }
+
+    .breath-prayer {
+      font-family: 'Amiri', serif;
+      font-size: 4rem;
+      color: #d4af37;
+      text-align: center;
+      z-index: 1;
+      animation: fadeInOut 6s ease-in-out infinite;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .breath-english {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      z-index: 1;
+    }
+
+    .breath-time {
+      position: absolute;
+      bottom: 80px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em;
+    }
+
+    .breath-countdown {
+      position: absolute;
+      bottom: 50px;
+      font-size: 0.7rem;
+      color: rgba(212,175,55,0.5);
+      letter-spacing: 0.2em;
+    }
+
+    /* ========================================
+       DESIGN 2: SACRED GEOMETRY - Pattern Forward
+       ======================================== */
+    .design-geometry {
+      background: #1a1a2e;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .geo-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+    }
+
+    .geo-pattern svg {
+      width: 100%;
+      height: 100%;
+      animation: rotatePattern 120s linear infinite;
+    }
+
+    @keyframes rotatePattern {
+      from { transform: rotate(0deg) scale(1.5); }
+      to { transform: rotate(360deg) scale(1.5); }
+    }
+
+    .geo-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.5rem;
+    }
+
+    .geo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: auto;
+    }
+
+    .geo-location {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.1em;
+    }
+
+    .geo-date {
+      font-family: 'Amiri', serif;
+      font-size: 0.8rem;
+      color: rgba(212,175,55,0.7);
+    }
+
+    .geo-center {
+      text-align: center;
+      margin: auto 0;
+    }
+
+    .geo-current {
+      font-family: 'Amiri', serif;
+      font-size: 5rem;
+      color: #d4af37;
+      line-height: 1;
+      text-shadow: 0 0 60px rgba(212,175,55,0.3);
+    }
+
+    .geo-english {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      color: rgba(255,255,255,0.6);
+      font-weight: 300;
+      margin-top: 0.25rem;
+    }
+
+    .geo-next {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 1rem;
+    }
+
+    .geo-next-label {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .geo-next-time {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 200;
+      color: white;
+      margin-top: 0.25rem;
+    }
+
+    .geo-prayers {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .geo-prayer-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .geo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .geo-dot.active {
+      background: #d4af37;
+      box-shadow: 0 0 10px rgba(212,175,55,0.5);
+    }
+
+    .geo-prayer-name {
+      font-size: 0.55rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.05em;
+    }
+
+    /* ========================================
+       DESIGN 3: THE HORIZON - Living Landscape
+       ======================================== */
+    .design-horizon {
+      background: linear-gradient(180deg, #0f0a1e 0%, #1a1033 30%, #2d1f4e 50%, #4a3366 70%, #6b4d7a 85%, #d4a574 95%, #e8c49a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .horizon-stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+    }
+
+    .horizon-star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    .horizon-moon {
+      position: absolute;
+      top: 60px;
+      right: 40px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f5f5dc 0%, #e8dcc4 100%);
+      box-shadow: 0 0 40px rgba(245,245,220,0.3);
+    }
+
+    .horizon-mountains {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+    }
+
+    .horizon-mountain {
+      position: absolute;
+      bottom: 0;
+      border-left: 60px solid transparent;
+      border-right: 60px solid transparent;
+      border-bottom: 80px solid rgba(0,0,0,0.3);
+    }
+
+    .horizon-mountain:nth-child(1) { left: -20px; border-bottom-width: 100px; }
+    .horizon-mountain:nth-child(2) { left: 60px; border-bottom-width: 70px; }
+    .horizon-mountain:nth-child(3) { right: 20px; border-bottom-width: 90px; }
+
+    .horizon-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .horizon-prayer {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      color: white;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .horizon-time-until {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      margin-top: 0.25rem;
+    }
+
+    .horizon-times {
+      margin-top: auto;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(20px);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+    }
+
+    .horizon-time-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .horizon-time-row:last-child {
+      border-bottom: none;
+    }
+
+    .horizon-time-row.active {
+      color: #f5d79e;
+    }
+
+    .horizon-time-name {
+      font-weight: 400;
+      font-size: 0.9rem;
+    }
+
+    .horizon-time-value {
+      font-weight: 300;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* ========================================
+       DESIGN 4: SACRED TEXT - Typography Editorial
+       ======================================== */
+    .design-editorial {
+      background: #f8f5f0;
+      color: #1a1a1a;
+      position: relative;
+    }
+
+    .editorial-texture {
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+    }
+
+    .editorial-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.25rem;
+    }
+
+    .editorial-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: #999;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .editorial-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .editorial-arabic {
+      font-family: 'Amiri', serif;
+      font-size: 6rem;
+      color: #1a1a1a;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .editorial-english {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: #666;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+
+    .editorial-time-big {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .editorial-countdown {
+      font-size: 0.7rem;
+      color: #999;
+      letter-spacing: 0.1em;
+      margin-top: 0.5rem;
+    }
+
+    .editorial-schedule {
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
+    }
+
+    .editorial-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      font-size: 0.8rem;
+    }
+
+    .editorial-row.active {
+      font-weight: 500;
+    }
+
+    .editorial-row-name {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .editorial-row-time {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      color: #666;
+    }
+
+    /* ========================================
+       DESIGN 5: THE CIRCLE - Radial Navigation
+       ======================================== */
+    .design-circle {
+      background: radial-gradient(circle at 50% 50%, #1e2a3a 0%, #0f1620 100%);
+      position: relative;
+    }
+
+    .circle-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    .circle-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .circle-location {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .circle-date {
+      font-family: 'Amiri', serif;
+      font-size: 0.8rem;
+      color: rgba(212,175,55,0.8);
+      margin-top: 0.25rem;
+    }
+
+    .prayer-circle {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin: 1rem 0;
+    }
+
+    .prayer-ring {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+
+    .prayer-ring-inner {
+      position: absolute;
+      inset: 30px;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .prayer-point {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translate(-50%, -50%);
+    }
+
+    .prayer-point-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .prayer-point.active .prayer-point-dot {
+      background: #d4af37;
+      border-color: rgba(212,175,55,0.3);
+      box-shadow: 0 0 20px rgba(212,175,55,0.5);
+    }
+
+    .prayer-point-label {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.25rem;
+      white-space: nowrap;
+    }
+
+    .prayer-point.active .prayer-point-label {
+      color: #d4af37;
+    }
+
+    .prayer-point-time {
+      font-size: 0.55rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Position prayer points around circle */
+    .prayer-point:nth-child(1) { top: 5%; left: 50%; }
+    .prayer-point:nth-child(2) { top: 25%; left: 93%; }
+    .prayer-point:nth-child(3) { top: 70%; left: 93%; }
+    .prayer-point:nth-child(4) { top: 95%; left: 50%; }
+    .prayer-point:nth-child(5) { top: 70%; left: 7%; }
+    .prayer-point:nth-child(6) { top: 25%; left: 7%; }
+
+    .circle-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .circle-current-arabic {
+      font-family: 'Amiri', serif;
+      font-size: 2rem;
+      color: #d4af37;
+    }
+
+    .circle-current-english {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.1em;
+    }
+
+    .circle-countdown-box {
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 1rem;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .circle-next-label {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .circle-countdown-time {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 200;
+      color: white;
+      margin-top: 0.25rem;
+    }
+
+    .circle-countdown-until {
+      font-size: 0.7rem;
+      color: rgba(212,175,55,0.7);
+      margin-top: 0.25rem;
+    }
+
+    .circle-bottom-nav {
+      display: flex;
+      gap: 2rem;
+      margin-top: auto;
+    }
+
+    .circle-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      opacity: 0.4;
+    }
+
+    .circle-nav-item.active {
+      opacity: 1;
+    }
+
+    .circle-nav-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .circle-nav-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.05em;
+    }
+
+    .circle-nav-item.active .circle-nav-label {
+      color: #d4af37;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Athan App Concepts</h1>
+    <p>5 Revolutionary Design Directions</p>
+  </header>
+
+  <div class="designs-grid">
+
+    <!-- DESIGN 1: THE BREATH -->
+    <div class="design-card">
+      <div class="design-label">
+        <h2>01 — The Breath</h2>
+        <p>Zen minimalist. The screen breathes with you. Almost no UI—just presence and awareness.</p>
+      </div>
+      <div class="phone-frame design-breath">
+        <div class="breath-prayer">العشاء</div>
+        <div class="breath-english">Isha</div>
+        <div class="breath-time">4h 53m remaining</div>
+        <div class="breath-countdown">until Fajr</div>
+      </div>
+    </div>
+
+    <!-- DESIGN 2: SACRED GEOMETRY -->
+    <div class="design-card">
+      <div class="design-label">
+        <h2>02 — Sacred Geometry</h2>
+        <p>The interface IS the art. Prayer flows through eternal Islamic patterns.</p>
+      </div>
+      <div class="phone-frame design-geometry">
+        <div class="geo-pattern">
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <pattern id="geo" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                <polygon points="10,0 20,10 10,20 0,10" fill="none" stroke="#d4af37" stroke-width="0.3"/>
+                <circle cx="10" cy="10" r="3" fill="none" stroke="#d4af37" stroke-width="0.2"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#geo)"/>
+          </svg>
+        </div>
+        <div class="geo-content">
+          <div class="geo-header">
+            <span class="geo-location">Berlin</span>
+            <span class="geo-date">Ramadan 5</span>
+          </div>
+          <div class="geo-center">
+            <div class="geo-current">العشاء</div>
+            <div class="geo-english">Isha</div>
+            <div class="geo-next">
+              <div class="geo-next-label">Next Prayer In</div>
+              <div class="geo-next-time">4:53:21</div>
+            </div>
+          </div>
+          <div class="geo-prayers">
+            <div class="geo-prayer-dot">
+              <div class="geo-dot"></div>
+              <span class="geo-prayer-name">Fajr</span>
+            </div>
+            <div class="geo-prayer-dot">
+              <div class="geo-dot"></div>
+              <span class="geo-prayer-name">Dhuhr</span>
+            </div>
+            <div class="geo-prayer-dot">
+              <div class="geo-dot"></div>
+              <span class="geo-prayer-name">Asr</span>
+            </div>
+            <div class="geo-prayer-dot">
+              <div class="geo-dot"></div>
+              <span class="geo-prayer-name">Mgrb</span>
+            </div>
+            <div class="geo-prayer-dot">
+              <div class="geo-dot active"></div>
+              <span class="geo-prayer-name">Isha</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN 3: THE HORIZON -->
+    <div class="design-card">
+      <div class="design-label">
+        <h2>03 — The Horizon</h2>
+        <p>A living landscape that transforms with each prayer. Dawn to dusk to night.</p>
+      </div>
+      <div class="phone-frame design-horizon">
+        <div class="horizon-stars">
+          <div class="horizon-star" style="top:20%;left:15%"></div>
+          <div class="horizon-star" style="top:10%;left:45%"></div>
+          <div class="horizon-star" style="top:30%;left:75%"></div>
+          <div class="horizon-star" style="top:15%;left:85%"></div>
+          <div class="horizon-star" style="top:35%;left:25%"></div>
+          <div class="horizon-star" style="top:8%;left:60%"></div>
+        </div>
+        <div class="horizon-moon"></div>
+        <div class="horizon-mountains">
+          <div class="horizon-mountain"></div>
+          <div class="horizon-mountain"></div>
+          <div class="horizon-mountain"></div>
+        </div>
+        <div class="horizon-content">
+          <div class="horizon-prayer">Isha</div>
+          <div class="horizon-time-until">4 hrs 53 mins until Fajr</div>
+          <div class="horizon-times">
+            <div class="horizon-time-row">
+              <span class="horizon-time-name">Fajr</span>
+              <span class="horizon-time-value">5:15 AM</span>
+            </div>
+            <div class="horizon-time-row">
+              <span class="horizon-time-name">Sunrise</span>
+              <span class="horizon-time-value">7:08 AM</span>
+            </div>
+            <div class="horizon-time-row">
+              <span class="horizon-time-name">Dhuhr</span>
+              <span class="horizon-time-value">12:21 PM</span>
+            </div>
+            <div class="horizon-time-row">
+              <span class="horizon-time-name">Asr</span>
+              <span class="horizon-time-value">2:59 PM</span>
+            </div>
+            <div class="horizon-time-row">
+              <span class="horizon-time-name">Maghrib</span>
+              <span class="horizon-time-value">5:32 PM</span>
+            </div>
+            <div class="horizon-time-row active">
+              <span class="horizon-time-name">Isha</span>
+              <span class="horizon-time-value">7:20 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN 4: SACRED TEXT -->
+    <div class="design-card">
+      <div class="design-label">
+        <h2>04 — Sacred Text</h2>
+        <p>Editorial typography. The prayer name commands the space. Magazine-inspired refinement.</p>
+      </div>
+      <div class="phone-frame design-editorial">
+        <div class="editorial-texture"></div>
+        <div class="editorial-content">
+          <div class="editorial-top">
+            <span>Berlin</span>
+            <span>Ramadan 5, 1447</span>
+          </div>
+          <div class="editorial-main">
+            <div class="editorial-arabic">العشاء</div>
+            <div class="editorial-english">The Night Prayer</div>
+            <div class="editorial-time-big">7:20</div>
+            <div class="editorial-countdown">4h 53m until Fajr</div>
+          </div>
+          <div class="editorial-schedule">
+            <div class="editorial-row">
+              <span class="editorial-row-name">Fajr</span>
+              <span class="editorial-row-time">5:15 AM</span>
+            </div>
+            <div class="editorial-row">
+              <span class="editorial-row-name">Dhuhr</span>
+              <span class="editorial-row-time">12:21 PM</span>
+            </div>
+            <div class="editorial-row">
+              <span class="editorial-row-name">Asr</span>
+              <span class="editorial-row-time">2:59 PM</span>
+            </div>
+            <div class="editorial-row">
+              <span class="editorial-row-name">Maghrib</span>
+              <span class="editorial-row-time">5:32 PM</span>
+            </div>
+            <div class="editorial-row active">
+              <span class="editorial-row-name">Isha</span>
+              <span class="editorial-row-time">7:20 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN 5: THE CIRCLE -->
+    <div class="design-card">
+      <div class="design-label">
+        <h2>05 — The Circle</h2>
+        <p>Radial navigation. Prayers orbit the day. Time flows in sacred cycles.</p>
+      </div>
+      <div class="phone-frame design-circle">
+        <div class="circle-content">
+          <div class="circle-header">
+            <div class="circle-location">Berlin, Germany</div>
+            <div class="circle-date">Ramadan 5, 1447 AH</div>
+          </div>
+
+          <div class="prayer-circle">
+            <div class="prayer-ring"></div>
+            <div class="prayer-ring-inner"></div>
+
+            <div class="prayer-point">
+              <div class="prayer-point-dot"></div>
+              <span class="prayer-point-label">Fajr</span>
+              <span class="prayer-point-time">5:15</span>
+            </div>
+            <div class="prayer-point">
+              <div class="prayer-point-dot"></div>
+              <span class="prayer-point-label">Sunrise</span>
+              <span class="prayer-point-time">7:08</span>
+            </div>
+            <div class="prayer-point">
+              <div class="prayer-point-dot"></div>
+              <span class="prayer-point-label">Dhuhr</span>
+              <span class="prayer-point-time">12:21</span>
+            </div>
+            <div class="prayer-point">
+              <div class="prayer-point-dot"></div>
+              <span class="prayer-point-label">Asr</span>
+              <span class="prayer-point-time">2:59</span>
+            </div>
+            <div class="prayer-point">
+              <div class="prayer-point-dot"></div>
+              <span class="prayer-point-label">Maghrib</span>
+              <span class="prayer-point-time">5:32</span>
+            </div>
+            <div class="prayer-point active">
+              <div class="prayer-point-dot"></div>
+              <span class="prayer-point-label">Isha</span>
+              <span class="prayer-point-time">7:20</span>
+            </div>
+
+            <div class="circle-center">
+              <div class="circle-current-arabic">العشاء</div>
+              <div class="circle-current-english">Current Prayer</div>
+            </div>
+          </div>
+
+          <div class="circle-countdown-box">
+            <div class="circle-next-label">Time Until Fajr</div>
+            <div class="circle-countdown-time">4:53:21</div>
+            <div class="circle-countdown-until">Next prayer begins</div>
+          </div>
+
+          <div class="circle-bottom-nav">
+            <div class="circle-nav-item active">
+              <svg class="circle-nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 10 12 6.16-1.26 10-6.45 10-12V7l-10-5z"/>
+              </svg>
+              <span class="circle-nav-label">Prayer</span>
+            </div>
+            <div class="circle-nav-item">
+              <svg class="circle-nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span class="circle-nav-label">Qibla</span>
+            </div>
+            <div class="circle-nav-item">
+              <svg class="circle-nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              <span class="circle-nav-label">Tracker</span>
+            </div>
+            <div class="circle-nav-item">
+              <svg class="circle-nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+              </svg>
+              <span class="circle-nav-label">Settings</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "athan-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "svelte": "^4.2.0",
+    "tailwindcss": "^3.4.1",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "adhan": "^4.4.3",
+    "gsap": "^3.12.5"
+  },
+  "type": "module"
+}
