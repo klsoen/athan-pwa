@@ -644,9 +644,9 @@
     margin-top: 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: clamp(0.6rem, 2vh, 1rem);
     width: 100%;
-    max-width: 260px;
+    max-width: min(320px, 85vw);
     margin-left: auto;
     margin-right: auto;
   }
@@ -659,7 +659,7 @@
 
   .time-name {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.85rem;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
     font-weight: 400;
     color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
@@ -681,7 +681,7 @@
 
   .time-value {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.95rem;
+    font-size: clamp(0.95rem, 2.8vw, 1.25rem);
     font-weight: 300;
     color: rgba(255, 255, 255, 0.5);
     font-variant-numeric: tabular-nums;
