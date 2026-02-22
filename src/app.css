@@ -37,8 +37,20 @@ html, body {
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent iOS from auto-scaling text */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   background: var(--theme-bg);
   color: var(--theme-text);
+}
+
+/* iOS standalone PWA - slightly smaller fonts to match other platforms */
+@media (display-mode: standalone) {
+  @supports (-webkit-touch-callout: none) {
+    html {
+      font-size: 14px;
+    }
+  }
 }
 
 /* Smooth scrolling */

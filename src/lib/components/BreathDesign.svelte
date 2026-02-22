@@ -215,7 +215,12 @@
 
   function getHijriDate() {
     try {
-      const date = $currentTime;
+      let date = $currentTime;
+
+      // Islamic day begins at Maghrib - if past Maghrib, use next day for Hijri
+      if ($prayerTimes.maghrib && date >= $prayerTimes.maghrib) {
+        date = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+      }
 
       // Get Hijri date parts
       const day = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric' }).format(date);
@@ -234,7 +239,8 @@
     }
   }
 
-  $: hijriDate = getHijriDate();
+  // Recalculate when time or Maghrib changes (Islamic day starts at Maghrib)
+  $: hijriDate = ($currentTime, $prayerTimes.maghrib, getHijriDate());
 
   // Get Gregorian date
   function getGregorianDate() {
@@ -777,6 +783,8 @@
     flex-direction: column;
     align-items: center;
     padding: 0 1.5rem;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .home-header {
@@ -1150,10 +1158,10 @@
 
   .current-time {
     font-family: 'Outfit', sans-serif;
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 5vw, 2.5rem);
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.85);
-    margin-top: 1rem;
+    margin-top: clamp(0.5rem, 1.5vh, 1rem);
     letter-spacing: 0.05em;
   }
 
@@ -1163,7 +1171,7 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin: 1.75rem 0;
+    margin: clamp(1rem, 2.5vh, 1.75rem) 0;
   }
 
   .divider-line {
@@ -1213,11 +1221,11 @@
 
   /* All prayer times list */
   .all-times {
-    margin-top: 2.5rem;
-    margin-bottom: 3.5rem;
+    margin-top: clamp(1rem, 3vh, 2.5rem);
+    margin-bottom: clamp(2rem, 5vh, 3.5rem);
     display: flex;
     flex-direction: column;
-    gap: clamp(0.6rem, 2vh, 1rem);
+    gap: clamp(0.5rem, 1.5vh, 1rem);
     width: 100%;
     max-width: min(320px, 85vw);
     margin-left: auto;
@@ -1394,7 +1402,7 @@
 
   .clock-center-arabic {
     font-family: 'Amiri', serif;
-    font-size: 2.2rem;
+    font-size: 2.8rem;
     color: var(--theme-accent-bright);
     line-height: 1.2;
     text-shadow: 0 0 20px rgba(var(--theme-accent-rgb), 0.3);
@@ -1402,27 +1410,27 @@
 
   .clock-center-english {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    margin-top: 0.15rem;
+    margin-top: 0.2rem;
   }
 
   .clock-center-countdown {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 200;
     color: rgba(var(--theme-text-rgb), 0.8);
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
   }
 
   .clock-center-next {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
-    margin-top: 0.25rem;
+    margin-top: 0.3rem;
     letter-spacing: 0.1em;
   }
 
