@@ -14,6 +14,8 @@
     { id: 'Karachi', name: 'University of Islamic Sciences, Karachi', fajr: 18, isha: 18 },
     { id: 'UmmAlQura', name: 'Umm al-Qura University, Makkah', fajr: 18.5, isha: '90min' },
     { id: 'Dubai', name: 'UAE General Authority of Islamic Affairs', fajr: 18.2, isha: 18.2 },
+    { id: 'Kuwait', name: 'Ministry of Awqaf, Kuwait', fajr: 18, isha: 17.5 },
+    { id: 'Qatar', name: 'Qatar Calendar House', fajr: 18, isha: '90min' },
     { id: 'NorthAmerica', name: 'Islamic Society of North America', fajr: 15, isha: 15 },
     { id: 'MoonsightingCommittee', name: 'Moonsighting Committee Worldwide', fajr: 18, isha: 18 },
     { id: 'Turkey', name: 'Diyanet Isleri Baskanligi, Turkey', fajr: 18, isha: 17 },

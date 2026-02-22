@@ -551,12 +551,15 @@
                       <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="groundGlowSunrise" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.2"/>
+                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.25"/>
                       <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
+                    <filter id="groundBlurSunrise" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+                    </filter>
                   </defs>
-                  <!-- Ground ellipse -->
-                  <ellipse class="ground" cx="40" cy="48" rx="60" ry="8" fill="url(#groundGlowSunrise)"/>
+                  <!-- Ground ellipse with atmospheric blur -->
+                  <ellipse class="ground" cx="40" cy="48" rx="55" ry="12" fill="url(#groundGlowSunrise)" filter="url(#groundBlurSunrise)"/>
                   <!-- Sun glow -->
                   <circle class="sunrise-glow" cx="40" cy="32" r="22" fill="url(#sunriseGlow)"/>
                   <!-- Sun disc -->
@@ -574,7 +577,7 @@
                 <svg viewBox="0 0 80 55" class="prayer-svg dhuhr" style="overflow:visible">
                   <defs>
                     <radialGradient id="groundGlowDhuhr" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.18"/>
+                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.22"/>
                       <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="dhuhrSunGlow" cx="50%" cy="50%" r="50%">
@@ -582,9 +585,12 @@
                       <stop offset="50%" stop-color={$currentTheme.accent} stop-opacity="0.2"/>
                       <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
+                    <filter id="groundBlurDhuhr" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+                    </filter>
                   </defs>
-                  <!-- Ground ellipse -->
-                  <ellipse class="ground" cx="40" cy="52" rx="60" ry="8" fill="url(#groundGlowDhuhr)"/>
+                  <!-- Ground ellipse with atmospheric blur -->
+                  <ellipse class="ground" cx="40" cy="52" rx="55" ry="12" fill="url(#groundGlowDhuhr)" filter="url(#groundBlurDhuhr)"/>
                   <!-- Sun glow (larger for zenith) -->
                   <circle class="zenith-glow" cx="40" cy="14" r="20" fill="url(#dhuhrSunGlow)"/>
                   <!-- Sun -->
@@ -603,16 +609,19 @@
                 <svg viewBox="0 0 80 55" class="prayer-svg asr" style="overflow:visible">
                   <defs>
                     <radialGradient id="groundGlowAsr" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.12"/>
+                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.15"/>
                       <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="asrSunGlow" cx="50%" cy="50%" r="50%">
                       <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.35"/>
                       <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
+                    <filter id="groundBlurAsr" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+                    </filter>
                   </defs>
-                  <!-- Ground ellipse -->
-                  <ellipse class="ground" cx="40" cy="52" rx="60" ry="8" fill="url(#groundGlowAsr)"/>
+                  <!-- Ground ellipse with atmospheric blur -->
+                  <ellipse class="ground" cx="40" cy="52" rx="55" ry="12" fill="url(#groundGlowAsr)" filter="url(#groundBlurAsr)"/>
                   <!-- Sun glow -->
                   <circle class="asr-glow" cx="60" cy="16" r="18" fill="url(#asrSunGlow)"/>
                   <!-- Afternoon sun (lower in sky, to the side) -->
