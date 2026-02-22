@@ -239,21 +239,78 @@
       <div class="full-clock" class:blurred={$citySelectorOpen} in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
-            <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+            <!-- Soft atmospheric glow -->
+            <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
               <feMerge>
                 <feMergeNode in="blur"/>
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
+            <!-- Stronger glow for active elements -->
+            <filter id="activeGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <!-- Gradient for progress arc -->
+            <linearGradient id="arcGradient" gradientUnits="userSpaceOnUse" x1="50" y1="10" x2="50" y2="90">
+              <stop offset="0%" stop-color="#e8c252"/>
+              <stop offset="100%" stop-color="#d4af37"/>
+            </linearGradient>
           </defs>
 
-          <!-- Background track -->
+          <!-- Outermost decorative ring -->
+          <circle
+            cx="50" cy="50" r="44"
+            fill="none"
+            stroke="rgba(212,175,55,0.08)"
+            stroke-width="0.3"
+          />
+
+          <!-- Hour tick marks (24) -->
+          {#each Array(24) as _, i}
+            {@const tickAngle = (i / 24) * 360}
+            {@const isMajor = i % 6 === 0}
+            {@const innerR = isMajor ? 40 : 41.5}
+            {@const outerR = 43}
+            {@const startPos = getPosition(tickAngle, innerR)}
+            {@const endPos = getPosition(tickAngle, outerR)}
+            <line
+              x1={startPos.x} y1={startPos.y}
+              x2={endPos.x} y2={endPos.y}
+              stroke={isMajor ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.08)'}
+              stroke-width={isMajor ? 0.6 : 0.3}
+            />
+          {/each}
+
+          <!-- Main track ring -->
           <circle
             cx="50" cy="50" r="38"
             fill="none"
-            stroke="rgba(255,255,255,0.1)"
-            stroke-width="1.5"
+            stroke="rgba(255,255,255,0.06)"
+            stroke-width="2"
+          />
+
+          <!-- Inner decorative ring -->
+          <circle
+            cx="50" cy="50" r="28"
+            fill="none"
+            stroke="rgba(212,175,55,0.06)"
+            stroke-width="0.3"
+          />
+
+          <!-- Last third arc (subtle) -->
+          <path
+            d={getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33)}
+            fill="none"
+            stroke="rgba(212,175,55,0.15)"
+            stroke-width="4"
+            stroke-linecap="round"
+            opacity="0.5"
           />
 
           <!-- Day progress arc -->
@@ -261,61 +318,78 @@
             <path
               d={getArcPath(0, $animatedAngle, 38)}
               fill="none"
-              stroke="rgba(212,175,55,0.7)"
+              stroke="url(#arcGradient)"
               stroke-width="2"
               stroke-linecap="round"
-              filter="url(#ringGlow)"
+              filter="url(#softGlow)"
             />
           {/if}
-
-          <!-- Last third arc -->
-          <path
-            d={getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33)}
-            fill="none"
-            stroke="rgba(212,175,55,0.25)"
-            stroke-width="0.5"
-            stroke-linecap="round"
-          />
 
           <!-- Prayer markers -->
           {#each prayers as prayer}
             {@const pos = getPosition(prayerAngles[prayer], 38)}
             {@const isActive = $currentPrayer.current === prayer}
             {#if prayer === 'sunrise'}
-              <rect
-                x={pos.x - (isActive ? 3 : 2)}
-                y={pos.y - (isActive ? 3 : 2)}
-                width={isActive ? 6 : 4}
-                height={isActive ? 6 : 4}
-                fill={isActive ? '#d4af37' : 'rgba(212,175,55,0.4)'}
-                transform="rotate(45 {pos.x} {pos.y})"
-              />
+              <!-- Sunrise: elegant diamond -->
+              <g filter={isActive ? 'url(#activeGlow)' : ''}>
+                <rect
+                  x={pos.x - (isActive ? 3 : 2)}
+                  y={pos.y - (isActive ? 3 : 2)}
+                  width={isActive ? 6 : 4}
+                  height={isActive ? 6 : 4}
+                  fill={isActive ? '#e8c252' : 'rgba(212,175,55,0.5)'}
+                  transform="rotate(45 {pos.x} {pos.y})"
+                />
+              </g>
             {:else}
-              <circle
-                cx={pos.x} cy={pos.y}
-                r={isActive ? 3 : 2}
-                fill={isActive ? '#d4af37' : 'rgba(212,175,55,0.4)'}
-              />
+              <!-- Other prayers: refined circles -->
+              <g filter={isActive ? 'url(#activeGlow)' : ''}>
+                <circle
+                  cx={pos.x} cy={pos.y}
+                  r={isActive ? 3.5 : 2}
+                  fill={isActive ? '#e8c252' : 'rgba(212,175,55,0.5)'}
+                />
+                {#if isActive}
+                  <circle
+                    cx={pos.x} cy={pos.y}
+                    r="5"
+                    fill="none"
+                    stroke="rgba(212,175,55,0.3)"
+                    stroke-width="0.5"
+                  />
+                {/if}
+              </g>
             {/if}
           {/each}
 
-          <!-- Last third diamond -->
-          <rect
-            x={lastThirdPos.x - (isInLastThird ? 2.5 : 1.5)}
-            y={lastThirdPos.y - (isInLastThird ? 2.5 : 1.5)}
-            width={isInLastThird ? 5 : 3}
-            height={isInLastThird ? 5 : 3}
-            fill={isInLastThird ? '#d4af37' : 'rgba(212,175,55,0.5)'}
-            transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
-          />
+          <!-- Last third diamond marker -->
+          <g filter={isInLastThird ? 'url(#activeGlow)' : ''}>
+            <rect
+              x={lastThirdPos.x - (isInLastThird ? 2.5 : 1.5)}
+              y={lastThirdPos.y - (isInLastThird ? 2.5 : 1.5)}
+              width={isInLastThird ? 5 : 3}
+              height={isInLastThird ? 5 : 3}
+              fill={isInLastThird ? '#e8c252' : 'rgba(212,175,55,0.5)'}
+              transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
+            />
+          </g>
 
-          <!-- Current time indicator -->
+          <!-- Current time indicator - elegant needle -->
+          <g style="transform-origin: 50px 50px; transform: rotate({$animatedAngle}deg)">
+            <!-- Glow behind indicator -->
+            <circle cx="50" cy="12" r="3" fill="rgba(255,255,255,0.2)" filter="url(#softGlow)"/>
+            <!-- Main indicator -->
+            <circle cx="50" cy="12" r="2" fill="white"/>
+            <!-- Inner highlight -->
+            <circle cx="50" cy="11.5" r="0.8" fill="rgba(255,255,255,0.8)"/>
+          </g>
+
+          <!-- Center circle accent -->
           <circle
-            cx="50"
-            cy="12"
-            r="2"
-            fill="white"
-            style="transform-origin: 50px 50px; transform: rotate({$animatedAngle}deg)"
+            cx="50" cy="50" r="18"
+            fill="none"
+            stroke="rgba(212,175,55,0.04)"
+            stroke-width="0.5"
           />
         </svg>
 
@@ -656,7 +730,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: min(65vw, 45vh);
+    width: min(70vw, 48vh);
     aspect-ratio: 1;
     transition: filter 0.3s ease-out;
   }
@@ -664,6 +738,7 @@
   .full-clock .clock-svg {
     width: 100%;
     height: 100%;
+    overflow: visible;
   }
 
   /* Clock labels */
@@ -673,52 +748,57 @@
     text-align: center;
     pointer-events: none;
     white-space: nowrap;
+    transition: all 0.3s ease;
   }
 
   .clock-label-name {
     display: block;
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(0.45rem, 1.5vw, 0.65rem);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.5rem, 1.8vw, 0.7rem);
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.1rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.15rem;
   }
 
   .clock-label-time {
     display: block;
     font-family: 'Outfit', sans-serif;
-    font-size: clamp(0.6rem, 2vw, 0.85rem);
+    font-size: clamp(0.65rem, 2.2vw, 0.9rem);
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.55);
     font-variant-numeric: tabular-nums;
   }
 
   .clock-label.active .clock-label-name {
-    color: rgba(212, 175, 55, 0.9);
+    color: rgba(232, 194, 82, 0.95);
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
   }
 
   .clock-label.active .clock-label-time {
-    color: #d4af37;
+    color: #e8c252;
     font-weight: 400;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
   }
 
   .clock-label.last-third .clock-label-name {
-    color: rgba(212, 175, 55, 0.7);
+    color: rgba(212, 175, 55, 0.65);
   }
 
   .clock-label.last-third .clock-label-time {
-    color: rgba(212, 175, 55, 0.8);
+    color: rgba(212, 175, 55, 0.75);
   }
 
   .clock-label.last-third.active .clock-label-name {
-    color: rgba(212, 175, 55, 1);
+    color: #e8c252;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
   }
 
   .clock-label.last-third.active .clock-label-time {
-    color: #d4af37;
+    color: #e8c252;
     font-weight: 400;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
   }
 
   /* Center content in clock mode */
@@ -734,9 +814,10 @@
 
   .clock-center-arabic {
     font-family: 'Amiri', serif;
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: #e8c252;
     line-height: 1.2;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
   }
 
   .clock-center-countdown {
