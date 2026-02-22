@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
+  import { fade, scale } from 'svelte/transition';
   import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen } from '$lib/stores/prayer.js';
   import CitySelector from './CitySelector.svelte';
 
@@ -235,7 +236,7 @@
 
     {#if showFullClock}
       <!-- FULL CLOCK VIEW -->
-      <div class="full-clock" class:blurred={$citySelectorOpen}>
+      <div class="full-clock" class:blurred={$citySelectorOpen} in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -353,7 +354,7 @@
 
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
-      <div class="prayer-display" class:blurred={$citySelectorOpen}>
+      <div class="prayer-display" class:blurred={$citySelectorOpen} in:fade={{ duration: 250, delay: 100 }} out:fade={{ duration: 150 }}>
         <div class="current-prayer">
           <div class="current-arabic">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
           <div class="current-name">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
@@ -658,18 +659,6 @@
     width: min(65vw, 45vh);
     aspect-ratio: 1;
     transition: filter 0.3s ease-out;
-    animation: clockIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  @keyframes clockIn {
-    from {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
   }
 
   .full-clock .clock-svg {

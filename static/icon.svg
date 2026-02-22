@@ -1,17 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  <rect width="512" height="512" fill="#080808"/>
 
-  <!-- Crescent moon -->
-  <circle cx="256" cy="200" r="120" fill="#D4AF37"/>
-  <circle cx="310" cy="200" r="100" fill="#0f172a"/>
-
-  <!-- Star -->
-  <polygon
-    points="256,320 262,340 284,340 266,352 274,374 256,360 238,374 246,352 228,340 250,340"
-    fill="#D4AF37"
-  />
-
-  <!-- Mosque silhouette hint -->
-  <rect x="160" y="400" width="192" height="8" rx="4" fill="#D4AF37" opacity="0.4"/>
-  <rect x="200" y="390" width="112" height="8" rx="4" fill="#D4AF37" opacity="0.3"/>
+  <!-- Elegant crescent - clean geometry -->
+  <circle cx="256" cy="256" r="140" fill="#d4af37"/>
+  <circle cx="320" cy="220" r="120" fill="#080808"/>
 </svg>
