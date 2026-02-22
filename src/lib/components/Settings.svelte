@@ -107,11 +107,21 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<button class="settings-btn" on:click|stopPropagation={open} type="button" aria-label="Settings">
+<button
+  class="settings-btn"
+  class:open={isOpen}
+  on:click|stopPropagation={() => isOpen ? close() : open()}
+  type="button"
+  aria-label={isOpen ? 'Close settings' : 'Settings'}
+>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-    <circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none" />
-    <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
-    <circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none" />
+    <!-- Three dots that morph into X -->
+    <circle class="dot dot-top" cx="12" cy="5" r="1.5" fill="currentColor" stroke="none" />
+    <circle class="dot dot-mid" cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <circle class="dot dot-bot" cx="12" cy="19" r="1.5" fill="currentColor" stroke="none" />
+    <!-- X lines (hidden by default) -->
+    <line class="x-line x-line-1" x1="7" y1="7" x2="17" y2="17" stroke-linecap="round" />
+    <line class="x-line x-line-2" x1="17" y1="7" x2="7" y2="17" stroke-linecap="round" />
   </svg>
 </button>
 
@@ -228,6 +238,7 @@
 
 <style>
   .settings-btn {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -239,6 +250,13 @@
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
     transition: all 0.2s;
+    z-index: 1;
+  }
+
+  .settings-btn.open {
+    z-index: 1002;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .settings-btn:hover {
@@ -249,6 +267,49 @@
   .settings-btn svg {
     width: 1.1rem;
     height: 1.1rem;
+  }
+
+  /* Dots */
+  .settings-btn .dot {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .settings-btn.open .dot-top {
+    transform: translate(0, 7px);
+    opacity: 0;
+  }
+
+  .settings-btn.open .dot-mid {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  .settings-btn.open .dot-bot {
+    transform: translate(0, -7px);
+    opacity: 0;
+  }
+
+  /* X lines */
+  .settings-btn .x-line {
+    stroke-width: 2;
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+    transform-origin: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .settings-btn.open .x-line {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  .settings-btn.open .x-line-1 {
+    transition-delay: 0.1s;
+  }
+
+  .settings-btn.open .x-line-2 {
+    transition-delay: 0.15s;
   }
 
   .backdrop {
