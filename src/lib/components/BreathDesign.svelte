@@ -82,6 +82,65 @@
     };
   }
 
+  // Calculate moon phase (0 = new moon, 0.5 = full moon, 1 = new moon)
+  function getMoonPhase(date) {
+    // Known new moon: January 6, 2000 at 18:14 UTC
+    const knownNewMoon = new Date(Date.UTC(2000, 0, 6, 18, 14, 0));
+    const lunarCycle = 29.53058867; // days
+
+    const daysSinceKnown = (date.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
+    const phase = (daysSinceKnown % lunarCycle) / lunarCycle;
+
+    return phase < 0 ? phase + 1 : phase;
+  }
+
+  // Get moon illumination and direction for SVG rendering
+  // Returns: { illumination: 0-1, waxing: boolean }
+  function getMoonData(date) {
+    const phase = getMoonPhase(date);
+
+    // Illumination follows cosine curve, not linear
+    // Phase 0 = new moon (0% lit)
+    // Phase 0.25 = first quarter (50% lit, right side)
+    // Phase 0.5 = full moon (100% lit)
+    // Phase 0.75 = last quarter (50% lit, left side)
+    const illumination = (1 - Math.cos(phase * 2 * Math.PI)) / 2;
+
+    const waxing = phase < 0.5; // Right side lit when waxing
+
+    return { illumination, waxing, phase };
+  }
+
+  $: moonData = getMoonData($currentTime);
+
+  // Moon rendering calculations for Maghrib (small moon)
+  $: maghribMoon = (() => {
+    const r = 7, cx = 62, cy = 14, innerR = 7.2;
+    // Use sqrt for more accurate crescent width mapping
+    // Thin crescent at low illumination, fuller at high
+    const crescentWidth = r * 2 * Math.pow(moonData.illumination, 0.6);
+    const offset = crescentWidth / 2;
+    return {
+      cx, cy, r, innerR,
+      innerCx: moonData.waxing ? cx - offset : cx + offset,
+      innerCy: cy,
+      showInner: moonData.illumination < 0.92
+    };
+  })();
+
+  // Moon rendering calculations for Isha (large moon)
+  $: ishaMoon = (() => {
+    const r = 14, cx = 40, cy = 20, innerR = 14.5;
+    const crescentWidth = r * 2 * Math.pow(moonData.illumination, 0.6);
+    const offset = crescentWidth / 2;
+    return {
+      cx, cy, r, innerR,
+      innerCx: moonData.waxing ? cx - offset : cx + offset,
+      innerCy: cy,
+      showInner: moonData.illumination < 0.92
+    };
+  })();
+
   let breathInterval;
   let showFullClock = false;
 
@@ -605,9 +664,11 @@
                   </g>
                   <!-- Horizon line -->
                   <line class="horizon" x1="0" y1="42" x2="80" y2="42"/>
-                  <!-- Crescent moon appearing -->
-                  <circle class="crescent-outer" cx="62" cy="14" r="7"/>
-                  <circle class="crescent-inner" cx="66" cy="12" r="6"/>
+                  <!-- Moon with actual phase -->
+                  <circle class="crescent-outer" cx={maghribMoon.cx} cy={maghribMoon.cy} r={maghribMoon.r}/>
+                  {#if maghribMoon.showInner}
+                    <circle class="crescent-inner" cx={maghribMoon.innerCx} cy={maghribMoon.innerCy} r={maghribMoon.innerR}/>
+                  {/if}
                   <!-- Stars appearing -->
                   <circle class="mag-star star-1" cx="16" cy="10" r="1.2"/>
                   <circle class="mag-star star-2" cx="8" cy="24" r="1"/>
@@ -615,16 +676,18 @@
                   <circle class="mag-star star-4" cx="48" cy="8" r="0.9"/>
                 </svg>
               {:else}
-                <!-- Isha: Night sky with crescent and stars -->
+                <!-- Isha: Night sky with moon and stars -->
                 <svg viewBox="0 0 80 50" class="prayer-svg isha">
-                  <circle class="isha-crescent-outer" cx="40" cy="20" r="14"/>
-                  <circle class="isha-crescent-inner" cx="48" cy="16" r="12"/>
+                  <!-- Moon with actual phase -->
+                  <circle class="isha-crescent-outer" cx={ishaMoon.cx} cy={ishaMoon.cy} r={ishaMoon.r}/>
+                  {#if ishaMoon.showInner}
+                    <circle class="isha-crescent-inner" cx={ishaMoon.innerCx} cy={ishaMoon.innerCy} r={ishaMoon.innerR}/>
+                  {/if}
                   <circle class="isha-star star-1" cx="16" cy="12" r="1.5"/>
                   <circle class="isha-star star-2" cx="68" cy="18" r="1.2"/>
                   <circle class="isha-star star-3" cx="24" cy="38" r="1"/>
                   <circle class="isha-star star-4" cx="58" cy="40" r="1.3"/>
                   <circle class="isha-star star-5" cx="12" cy="30" r="0.8"/>
-                  <circle class="isha-glow" cx="40" cy="20" r="20"/>
                 </svg>
               {/if}
             </div>
@@ -632,6 +695,7 @@
             <div class="current-arabic engrave-in">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
           {/key}
           <div class="current-name">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+          <div class="tap-hint" class:blurred={$citySelectorOpen}>tap for full clock</div>
           <div class="current-time">{formatTime($prayerTimes[$currentPrayer.current])}</div>
         </div>
 
@@ -668,10 +732,6 @@
       <span class="date-gregorian">{gregorianDate}</span>
     </div>
 
-    <!-- Tap hint -->
-    {#if !showFullClock}
-      <div class="tap-hint" class:blurred={$citySelectorOpen}>tap for full clock</div>
-    {/if}
 
   </div>
 
@@ -786,11 +846,27 @@
     justify-content: center;
     align-items: flex-end;
     opacity: 0;
-    animation: iconFadeIn 0.8s ease-out 0.2s forwards;
+    filter: blur(8px);
+    transform: scale(0.92);
+    animation: iconReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
   }
 
-  @keyframes iconFadeIn {
-    to { opacity: 1; }
+  @keyframes iconReveal {
+    0% {
+      opacity: 0;
+      filter: blur(8px);
+      transform: scale(0.92);
+    }
+    40% {
+      opacity: 0.9;
+      filter: blur(0);
+      transform: scale(1.02);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
   }
 
   .prayer-svg {
@@ -981,7 +1057,7 @@
   .prayer-svg.maghrib .crescent-outer {
     fill: #e8c252;
     opacity: 0;
-    animation: crescentAppear 1.5s ease-out 0.5s forwards, crescentGlow 3s ease-in-out 2s infinite;
+    animation: crescentAppear 1.5s ease-out 0.5s forwards;
   }
 
   .prayer-svg.maghrib .crescent-inner {
@@ -1003,11 +1079,6 @@
     50% { opacity: 1; }
   }
 
-  @keyframes crescentGlow {
-    0%, 100% { filter: drop-shadow(0 0 2px rgba(232, 194, 82, 0.3)); }
-    50% { filter: drop-shadow(0 0 6px rgba(232, 194, 82, 0.6)); }
-  }
-
   @keyframes sunSet {
     0% { transform: translateY(-4px); opacity: 1; }
     100% { transform: translateY(6px); opacity: 0.4; }
@@ -1027,11 +1098,6 @@
     fill: #080808;
   }
 
-  .prayer-svg.isha .isha-glow {
-    fill: rgba(212, 175, 55, 0.08);
-    animation: ishaGlow 4s ease-in-out infinite;
-  }
-
   .prayer-svg.isha .isha-star {
     fill: #e8c252;
     animation: starTwinkle 3s ease-in-out infinite;
@@ -1042,11 +1108,6 @@
   .prayer-svg.isha .star-3 { animation-delay: 1.4s; }
   .prayer-svg.isha .star-4 { animation-delay: 2.1s; }
   .prayer-svg.isha .star-5 { animation-delay: 2.8s; }
-
-  @keyframes ishaGlow {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
 
   @keyframes starTwinkle {
     0%, 100% { opacity: 0.3; }
@@ -1339,16 +1400,13 @@
 
   /* Tap hint */
   .tap-hint {
-    position: absolute;
-    bottom: 5.5rem;
-    left: 50%;
-    transform: translateX(-50%);
     font-family: 'Outfit', sans-serif;
-    font-size: 0.6rem;
-    font-weight: 300;
-    color: rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: rgba(212, 175, 55, 0.4);
+    letter-spacing: 0.12em;
     text-transform: lowercase;
+    margin-top: 0.75rem;
     transition: filter 0.3s ease-out;
   }
 
@@ -1436,10 +1494,6 @@
 
     .dates-row {
       bottom: 1.5rem;
-    }
-
-    .tap-hint {
-      bottom: 4rem;
     }
   }
 

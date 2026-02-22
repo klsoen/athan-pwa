@@ -1,11 +1,11 @@
 {
-  "name": "Athan - Prayer Times",
-  "short_name": "Athan",
-  "description": "Beautiful Islamic prayer times app with athan notifications",
+  "name": "!Athan",
+  "short_name": "!Athan",
+  "description": "Beautiful Islamic prayer times app",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#080808",
+  "theme_color": "#080808",
   "orientation": "portrait",
   "icons": [
     {
