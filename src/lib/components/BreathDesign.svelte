@@ -303,14 +303,13 @@
             stroke-width="0.3"
           />
 
-          <!-- Last third arc (subtle) -->
+          <!-- Last third arc -->
           <path
             d={getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33)}
             fill="none"
-            stroke="rgba(212,175,55,0.15)"
-            stroke-width="4"
+            stroke="rgba(212,175,55,0.4)"
+            stroke-width="1"
             stroke-linecap="round"
-            opacity="0.5"
           />
 
           <!-- Day progress arc -->
