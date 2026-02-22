@@ -273,14 +273,14 @@
   .prayer-label-name {
     display: block;
     font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(var(--theme-text-rgb), 0.5);
     letter-spacing: 0.03em;
   }
 
   .prayer-label-time {
     display: block;
     font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(var(--theme-text-rgb), 0.3);
     margin-top: 0.125rem;
     font-variant-numeric: tabular-nums;
   }
@@ -313,7 +313,7 @@
 
   .center-english {
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(var(--theme-text-rgb), 0.4);
     letter-spacing: 0.15em;
     text-transform: uppercase;
     margin-top: 0.125rem;
@@ -333,7 +333,7 @@
 
   .countdown-label {
     font-size: 0.625rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(var(--theme-text-rgb), 0.4);
     letter-spacing: 0.15em;
     text-transform: uppercase;
   }
@@ -359,7 +359,7 @@
     padding: 0.75rem 1rem;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
     background: rgba(13, 20, 28, 0.95);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(var(--theme-text-rgb), 0.05);
   }
 
   .nav-item {
@@ -370,7 +370,7 @@
     padding: 0.5rem 0.75rem;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(var(--theme-text-rgb), 0.3);
     cursor: pointer;
     transition: color 0.2s;
   }

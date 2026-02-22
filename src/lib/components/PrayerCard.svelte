@@ -45,16 +45,16 @@
     justify-content: space-between;
     width: 100%;
     padding: 1.125rem 1.25rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--theme-text-rgb), 0.03);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.08);
     border-radius: 0.875rem;
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
   .prayer-card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(var(--theme-text-rgb), 0.06);
+    border-color: rgba(var(--theme-text-rgb), 0.12);
   }
 
   .prayer-card.active {
@@ -82,14 +82,14 @@
   .prayer-time {
     font-size: 1.0625rem;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(var(--theme-text-rgb), 0.9);
     font-variant-numeric: tabular-nums;
   }
 
   .notification-icon {
     width: 1.25rem;
     height: 1.25rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(var(--theme-text-rgb), 0.3);
     transition: color 0.2s ease;
   }
 

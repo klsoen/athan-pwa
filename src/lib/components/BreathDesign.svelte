@@ -1142,7 +1142,7 @@
   .current-name {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(var(--theme-text-rgb), 0.5);
     letter-spacing: 0.5em;
     text-transform: uppercase;
     margin-top: 0.5rem;
@@ -1152,7 +1152,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 2.5rem;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(var(--theme-text-rgb), 0.85);
     margin-top: 1rem;
     letter-spacing: 0.05em;
   }
@@ -1193,7 +1193,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 0.85rem;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(var(--theme-text-rgb), 0.3);
     text-transform: uppercase;
     letter-spacing: 0.15em;
   }
@@ -1201,14 +1201,14 @@
   .next-name {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(var(--theme-text-rgb), 0.6);
   }
 
   .next-time {
     font-family: 'Outfit', sans-serif;
     font-size: 1.2rem;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(var(--theme-text-rgb), 0.5);
   }
 
   /* All prayer times list */
@@ -1234,7 +1234,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: clamp(0.85rem, 2.5vw, 1.1rem);
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     width: 80px;
@@ -1245,9 +1245,9 @@
     flex: 1;
     height: 1px;
     background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      rgba(255, 255, 255, 0.1) 100%
+      rgba(var(--theme-text-rgb), 0.1) 0%,
+      rgba(var(--theme-text-rgb), 0.05) 50%,
+      rgba(var(--theme-text-rgb), 0.1) 100%
     );
     background-size: 4px 1px;
   }
@@ -1256,7 +1256,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: clamp(0.95rem, 2.8vw, 1.25rem);
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
     text-align: right;
     white-space: nowrap;
@@ -1302,14 +1302,14 @@
   }
 
   .date-separator {
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(var(--theme-text-rgb), 0.2);
   }
 
   .date-gregorian {
     font-family: 'Outfit', sans-serif;
     font-size: 0.75rem;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(var(--theme-text-rgb), 0.35);
   }
 
   /* ===== FULL CLOCK VIEW ===== */
@@ -1344,7 +1344,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(0.5rem, 1.8vw, 0.7rem);
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
     letter-spacing: 0.12em;
     margin-bottom: 0.15rem;
@@ -1355,7 +1355,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: clamp(0.65rem, 2.2vw, 0.9rem);
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(var(--theme-text-rgb), 0.55);
     font-variant-numeric: tabular-nums;
   }
 
@@ -1404,7 +1404,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: 0.85rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(var(--theme-text-rgb), 0.5);
     text-transform: uppercase;
     letter-spacing: 0.15em;
     margin-top: 0.15rem;
@@ -1414,7 +1414,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 1.25rem;
     font-weight: 200;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(var(--theme-text-rgb), 0.8);
     margin-top: 0.5rem;
   }
 

@@ -219,18 +219,18 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 0.85rem;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(var(--theme-text-rgb), 0.06);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
     border-radius: 2rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(var(--theme-text-rgb), 0.6);
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .location-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
+    background: rgba(var(--theme-text-rgb), 0.1);
+    color: rgba(var(--theme-text-rgb), 0.9);
   }
 
   .location-icon {
@@ -270,8 +270,8 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.9rem 1.25rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(var(--theme-text-rgb), 0.08);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.12);
     border-radius: 3rem;
     width: 100%;
     max-width: 320px;
@@ -298,7 +298,7 @@
   }
 
   .search-input::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(var(--theme-text-rgb), 0.35);
   }
 
   .search-spinner {
@@ -329,8 +329,8 @@
     flex-direction: column;
     align-items: center;
     padding: 0.8rem 1.2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(var(--theme-text-rgb), 0.05);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
     border-radius: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -339,8 +339,8 @@
   }
 
   .city-chip:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(var(--theme-text-rgb), 0.1);
+    border-color: rgba(var(--theme-text-rgb), 0.2);
     transform: translateY(-2px);
   }
 
@@ -353,7 +353,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(var(--theme-text-rgb), 0.9);
   }
 
   .city-chip.selected .chip-name {
@@ -363,12 +363,12 @@
   .chip-country {
     font-family: 'Outfit', sans-serif;
     font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(var(--theme-text-rgb), 0.4);
     margin-top: 0.15rem;
   }
 
   .no-results {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(var(--theme-text-rgb), 0.4);
     font-size: 0.9rem;
     font-family: 'Outfit', sans-serif;
     padding: 1rem;
@@ -378,7 +378,7 @@
   .close-hint {
     font-family: 'Outfit', sans-serif;
     font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(var(--theme-text-rgb), 0.2);
     letter-spacing: 0.1em;
     margin-top: 0.5rem;
   }

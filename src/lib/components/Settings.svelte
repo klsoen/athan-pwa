@@ -273,10 +273,10 @@
     justify-content: center;
     width: 2.2rem;
     height: 2.2rem;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(var(--theme-text-rgb), 0.06);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
     border-radius: 50%;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(var(--theme-text-rgb), 0.5);
     cursor: pointer;
     transition: all 0.2s;
     z-index: 1;
@@ -284,13 +284,13 @@
 
   .settings-btn.open {
     z-index: 1002;
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(var(--theme-text-rgb), 0.1);
+    color: rgba(var(--theme-text-rgb), 0.8);
   }
 
   .settings-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(var(--theme-text-rgb), 0.1);
+    color: rgba(var(--theme-text-rgb), 0.8);
   }
 
   .settings-btn svg {
@@ -393,7 +393,7 @@
   .section-label {
     font-family: 'Outfit', sans-serif;
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
     letter-spacing: 0.15em;
   }
@@ -413,16 +413,16 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 0.4rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(var(--theme-text-rgb), 0.03);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.06);
     border-radius: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
   .theme-card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(var(--theme-text-rgb), 0.06);
+    border-color: rgba(var(--theme-text-rgb), 0.12);
   }
 
   .theme-card.selected {
@@ -436,7 +436,7 @@
     height: 36px;
     border-radius: 50%;
     background: var(--preview-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
     overflow: hidden;
   }
 
@@ -468,7 +468,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 0.6rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(var(--theme-text-rgb), 0.6);
     text-align: center;
     line-height: 1.2;
   }
@@ -492,8 +492,8 @@
     align-items: center;
     justify-content: center;
     padding: 0.7rem 0.5rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--theme-text-rgb), 0.04);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.08);
     border-radius: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -501,8 +501,8 @@
   }
 
   .method-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(var(--theme-text-rgb), 0.08);
+    border-color: rgba(var(--theme-text-rgb), 0.15);
   }
 
   .method-card.selected {
@@ -514,7 +514,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 0.72rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(var(--theme-text-rgb), 0.8);
     text-align: center;
     line-height: 1.3;
   }
@@ -526,7 +526,7 @@
   .method-angles {
     font-family: 'Outfit', sans-serif;
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(var(--theme-text-rgb), 0.35);
     margin-top: 0.2rem;
   }
 
@@ -554,7 +554,7 @@
   .angle-divider {
     width: 1px;
     height: 3rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(var(--theme-text-rgb), 0.1);
   }
 
   .angle-input-group {
@@ -577,8 +577,8 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(var(--theme-text-rgb), 0.05);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
     border-radius: 2rem;
     padding: 0.25rem;
   }
@@ -589,10 +589,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(var(--theme-text-rgb), 0.08);
     border: none;
     border-radius: 50%;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(var(--theme-text-rgb), 0.7);
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -625,13 +625,13 @@
   .angle-unit {
     font-family: 'Outfit', sans-serif;
     font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(var(--theme-text-rgb), 0.3);
   }
 
   .angle-hint {
     font-family: 'Outfit', sans-serif;
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(var(--theme-text-rgb), 0.25);
     text-align: center;
     margin-top: 0.25rem;
   }
@@ -639,7 +639,7 @@
   .close-hint {
     font-family: 'Outfit', sans-serif;
     font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(var(--theme-text-rgb), 0.2);
     letter-spacing: 0.1em;
   }
 

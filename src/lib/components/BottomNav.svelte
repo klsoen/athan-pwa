@@ -65,7 +65,7 @@
     padding: 0.75rem 1rem;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
     background: #1f3044;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(var(--theme-text-rgb), 0.08);
     z-index: 100;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -79,7 +79,7 @@
     padding: 0.5rem 1rem;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(var(--theme-text-rgb), 0.4);
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -100,6 +100,6 @@
   }
 
   .nav-item:not(.active):hover {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(var(--theme-text-rgb), 0.7);
   }
 </style>
