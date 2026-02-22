@@ -4,6 +4,7 @@
   import { cubicInOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
   import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen } from '$lib/stores/prayer.js';
+  import { currentTheme } from '$lib/stores/theme.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
@@ -322,8 +323,8 @@
             </filter>
             <!-- Gradient for progress arc -->
             <linearGradient id="arcGradient" gradientUnits="userSpaceOnUse" x1="50" y1="10" x2="50" y2="90">
-              <stop offset="0%" stop-color="#e8c252"/>
-              <stop offset="100%" stop-color="#d4af37"/>
+              <stop offset="0%" stop-color={$currentTheme.accentBright}/>
+              <stop offset="100%" stop-color={$currentTheme.accent}/>
             </linearGradient>
           </defs>
 
@@ -331,7 +332,7 @@
           <circle
             cx="50" cy="50" r="44"
             fill="none"
-            stroke="rgba(212,175,55,0.08)"
+            stroke="rgba({$currentTheme.accentRgb},0.08)"
             stroke-width="0.3"
           />
 
@@ -346,7 +347,7 @@
             <line
               x1={startPos.x} y1={startPos.y}
               x2={endPos.x} y2={endPos.y}
-              stroke={isMajor ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.08)'}
+              stroke={isMajor ? `rgba(${$currentTheme.accentRgb},0.3)` : 'rgba(255,255,255,0.08)'}
               stroke-width={isMajor ? 0.6 : 0.3}
             />
           {/each}
@@ -363,7 +364,7 @@
           <circle
             cx="50" cy="50" r="28"
             fill="none"
-            stroke="rgba(212,175,55,0.06)"
+            stroke="rgba({$currentTheme.accentRgb},0.06)"
             stroke-width="0.3"
           />
 
@@ -371,7 +372,7 @@
           <path
             d={getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33)}
             fill="none"
-            stroke="rgba(212,175,55,0.4)"
+            stroke="rgba({$currentTheme.accentRgb},0.4)"
             stroke-width="1"
             stroke-linecap="round"
           />
@@ -401,7 +402,7 @@
                     y={pos.y - 3}
                     width="6"
                     height="6"
-                    fill="#e8c252"
+                    fill={$currentTheme.accentBright}
                     transform="rotate(45 {pos.x} {pos.y})"
                   />
                 </g>
@@ -411,7 +412,7 @@
                   y={pos.y - 1.5}
                   width="3"
                   height="3"
-                  fill="#b8943a"
+                  fill={$currentTheme.accentDim}
                   transform="rotate(45 {pos.x} {pos.y})"
                 />
               {/if}
@@ -419,10 +420,10 @@
               <!-- Other prayers: circles -->
               {#if isActive}
                 <g filter="url(#activeGlow)">
-                  <circle cx={pos.x} cy={pos.y} r="3.5" fill="#e8c252"/>
+                  <circle cx={pos.x} cy={pos.y} r="3.5" fill={$currentTheme.accentBright}/>
                 </g>
               {:else}
-                <circle cx={pos.x} cy={pos.y} r="2" fill="#b8943a"/>
+                <circle cx={pos.x} cy={pos.y} r="2" fill={$currentTheme.accentDim}/>
               {/if}
             {/if}
           {/each}
@@ -435,7 +436,7 @@
                 y={lastThirdPos.y - 2.5}
                 width="5"
                 height="5"
-                fill="#e8c252"
+                fill={$currentTheme.accentBright}
                 transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
               />
             </g>
@@ -445,18 +446,15 @@
               y={lastThirdPos.y - 1.5}
               width="3"
               height="3"
-              fill="#b8943a"
+              fill={$currentTheme.accentDim}
               transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
             />
           {/if}
 
-          <!-- Current time indicator - elegant needle -->
+          <!-- Current time indicator -->
           <g style="transform-origin: 50px 50px; transform: rotate({$animatedAngle}deg)">
-            <!-- Glow behind indicator -->
             <circle cx="50" cy="12" r="3" fill="rgba(255,255,255,0.2)" filter="url(#softGlow)"/>
-            <!-- Main indicator -->
             <circle cx="50" cy="12" r="2" fill="white"/>
-            <!-- Inner highlight -->
             <circle cx="50" cy="11.5" r="0.8" fill="rgba(255,255,255,0.8)"/>
           </g>
 
@@ -464,7 +462,7 @@
           <circle
             cx="50" cy="50" r="18"
             fill="none"
-            stroke="rgba(212,175,55,0.04)"
+            stroke="rgba({$currentTheme.accentRgb},0.04)"
             stroke-width="0.5"
           />
         </svg>
@@ -516,9 +514,9 @@
                 <svg viewBox="0 0 80 50" class="prayer-svg fajr" style="overflow:visible">
                   <defs>
                     <radialGradient id="fajrGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.6"/>
-                      <stop offset="40%" stop-color="#d4af37" stop-opacity="0.25"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.6"/>
+                      <stop offset="40%" stop-color={$currentTheme.accent} stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <!-- Clip to only show above horizon -->
                     <clipPath id="aboveHorizonFajr">
@@ -548,13 +546,13 @@
                 <svg viewBox="0 0 80 50" class="prayer-svg sunrise" style="overflow:visible">
                   <defs>
                     <radialGradient id="sunriseGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.5"/>
-                      <stop offset="60%" stop-color="#d4af37" stop-opacity="0.15"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.5"/>
+                      <stop offset="60%" stop-color={$currentTheme.accent} stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="groundGlowSunrise" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.25"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <filter id="groundBlurSunrise" x="-100%" y="-100%" width="300%" height="300%">
                       <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
@@ -579,13 +577,13 @@
                 <svg viewBox="0 0 80 55" class="prayer-svg dhuhr" style="overflow:visible">
                   <defs>
                     <radialGradient id="groundGlowDhuhr" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.22"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.22"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="dhuhrSunGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.55"/>
-                      <stop offset="50%" stop-color="#d4af37" stop-opacity="0.2"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.55"/>
+                      <stop offset="50%" stop-color={$currentTheme.accent} stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <filter id="groundBlurDhuhr" x="-100%" y="-100%" width="300%" height="300%">
                       <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
@@ -611,12 +609,12 @@
                 <svg viewBox="0 0 80 55" class="prayer-svg asr" style="overflow:visible">
                   <defs>
                     <radialGradient id="groundGlowAsr" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.15"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="asrSunGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.35"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.35"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <filter id="groundBlurAsr" x="-100%" y="-100%" width="300%" height="300%">
                       <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
@@ -649,9 +647,9 @@
                 <svg viewBox="0 0 80 50" class="prayer-svg maghrib" style="overflow:visible">
                   <defs>
                     <radialGradient id="maghribGlowGrad" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.7"/>
-                      <stop offset="30%" stop-color="#d4af37" stop-opacity="0.3"/>
-                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.7"/>
+                      <stop offset="30%" stop-color={$currentTheme.accent} stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
                     </radialGradient>
                     <!-- Clip to only show above horizon -->
                     <clipPath id="aboveHorizonMaghrib">
@@ -742,10 +740,18 @@
   .app-container {
     position: fixed;
     inset: 0;
-    background: #080808;
+    background: var(--theme-bg);
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  .app-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--theme-bg-gradient);
+    pointer-events: none;
   }
 
   .home-view {
@@ -781,13 +787,13 @@
   .breath-glow.outer {
     width: min(450px, 120vw);
     height: min(450px, 120vw);
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.03) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(var(--theme-accent-rgb), 0.1) 0%, rgba(var(--theme-accent-rgb), 0.03) 50%, transparent 70%);
   }
 
   .breath-glow.inner {
     width: min(280px, 75vw);
     height: min(280px, 75vw);
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 65%);
+    background: radial-gradient(circle, rgba(var(--theme-accent-rgb), 0.15) 0%, rgba(var(--theme-accent-rgb), 0.05) 45%, transparent 65%);
   }
 
   /* Main prayer display */
@@ -811,9 +817,9 @@
   .current-arabic {
     font-family: 'Amiri', serif;
     font-size: 4.5rem;
-    color: #e8c252;
+    color: var(--theme-accent-bright);
     line-height: 1.1;
-    text-shadow: 0 0 80px rgba(212, 175, 55, 0.3);
+    text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
   }
 
   /* Gentle reveal with golden glow pulse */
@@ -827,16 +833,16 @@
     0% {
       opacity: 0;
       transform: scale(0.94);
-      text-shadow: 0 0 0 rgba(212, 175, 55, 0);
+      text-shadow: 0 0 0 rgba(var(--theme-accent-rgb), 0);
     }
     50% {
       opacity: 1;
-      text-shadow: 0 0 40px rgba(232, 194, 82, 0.6);
+      text-shadow: 0 0 40px rgba(var(--theme-accent-bright-rgb), 0.6);
     }
     100% {
       opacity: 1;
       transform: scale(1);
-      text-shadow: 0 0 80px rgba(212, 175, 55, 0.3);
+      text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
     }
   }
 
@@ -879,7 +885,7 @@
 
   /* Shared styles */
   .prayer-svg .horizon {
-    stroke: rgba(212, 175, 55, 0.3);
+    stroke: rgba(var(--theme-accent-rgb), 0.3);
     stroke-width: 0.5;
   }
 
@@ -889,7 +895,7 @@
   }
 
   .prayer-svg.fajr .fajr-star {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: starFadeOut 4s ease-in-out infinite;
   }
 
@@ -901,7 +907,7 @@
   .prayer-svg.fajr .star-6 { animation-delay: 1.5s; }
 
   .prayer-svg.fajr .fajr-particle {
-    fill: rgba(232, 194, 82, 0.8);
+    fill: rgba(var(--theme-accent-bright-rgb), 0.8);
     animation: particleRise 3s ease-out infinite;
   }
 
@@ -929,7 +935,7 @@
 
   /* === SUNRISE: Sun rising with particles === */
   .prayer-svg.sunrise .sun-disc {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
   }
 
   .prayer-svg.sunrise .sunrise-glow {
@@ -937,7 +943,7 @@
   }
 
   .prayer-svg.sunrise .sun-particle {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: sunParticleFloat 4s ease-in-out infinite;
   }
 
@@ -962,7 +968,7 @@
 
   /* === DHUHR: Sun at zenith with particles === */
   .prayer-svg.dhuhr .zenith-sun {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
   }
 
   .prayer-svg.dhuhr .zenith-glow {
@@ -970,7 +976,7 @@
   }
 
   .prayer-svg.dhuhr .sun-particle {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: sunParticleFloat 4s ease-in-out infinite;
   }
 
@@ -989,7 +995,7 @@
 
   /* === ASR: Warm afternoon with floating dust === */
   .prayer-svg.asr .asr-sun {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
   }
 
   .prayer-svg.asr .asr-glow {
@@ -1002,7 +1008,7 @@
   }
 
   .prayer-svg.asr .sun-particle {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: sunParticleFloat 4s ease-in-out infinite;
   }
 
@@ -1013,7 +1019,7 @@
   .prayer-svg.asr .sp-5 { animation-delay: 0.4s; }
 
   .prayer-svg.asr .asr-dust {
-    fill: rgba(232, 194, 82, 0.7);
+    fill: rgba(var(--theme-accent-bright-rgb), 0.7);
     animation: dustFloat 5s ease-in-out infinite;
   }
 
@@ -1052,22 +1058,22 @@
   }
 
   .prayer-svg.maghrib .setting-sun {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: sunSet 4s ease-in forwards;
   }
 
   .prayer-svg.maghrib .crescent-outer {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     opacity: 0;
     animation: crescentAppear 1.5s ease-out 0.5s forwards;
   }
 
   .prayer-svg.maghrib .crescent-inner {
-    fill: #080808;
+    fill: var(--theme-bg);
   }
 
   .prayer-svg.maghrib .mag-star {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: starTwinkle 3s ease-in-out infinite;
   }
 
@@ -1093,15 +1099,15 @@
 
   /* === ISHA: Night sky === */
   .prayer-svg.isha .isha-crescent-outer {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
   }
 
   .prayer-svg.isha .isha-crescent-inner {
-    fill: #080808;
+    fill: var(--theme-bg);
   }
 
   .prayer-svg.isha .isha-star {
-    fill: #e8c252;
+    fill: var(--theme-accent-bright);
     animation: starTwinkle 3s ease-in-out infinite;
   }
 
@@ -1147,14 +1153,14 @@
     flex: 1;
     max-width: 60px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.3), transparent);
   }
 
   .divider-countdown {
     font-family: 'Outfit', sans-serif;
     font-size: 1.4rem;
     font-weight: 200;
-    color: rgba(212, 175, 55, 0.8);
+    color: rgba(var(--theme-accent-rgb), 0.8);
     letter-spacing: 0.1em;
   }
 
@@ -1240,19 +1246,19 @@
   }
 
   .time-row.active .time-name {
-    color: rgba(212, 175, 55, 0.8);
+    color: rgba(var(--theme-accent-rgb), 0.8);
   }
 
   .time-row.active .time-dots {
     background: linear-gradient(90deg,
-      rgba(212, 175, 55, 0.3) 0%,
-      rgba(212, 175, 55, 0.15) 50%,
-      rgba(212, 175, 55, 0.3) 100%
+      rgba(var(--theme-accent-rgb), 0.3) 0%,
+      rgba(var(--theme-accent-rgb), 0.15) 50%,
+      rgba(var(--theme-accent-rgb), 0.3) 100%
     );
   }
 
   .time-row.active .time-value {
-    color: rgba(212, 175, 55, 0.9);
+    color: rgba(var(--theme-accent-rgb), 0.9);
     font-weight: 400;
   }
 
@@ -1272,7 +1278,7 @@
   .date-hijri {
     font-family: 'Amiri', serif;
     font-size: 0.8rem;
-    color: rgba(232, 194, 82, 0.5);
+    color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
 
   .date-separator {
@@ -1334,25 +1340,25 @@
   }
 
   .clock-label.active .clock-label-name {
-    color: rgba(232, 194, 82, 0.95);
-    text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+    color: rgba(var(--theme-accent-bright-rgb), 0.95);
+    text-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.5);
   }
 
   .clock-label.active .clock-label-time {
-    color: #e8c252;
+    color: var(--theme-accent-bright);
     font-weight: 400;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    text-shadow: 0 0 10px rgba(var(--theme-accent-rgb), 0.4);
   }
 
   .clock-label.last-third.active .clock-label-name {
-    color: rgba(232, 194, 82, 0.95);
-    text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+    color: rgba(var(--theme-accent-bright-rgb), 0.95);
+    text-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.5);
   }
 
   .clock-label.last-third.active .clock-label-time {
-    color: #e8c252;
+    color: var(--theme-accent-bright);
     font-weight: 400;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    text-shadow: 0 0 10px rgba(var(--theme-accent-rgb), 0.4);
   }
 
   /* Center content in clock mode */
@@ -1369,9 +1375,9 @@
   .clock-center-arabic {
     font-family: 'Amiri', serif;
     font-size: 2.2rem;
-    color: #e8c252;
+    color: var(--theme-accent-bright);
     line-height: 1.2;
-    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    text-shadow: 0 0 20px rgba(var(--theme-accent-rgb), 0.3);
   }
 
   .clock-center-english {
@@ -1395,7 +1401,7 @@
   .clock-center-next {
     font-family: 'Outfit', sans-serif;
     font-size: 0.65rem;
-    color: rgba(212, 175, 55, 0.6);
+    color: rgba(var(--theme-accent-rgb), 0.6);
     margin-top: 0.25rem;
     letter-spacing: 0.1em;
   }
@@ -1405,7 +1411,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 0.7rem;
     font-weight: 400;
-    color: rgba(212, 175, 55, 0.4);
+    color: rgba(var(--theme-accent-rgb), 0.4);
     letter-spacing: 0.12em;
     text-transform: lowercase;
     margin-top: 0.75rem;

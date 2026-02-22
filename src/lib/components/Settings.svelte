@@ -1,8 +1,12 @@
 <script>
   import { calculationMethod, customAngles, settingsOpen } from '$lib/stores/prayer.js';
+  import { themes, currentThemeId, setTheme } from '$lib/stores/theme.js';
   import { fade, fly, scale } from 'svelte/transition';
   import { cubicOut, backOut } from 'svelte/easing';
   import { onMount } from 'svelte';
+
+  // Theme list for selector
+  const themeList = Object.values(themes);
 
   const methods = [
     { id: 'MuslimWorldLeague', name: 'Muslim World League', fajr: 18, isha: 17 },
@@ -143,8 +147,31 @@
       <span class="settings-title">Settings</span>
     </div>
 
+    <!-- Theme Selector -->
+    <div class="section" in:fade={{ duration: 300, delay: 80 }}>
+      <span class="section-label">Theme</span>
+      <div class="theme-grid">
+        {#each themeList as theme, i}
+          <button
+            class="theme-card"
+            class:selected={$currentThemeId === theme.id}
+            on:click={() => { setTheme(theme.id); close(); }}
+            type="button"
+            style="--preview-bg: {theme.bg}; --preview-accent: {theme.accent}; --preview-accent-bright: {theme.accentBright};"
+            in:scale={{ duration: 200, delay: 100 + i * 30, start: 0.9, easing: backOut }}
+          >
+            <div class="theme-preview">
+              <div class="preview-glow"></div>
+              <div class="preview-dot"></div>
+            </div>
+            <span class="theme-name">{theme.name}</span>
+          </button>
+        {/each}
+      </div>
+    </div>
+
     <!-- Calculation Method -->
-    <div class="section" in:fade={{ duration: 300, delay: 100 }}>
+    <div class="section" in:fade={{ duration: 300, delay: 150 }}>
       <span class="section-label">Calculation Method</span>
       <div class="method-grid">
         {#each methods as method, i}
@@ -354,7 +381,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.4rem;
     font-weight: 500;
-    color: rgba(212, 175, 55, 0.9);
+    color: rgba(var(--theme-accent-rgb), 0.9);
     letter-spacing: 0.1em;
   }
 
@@ -372,6 +399,85 @@
     color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
     letter-spacing: 0.15em;
+  }
+
+  /* Theme grid */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .theme-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.4rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .theme-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .theme-card.selected {
+    background: rgba(var(--theme-accent-rgb), 0.1);
+    border-color: rgba(var(--theme-accent-rgb), 0.4);
+  }
+
+  .theme-preview {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--preview-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+  }
+
+  .preview-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--preview-accent) 0%, transparent 70%);
+    opacity: 0.4;
+  }
+
+  .preview-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--preview-accent-bright);
+    box-shadow: 0 0 8px var(--preview-accent);
+  }
+
+  .theme-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .theme-card.selected .theme-name {
+    color: var(--theme-accent);
   }
 
   /* Method grid */
@@ -403,8 +509,8 @@
   }
 
   .method-card.selected {
-    background: rgba(212, 175, 55, 0.12);
-    border-color: rgba(212, 175, 55, 0.35);
+    background: rgba(var(--theme-accent-rgb), 0.12);
+    border-color: rgba(var(--theme-accent-rgb), 0.35);
   }
 
   .method-name {
@@ -417,7 +523,7 @@
   }
 
   .method-card.selected .method-name {
-    color: #d4af37;
+    color: var(--theme-accent);
   }
 
   .method-angles {
@@ -428,7 +534,7 @@
   }
 
   .method-card.selected .method-angles {
-    color: rgba(212, 175, 55, 0.6);
+    color: rgba(var(--theme-accent-rgb), 0.6);
   }
 
   /* Custom angles section */
@@ -465,7 +571,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: 0.75rem;
     font-weight: 500;
-    color: rgba(212, 175, 55, 0.7);
+    color: rgba(var(--theme-accent-rgb), 0.7);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -496,8 +602,8 @@
   }
 
   .angle-btn:hover {
-    background: rgba(212, 175, 55, 0.2);
-    color: #d4af37;
+    background: rgba(var(--theme-accent-rgb), 0.2);
+    color: var(--theme-accent);
   }
 
   .angle-input-group input {

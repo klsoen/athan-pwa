@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================
+   THEME SYSTEM
+   CSS variables for dynamic theming
+===================================================== */
+:root {
+  /* Default theme: Refined Gold */
+  --theme-bg: #080808;
+  --theme-bg-gradient: none;
+  --theme-accent: #d4af37;
+  --theme-accent-bright: #e8c252;
+  --theme-accent-dim: #b8943a;
+  --theme-accent-rgb: 212, 175, 55;
+  --theme-accent-bright-rgb: 232, 194, 82;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -16,7 +31,7 @@ html, body {
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0a0a0a;
+  background: var(--theme-bg);
   color: white;
 }
 
@@ -29,7 +44,7 @@ html, body {
 
 /* Focus states */
 :focus-visible {
-  outline: 2px solid rgba(212, 175, 55, 0.5);
+  outline: 2px solid rgba(var(--theme-accent-rgb), 0.5);
   outline-offset: 2px;
 }
 
@@ -54,7 +69,7 @@ html, body {
 
 /* Selection */
 ::selection {
-  background: rgba(212, 175, 55, 0.3);
+  background: rgba(var(--theme-accent-rgb), 0.3);
   color: white;
 }
 

@@ -282,7 +282,7 @@
   .search-icon {
     width: 1.1rem;
     height: 1.1rem;
-    color: rgba(212, 175, 55, 0.6);
+    color: rgba(var(--theme-accent-rgb), 0.6);
     flex-shrink: 0;
   }
 
@@ -304,8 +304,8 @@
   .search-spinner {
     width: 1rem;
     height: 1rem;
-    border: 2px solid rgba(212, 175, 55, 0.2);
-    border-top-color: rgba(212, 175, 55, 0.8);
+    border: 2px solid rgba(var(--theme-accent-rgb), 0.2);
+    border-top-color: rgba(var(--theme-accent-rgb), 0.8);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     flex-shrink: 0;
@@ -345,8 +345,8 @@
   }
 
   .city-chip.selected {
-    background: rgba(212, 175, 55, 0.15);
-    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(var(--theme-accent-rgb), 0.15);
+    border-color: rgba(var(--theme-accent-rgb), 0.4);
   }
 
   .chip-name {
@@ -357,7 +357,7 @@
   }
 
   .city-chip.selected .chip-name {
-    color: #d4af37;
+    color: var(--theme-accent);
   }
 
   .chip-country {
