@@ -148,6 +148,8 @@
 
   let breathInterval;
   let showFullClock = false;
+  let isAnimating = false;
+  let animationTimeout;
 
   function toggleClock() {
     if (!$citySelectorOpen) {
@@ -155,10 +157,18 @@
 
       // Animate arc when opening clock
       if (showFullClock) {
+        isAnimating = true;
+        clearTimeout(animationTimeout);
         animatedAngle.set(0, { duration: 0 });
         setTimeout(() => {
           animatedAngle.set(currentTimeAngle, { duration: 2800 });
         }, 50);
+        // Fade out motion trail after animation completes
+        animationTimeout = setTimeout(() => {
+          isAnimating = false;
+        }, 3000);
+      } else {
+        isAnimating = false;
       }
     }
   }
@@ -453,7 +463,13 @@
 
           <!-- Current time indicator -->
           <g style="transform-origin: 50px 50px; transform: rotate({$animatedAngle}deg)">
-            <circle cx="50" cy="12" r="3" fill="rgba(255,255,255,0.2)" filter="url(#softGlow)"/>
+            <!-- Motion trail glow - only visible during animation -->
+            <circle
+              cx="50" cy="12" r="3"
+              fill="rgba(255,255,255,{isAnimating ? 0.25 : 0})"
+              filter="url(#softGlow)"
+              style="transition: fill 0.5s ease-out;"
+            />
             <circle cx="50" cy="12" r="2" fill="white"/>
             <circle cx="50" cy="11.5" r="0.8" fill="rgba(255,255,255,0.8)"/>
           </g>
@@ -761,13 +777,15 @@
     flex-direction: column;
     align-items: center;
     padding: 0 1.5rem;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
   }
 
   .home-header {
     position: absolute;
-    top: 2rem;
-    left: 1.5rem;
-    right: 1.5rem;
+    top: calc(1.25rem + var(--safe-top));
+    left: calc(1.5rem + var(--safe-left));
+    right: calc(1.5rem + var(--safe-right));
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1197,6 +1215,7 @@
   /* All prayer times list */
   .all-times {
     margin-top: 2.5rem;
+    margin-bottom: calc(3rem + var(--safe-bottom));
     display: flex;
     flex-direction: column;
     gap: clamp(0.6rem, 2vh, 1rem);
@@ -1265,7 +1284,7 @@
   /* Dates row at bottom */
   .dates-row {
     position: absolute;
-    bottom: 2.5rem;
+    bottom: calc(1.5rem + var(--safe-bottom));
     left: 0;
     right: 0;
     display: flex;
@@ -1497,11 +1516,12 @@
 
     .all-times {
       margin-top: 1.5rem;
+      margin-bottom: calc(2.5rem + var(--safe-bottom));
       gap: 0.4rem;
     }
 
     .dates-row {
-      bottom: 1.5rem;
+      bottom: calc(1rem + var(--safe-bottom));
     }
   }
 

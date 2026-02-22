@@ -35,6 +35,16 @@ html, body {
   color: white;
 }
 
+/* iOS Safe Area CSS Variables */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --header-height: calc(2.5rem + var(--safe-top));
+  --footer-height: calc(2.5rem + var(--safe-bottom));
+}
+
 /* Smooth scrolling */
 @media (prefers-reduced-motion: no-preference) {
   html {

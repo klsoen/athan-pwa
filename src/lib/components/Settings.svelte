@@ -352,18 +352,15 @@
 
   .settings-content {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
     z-index: 1001;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.75rem;
+    gap: 1.5rem;
     padding: 1.5rem;
-    width: 92vw;
-    max-width: 420px;
-    max-height: 85vh;
+    padding-top: calc(4.5rem + var(--safe-top));
+    padding-bottom: calc(2rem + var(--safe-bottom));
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
