@@ -434,6 +434,7 @@
       <!-- Center info in clock mode -->
       <div class="clock-center" class:blurred={$citySelectorOpen}>
         <div class="clock-center-arabic">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
+        <div class="clock-center-english">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
         <div class="clock-center-countdown">{formatCountdown($countdown)}</div>
         <div class="clock-center-next">until {prayerNames[$currentPrayer.next]?.en}</div>
       </div>
@@ -824,6 +825,16 @@
     text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
   }
 
+  .clock-center-english {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 0.15rem;
+  }
+
   .clock-center-countdown {
     font-family: 'Outfit', sans-serif;
     font-size: 1.25rem;
@@ -887,6 +898,10 @@
       font-size: 1.6rem;
     }
 
+    .clock-center-english {
+      font-size: 0.75rem;
+    }
+
     .clock-center-countdown {
       font-size: 1rem;
     }
@@ -916,6 +931,10 @@
 
     .clock-center-arabic {
       font-size: 1.4rem;
+    }
+
+    .clock-center-english {
+      font-size: 0.7rem;
     }
   }
 
