@@ -330,49 +330,62 @@
             {@const pos = getPosition(prayerAngles[prayer], 38)}
             {@const isActive = $currentPrayer.current === prayer}
             {#if prayer === 'sunrise'}
-              <!-- Sunrise: elegant diamond -->
-              <g filter={isActive ? 'url(#activeGlow)' : ''}>
+              <!-- Sunrise: diamond -->
+              {#if isActive}
+                <g filter="url(#activeGlow)">
+                  <rect
+                    x={pos.x - 3}
+                    y={pos.y - 3}
+                    width="6"
+                    height="6"
+                    fill="#e8c252"
+                    transform="rotate(45 {pos.x} {pos.y})"
+                  />
+                </g>
+              {:else}
                 <rect
-                  x={pos.x - (isActive ? 3 : 2)}
-                  y={pos.y - (isActive ? 3 : 2)}
-                  width={isActive ? 6 : 4}
-                  height={isActive ? 6 : 4}
-                  fill={isActive ? '#e8c252' : 'rgba(212,175,55,0.5)'}
+                  x={pos.x - 1.5}
+                  y={pos.y - 1.5}
+                  width="3"
+                  height="3"
+                  fill="#b8943a"
                   transform="rotate(45 {pos.x} {pos.y})"
                 />
-              </g>
+              {/if}
             {:else}
-              <!-- Other prayers: refined circles -->
-              <g filter={isActive ? 'url(#activeGlow)' : ''}>
-                <circle
-                  cx={pos.x} cy={pos.y}
-                  r={isActive ? 3.5 : 2}
-                  fill={isActive ? '#e8c252' : 'rgba(212,175,55,0.5)'}
-                />
-                {#if isActive}
-                  <circle
-                    cx={pos.x} cy={pos.y}
-                    r="5"
-                    fill="none"
-                    stroke="rgba(212,175,55,0.3)"
-                    stroke-width="0.5"
-                  />
-                {/if}
-              </g>
+              <!-- Other prayers: circles -->
+              {#if isActive}
+                <g filter="url(#activeGlow)">
+                  <circle cx={pos.x} cy={pos.y} r="3.5" fill="#e8c252"/>
+                </g>
+              {:else}
+                <circle cx={pos.x} cy={pos.y} r="2" fill="#b8943a"/>
+              {/if}
             {/if}
           {/each}
 
           <!-- Last third diamond marker -->
-          <g filter={isInLastThird ? 'url(#activeGlow)' : ''}>
+          {#if isInLastThird}
+            <g filter="url(#activeGlow)">
+              <rect
+                x={lastThirdPos.x - 2.5}
+                y={lastThirdPos.y - 2.5}
+                width="5"
+                height="5"
+                fill="#e8c252"
+                transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
+              />
+            </g>
+          {:else}
             <rect
-              x={lastThirdPos.x - (isInLastThird ? 2.5 : 1.5)}
-              y={lastThirdPos.y - (isInLastThird ? 2.5 : 1.5)}
-              width={isInLastThird ? 5 : 3}
-              height={isInLastThird ? 5 : 3}
-              fill={isInLastThird ? '#e8c252' : 'rgba(212,175,55,0.5)'}
+              x={lastThirdPos.x - 1.5}
+              y={lastThirdPos.y - 1.5}
+              width="3"
+              height="3"
+              fill="#b8943a"
               transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
             />
-          </g>
+          {/if}
 
           <!-- Current time indicator - elegant needle -->
           <g style="transform-origin: 50px 50px; transform: rotate({$animatedAngle}deg)">
