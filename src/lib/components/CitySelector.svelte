@@ -1,22 +1,8 @@
 <script>
-  import { location, citySelectorOpen, fetchTimezone, calculationMethod } from '$lib/stores/prayer.js';
+  import { location, citySelectorOpen, fetchTimezone } from '$lib/stores/prayer.js';
   import { onMount } from 'svelte';
-
-  // Calculation methods with display names
-  const methods = [
-    { id: 'MuslimWorldLeague', name: 'MWL', full: 'Muslim World League' },
-    { id: 'Egyptian', name: 'Egypt', full: 'Egyptian' },
-    { id: 'Karachi', name: 'Karachi', full: 'Karachi' },
-    { id: 'UmmAlQura', name: 'Umm al-Qura', full: 'Umm al-Qura' },
-    { id: 'Dubai', name: 'Dubai', full: 'Dubai' },
-    { id: 'NorthAmerica', name: 'ISNA', full: 'North America (ISNA)' },
-    { id: 'MoonsightingCommittee', name: 'Moonsighting', full: 'Moonsighting Committee' },
-    { id: 'Turkey', name: 'Turkey', full: 'Turkey' },
-    { id: 'Tehran', name: 'Tehran', full: 'Tehran' },
-    { id: 'Singapore', name: 'Singapore', full: 'Singapore' },
-  ];
-
-  let selectedMethod = 'MuslimWorldLeague';
+  import { fade, fly, scale } from 'svelte/transition';
+  import { cubicOut, backOut } from 'svelte/easing';
 
   // Popular cities shown when no search query
   const popularCities = [
@@ -31,7 +17,6 @@
   let isOpen = false;
   let searchQuery = '';
   let selectedCity = popularCities[0];
-  let inputRef;
   let searchResults = [];
   let isSearching = false;
   let searchTimeout;
@@ -57,7 +42,6 @@
 
       searchResults = data
         .map(place => {
-          // Extract the best name for the place
           const name = place.address?.city
             || place.address?.town
             || place.address?.village
@@ -72,9 +56,8 @@
             lng: parseFloat(place.lon)
           };
         })
-        .filter(city => city.name) // Must have a name
+        .filter(city => city.name)
         .filter((city, index, self) =>
-          // Remove duplicates by name + country
           index === self.findIndex(c => c.name === city.name && c.country === city.country)
         )
         .slice(0, 6);
@@ -85,7 +68,6 @@
     isSearching = false;
   }
 
-  // Debounce search input
   function handleSearchInput() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -99,7 +81,6 @@
     selectedCity = city;
     close();
 
-    // Fetch timezone for the city
     const timezone = await fetchTimezone(city.lat, city.lng);
 
     const cityData = {
@@ -116,19 +97,10 @@
     }
   }
 
-  function selectMethod(method) {
-    selectedMethod = method.id;
-    calculationMethod.set(method.id);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('athan-method', method.id);
-    }
-  }
-
   function open() {
     isOpen = true;
     citySelectorOpen.set(true);
     searchResults = [];
-    setTimeout(() => inputRef?.focus(), 100);
   }
 
   function close() {
@@ -146,23 +118,14 @@
 
   onMount(async () => {
     if (typeof localStorage !== 'undefined') {
-      // Load saved calculation method
-      const savedMethod = localStorage.getItem('athan-method');
-      if (savedMethod) {
-        selectedMethod = savedMethod;
-        calculationMethod.set(savedMethod);
-      }
-
       const saved = localStorage.getItem('athan-city');
       if (saved) {
         const city = JSON.parse(saved);
         selectedCity = city;
 
-        // If timezone is missing, fetch it
         let timezone = city.timezone;
         if (!timezone) {
           timezone = await fetchTimezone(city.lat, city.lng);
-          // Update localStorage with timezone
           localStorage.setItem('athan-city', JSON.stringify({ ...city, timezone }));
         }
 
@@ -190,20 +153,29 @@
 </button>
 
 {#if isOpen}
-  <button class="spotlight-backdrop" on:click|stopPropagation={close} type="button" aria-label="Close"></button>
+  <!-- Invisible backdrop for closing -->
+  <button
+    class="backdrop"
+    on:click|stopPropagation={close}
+    type="button"
+    aria-label="Close"
+    transition:fade={{ duration: 200 }}
+  ></button>
 
-  <div class="spotlight" role="dialog" aria-modal="true" on:click|stopPropagation>
-    <div class="spotlight-search">
+  <!-- Floating content - no visible container -->
+  <div class="selector-content" on:click|stopPropagation role="dialog" aria-modal="true">
+
+    <!-- Search bar -->
+    <div class="search-bar" in:fly={{ y: -20, duration: 400, delay: 50, easing: cubicOut }}>
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
       <input
-        bind:this={inputRef}
         type="text"
         bind:value={searchQuery}
         on:input={handleSearchInput}
-        placeholder="Search any city..."
+        placeholder="Search city..."
         class="search-input"
         autocomplete="off"
         autocorrect="off"
@@ -214,48 +186,29 @@
       {/if}
     </div>
 
-    {#if searchQuery.length > 0 && searchQuery.length < 2}
-      <div class="search-hint">Type at least 2 characters to search</div>
-    {/if}
-
-    <ul class="city-list" role="listbox">
-      {#each displayCities as city (`${city.name}-${city.lat}`)}
-        <li>
-          <button
-            class="city-item"
-            class:selected={selectedCity.name === city.name && selectedCity.country === city.country}
-            on:click={() => selectCity(city)}
-            type="button"
-            role="option"
-            aria-selected={selectedCity.name === city.name}
-          >
-            <span class="city-name">{city.name}</span>
-            <span class="city-country">{city.country}</span>
-          </button>
-        </li>
+    <!-- City chips -->
+    <div class="city-chips" in:fade={{ duration: 300, delay: 100 }}>
+      {#each displayCities as city, i (`${city.name}-${city.lat}`)}
+        <button
+          class="city-chip"
+          class:selected={selectedCity.name === city.name && selectedCity.country === city.country}
+          on:click={() => selectCity(city)}
+          type="button"
+          in:scale={{ duration: 300, delay: 120 + i * 40, start: 0.8, easing: backOut }}
+        >
+          <span class="chip-name">{city.name}</span>
+          <span class="chip-country">{city.country}</span>
+        </button>
       {/each}
 
       {#if searchQuery.length >= 2 && displayCities.length === 0 && !isSearching}
-        <li class="no-results">No cities found</li>
+        <div class="no-results" in:fade={{ duration: 200 }}>No cities found</div>
       {/if}
-    </ul>
+    </div>
 
-    <!-- Calculation Method Selector -->
-    <div class="method-section">
-      <span class="method-label">Calculation</span>
-      <div class="method-scroll">
-        {#each methods as method}
-          <button
-            class="method-pill"
-            class:active={selectedMethod === method.id}
-            on:click|stopPropagation={() => selectMethod(method)}
-            type="button"
-            title={method.full}
-          >
-            {method.name}
-          </button>
-        {/each}
-      </div>
+    <!-- Close hint -->
+    <div class="close-hint" in:fade={{ duration: 300, delay: 350 }}>
+      tap anywhere to close
     </div>
   </div>
 {/if}
@@ -285,68 +238,51 @@
     height: 1rem;
   }
 
-  /* Backdrop */
-  .spotlight-backdrop {
+  /* Invisible backdrop */
+  .backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: transparent;
     z-index: 1000;
     border: none;
     cursor: default;
-    animation: backdropIn 0.3s ease-out;
   }
 
-  @keyframes backdropIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* Spotlight */
-  .spotlight {
+  /* Floating content - centered, no container */
+  .selector-content {
     position: fixed;
-    top: 12vh;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 90vw;
-    max-width: 360px;
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
-    overflow: hidden;
+    transform: translate(-50%, -50%);
     z-index: 1001;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: spotlightIn 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+    width: 90vw;
+    max-width: 400px;
   }
 
-  @keyframes spotlightIn {
-    from {
-      opacity: 0;
-      transform: translateX(-50%) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
-    }
-  }
-
-  /* Search */
-  .spotlight-search {
+  /* Search bar - floating pill */
+  .search-bar {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.9rem 1.25rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 3rem;
+    width: 100%;
+    max-width: 320px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .search-icon {
-    width: 1.2rem;
-    height: 1.2rem;
-    color: rgba(255, 255, 255, 0.4);
+    width: 1.1rem;
+    height: 1.1rem;
+    color: rgba(212, 175, 55, 0.6);
     flex-shrink: 0;
   }
 
@@ -356,7 +292,8 @@
     background: none;
     border: none;
     color: white;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
     outline: none;
   }
 
@@ -378,115 +315,71 @@
     to { transform: rotate(360deg); }
   }
 
-  .search-hint {
-    padding: 0.6rem 1rem;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  /* City list */
-  .city-list {
-    list-style: none;
-    margin: 0;
-    padding: 0.5rem 0;
-    max-height: 280px;
-    overflow-y: auto;
-  }
-
-  .city-item {
+  /* City chips - flowing layout */
+  .city-chips {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 360px;
+  }
+
+  .city-chip {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: none;
-    border: none;
+    padding: 0.8rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
     cursor: pointer;
-    text-align: left;
-    transition: background 0.1s;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
-  .city-item:hover {
-    background: rgba(255, 255, 255, 0.08);
+  .city-chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
   }
 
-  .city-item.selected {
+  .city-chip.selected {
     background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.4);
   }
 
-  .city-name {
-    font-size: 0.95rem;
-    color: white;
+  .chip-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
   }
 
-  .city-country {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .city-item.selected .city-name {
+  .city-chip.selected .chip-name {
     color: #d4af37;
+  }
+
+  .chip-country {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 0.15rem;
   }
 
   .no-results {
-    padding: 1.5rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.4);
     font-size: 0.9rem;
-  }
-
-  /* Calculation Method Selector */
-  .method-section {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.75rem 1rem;
-  }
-
-  .method-label {
-    display: block;
-    font-size: 0.7rem;
-    color: rgba(212, 175, 55, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.6rem;
     font-family: 'Outfit', sans-serif;
+    padding: 1rem;
   }
 
-  .method-scroll {
-    display: flex;
-    gap: 0.4rem;
-    overflow-x: auto;
-    padding-bottom: 0.25rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .method-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .method-pill {
-    flex-shrink: 0;
-    padding: 0.4rem 0.7rem;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
+  /* Close hint */
+  .close-hint {
     font-family: 'Outfit', sans-serif;
-    white-space: nowrap;
-  }
-
-  .method-pill:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  .method-pill.active {
-    background: rgba(212, 175, 55, 0.2);
-    border-color: rgba(212, 175, 55, 0.4);
-    color: #d4af37;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
   }
 </style>

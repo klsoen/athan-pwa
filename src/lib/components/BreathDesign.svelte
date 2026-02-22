@@ -3,8 +3,12 @@
   import { tweened } from 'svelte/motion';
   import { cubicInOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
-  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen } from '$lib/stores/prayer.js';
+  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen } from '$lib/stores/prayer.js';
   import CitySelector from './CitySelector.svelte';
+  import Settings from './Settings.svelte';
+
+  // Combined overlay state for blur
+  $: overlayOpen = $citySelectorOpen || $settingsOpen;
 
   // Animated progress angle for arc and dot
   const animatedAngle = tweened(0, {
@@ -144,12 +148,6 @@
   let breathInterval;
   let showFullClock = false;
 
-  // TEMP: Preview mode to cycle through prayers
-  const previewPrayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
-  let previewIndex = 0;
-  let previewPrayer = previewPrayers[0];
-  let previewInterval;
-
   function toggleClock() {
     if (!$citySelectorOpen) {
       showFullClock = !showFullClock;
@@ -170,15 +168,8 @@
       breathPhase = (breathPhase + 1) % 360;
     }, 66);
 
-    // TEMP: Cycle through prayers every 8 seconds for preview
-    previewInterval = setInterval(() => {
-      previewIndex = (previewIndex + 1) % previewPrayers.length;
-      previewPrayer = previewPrayers[previewIndex];
-    }, 8000);
-
     return () => {
       clearInterval(breathInterval);
-      clearInterval(previewInterval);
     };
   });
 
@@ -304,11 +295,12 @@
 
     <div class="home-header">
       <CitySelector />
+      <Settings />
     </div>
 
     {#if showFullClock}
       <!-- FULL CLOCK VIEW -->
-      <div class="full-clock" class:blurred={$citySelectorOpen} in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
+      <div class="full-clock" class:blurred={overlayOpen} in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
@@ -504,7 +496,7 @@
       </div>
 
       <!-- Center info in clock mode -->
-      <div class="clock-center" class:blurred={$citySelectorOpen}>
+      <div class="clock-center" class:blurred={overlayOpen}>
         <div class="clock-center-arabic">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
         <div class="clock-center-english">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
         <div class="clock-center-countdown">{formatCountdown($countdown)}</div>
@@ -513,13 +505,13 @@
 
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
-      <div class="prayer-display" class:blurred={$citySelectorOpen} in:scale={{ duration: 400, delay: 80, start: 0.95, opacity: 0 }} out:fade={{ duration: 120 }}>
+      <div class="prayer-display" class:blurred={overlayOpen} in:scale={{ duration: 400, delay: 80, start: 0.95, opacity: 0 }} out:fade={{ duration: 120 }}>
         <div class="current-prayer" in:fly={{ y: 15, duration: 450, delay: 120 }}>
           {#key showFullClock}
-            <!-- Prayer-specific animated icon (using previewPrayer for testing) -->
-            {#key previewPrayer}
+            <!-- Prayer-specific animated icon (using $currentPrayer.current for testing) -->
+            {#key $currentPrayer.current}
             <div class="prayer-icon">
-              {#if previewPrayer === 'fajr'}
+              {#if $currentPrayer.current === 'fajr'}
                 <!-- Fajr: Glow emanating from below horizon, stars fading -->
                 <svg viewBox="0 0 80 50" class="prayer-svg fajr" style="overflow:visible">
                   <defs>
@@ -551,7 +543,7 @@
                   <circle class="fajr-particle p-4" cx="28" cy="32" r="0.5"/>
                   <circle class="fajr-particle p-5" cx="52" cy="35" r="0.6"/>
                 </svg>
-              {:else if previewPrayer === 'sunrise'}
+              {:else if $currentPrayer.current === 'sunrise'}
                 <!-- Sunrise: Sun rising with glow and particles -->
                 <svg viewBox="0 0 80 50" class="prayer-svg sunrise" style="overflow:visible">
                   <defs>
@@ -579,7 +571,7 @@
                   <circle class="sun-particle sp-5" cx="26" cy="34" r="0.6"/>
                   <circle class="sun-particle sp-6" cx="56" cy="36" r="0.8"/>
                 </svg>
-              {:else if previewPrayer === 'dhuhr'}
+              {:else if $currentPrayer.current === 'dhuhr'}
                 <!-- Dhuhr: Sun at zenith with glow and particles -->
                 <svg viewBox="0 0 80 55" class="prayer-svg dhuhr" style="overflow:visible">
                   <defs>
@@ -608,7 +600,7 @@
                   <circle class="sun-particle sp-6" cx="58" cy="20" r="0.7"/>
                   <circle class="sun-particle sp-7" cx="40" cy="2" r="0.8"/>
                 </svg>
-              {:else if previewPrayer === 'asr'}
+              {:else if $currentPrayer.current === 'asr'}
                 <!-- Asr: Afternoon sun with ground below and floating dust -->
                 <svg viewBox="0 0 80 55" class="prayer-svg asr" style="overflow:visible">
                   <defs>
@@ -643,7 +635,7 @@
                   <circle class="asr-dust d-7" cx="48" cy="36" r="0.5"/>
                   <circle class="asr-dust d-8" cx="22" cy="46" r="0.7"/>
                 </svg>
-              {:else if previewPrayer === 'maghrib'}
+              {:else if $currentPrayer.current === 'maghrib'}
                 <!-- Maghrib: Sun setting below horizon, glow fading with it -->
                 <svg viewBox="0 0 80 50" class="prayer-svg maghrib" style="overflow:visible">
                   <defs>
@@ -695,7 +687,7 @@
             <div class="current-arabic engrave-in">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
           {/key}
           <div class="current-name">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
-          <div class="tap-hint" class:blurred={$citySelectorOpen}>tap for full clock</div>
+          <div class="tap-hint" class:blurred={overlayOpen}>tap for full clock</div>
           <div class="current-time">{formatTime($prayerTimes[$currentPrayer.current])}</div>
         </div>
 
@@ -726,7 +718,7 @@
     {/if}
 
     <!-- Dates at bottom (both views) -->
-    <div class="dates-row" class:blurred={$citySelectorOpen}>
+    <div class="dates-row" class:blurred={overlayOpen}>
       <span class="date-hijri">{hijriDate}</span>
       <span class="date-separator">·</span>
       <span class="date-gregorian">{gregorianDate}</span>
@@ -759,10 +751,11 @@
   .home-header {
     position: absolute;
     top: 2rem;
-    left: 0;
-    right: 0;
+    left: 1.5rem;
+    right: 1.5rem;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     z-index: 10;
   }
 
@@ -1208,7 +1201,7 @@
     font-family: 'Outfit', sans-serif;
     font-size: clamp(0.85rem, 2.5vw, 1.1rem);
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.55);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     width: 80px;
@@ -1230,10 +1223,10 @@
     font-family: 'Outfit', sans-serif;
     font-size: clamp(0.95rem, 2.8vw, 1.25rem);
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.7);
     font-variant-numeric: tabular-nums;
     text-align: right;
-    width: 80px;
+    white-space: nowrap;
     flex-shrink: 0;
   }
 

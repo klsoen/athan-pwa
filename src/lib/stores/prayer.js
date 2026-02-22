@@ -31,6 +31,12 @@ export async function fetchTimezone(lat, lng) {
 // Calculation method store
 export const calculationMethod = writable('MuslimWorldLeague');
 
+// Custom angles for prayer calculation
+export const customAngles = writable({ fajr: 18, isha: 17 });
+
+// Settings open state (for blur effect)
+export const settingsOpen = writable(false);
+
 // Current time store (updates every second)
 export const currentTime = writable(new Date());
 
@@ -41,13 +47,23 @@ if (typeof window !== 'undefined') {
   }, 1000);
 }
 
-// Prayer times derived from location and method
+// Prayer times derived from location, method, and custom angles
 export const prayerTimes = derived(
-  [location, calculationMethod],
-  ([$location, $method]) => {
+  [location, calculationMethod, customAngles],
+  ([$location, $method, $angles]) => {
     try {
       const coords = new Coordinates($location.latitude, $location.longitude);
-      const params = CalculationMethod[$method]();
+      let params;
+
+      if ($method === 'Custom') {
+        // Use custom angles with MuslimWorldLeague as base
+        params = CalculationMethod.MuslimWorldLeague();
+        params.fajrAngle = $angles.fajr;
+        params.ishaAngle = $angles.isha;
+      } else {
+        params = CalculationMethod[$method]();
+      }
+
       const date = new Date();
       const times = new PrayerTimes(coords, date, params);
 
@@ -159,25 +175,3 @@ export const prayerNames = {
   isha: { en: 'Isha', ar: 'العشاء' }
 };
 
-// Get user location
-export async function getUserLocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error('Geolocation not supported'));
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        location.set({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          name: 'Current Location'
-        });
-        resolve(position);
-      },
-      reject,
-      { enableHighAccuracy: true }
-    );
-  });
-}
