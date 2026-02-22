@@ -1,15 +1,15 @@
 <script>
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
-  import { cubicOut } from 'svelte/easing';
-  import { fade, scale } from 'svelte/transition';
+  import { cubicInOut } from 'svelte/easing';
+  import { fade, scale, fly } from 'svelte/transition';
   import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen } from '$lib/stores/prayer.js';
   import CitySelector from './CitySelector.svelte';
 
   // Animated progress angle for arc and dot
   const animatedAngle = tweened(0, {
-    duration: 2500,
-    easing: cubicOut
+    duration: 2800,
+    easing: cubicInOut
   });
 
   let mounted = false;
@@ -85,6 +85,12 @@
   let breathInterval;
   let showFullClock = false;
 
+  // TEMP: Preview mode to cycle through prayers
+  const previewPrayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+  let previewIndex = 0;
+  let previewPrayer = previewPrayers[0];
+  let previewInterval;
+
   function toggleClock() {
     if (!$citySelectorOpen) {
       showFullClock = !showFullClock;
@@ -93,7 +99,7 @@
       if (showFullClock) {
         animatedAngle.set(0, { duration: 0 });
         setTimeout(() => {
-          animatedAngle.set(currentTimeAngle, { duration: 1500 });
+          animatedAngle.set(currentTimeAngle, { duration: 2800 });
         }, 50);
       }
     }
@@ -105,8 +111,15 @@
       breathPhase = (breathPhase + 1) % 360;
     }, 66);
 
+    // TEMP: Cycle through prayers every 8 seconds for preview
+    previewInterval = setInterval(() => {
+      previewIndex = (previewIndex + 1) % previewPrayers.length;
+      previewPrayer = previewPrayers[previewIndex];
+    }, 8000);
+
     return () => {
       clearInterval(breathInterval);
+      clearInterval(previewInterval);
     };
   });
 
@@ -441,27 +454,201 @@
 
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
-      <div class="prayer-display" class:blurred={$citySelectorOpen} in:fade={{ duration: 250, delay: 100 }} out:fade={{ duration: 150 }}>
-        <div class="current-prayer">
-          <div class="current-arabic">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
+      <div class="prayer-display" class:blurred={$citySelectorOpen} in:scale={{ duration: 400, delay: 80, start: 0.95, opacity: 0 }} out:fade={{ duration: 120 }}>
+        <div class="current-prayer" in:fly={{ y: 15, duration: 450, delay: 120 }}>
+          {#key showFullClock}
+            <!-- Prayer-specific animated icon (using previewPrayer for testing) -->
+            {#key previewPrayer}
+            <div class="prayer-icon">
+              {#if previewPrayer === 'fajr'}
+                <!-- Fajr: Glow emanating from below horizon, stars fading -->
+                <svg viewBox="0 0 80 50" class="prayer-svg fajr" style="overflow:visible">
+                  <defs>
+                    <radialGradient id="fajrGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.6"/>
+                      <stop offset="40%" stop-color="#d4af37" stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                    <!-- Clip to only show above horizon -->
+                    <clipPath id="aboveHorizonFajr">
+                      <rect x="-20" y="-20" width="120" height="62"/>
+                    </clipPath>
+                  </defs>
+                  <!-- Radial glow centered below horizon, clipped to show only above -->
+                  <circle class="fajr-glow" cx="40" cy="48" r="32" fill="url(#fajrGlow)" clip-path="url(#aboveHorizonFajr)"/>
+                  <!-- Horizon line -->
+                  <line class="horizon" x1="0" y1="42" x2="80" y2="42"/>
+                  <!-- Fading stars -->
+                  <circle class="fajr-star star-1" cx="12" cy="8" r="1.2"/>
+                  <circle class="fajr-star star-2" cx="68" cy="12" r="1"/>
+                  <circle class="fajr-star star-3" cx="28" cy="6" r="0.8"/>
+                  <circle class="fajr-star star-4" cx="52" cy="10" r="1.1"/>
+                  <circle class="fajr-star star-5" cx="8" cy="22" r="0.9"/>
+                  <circle class="fajr-star star-6" cx="72" cy="20" r="0.7"/>
+                  <!-- Rising light particles -->
+                  <circle class="fajr-particle p-1" cx="35" cy="36" r="0.8"/>
+                  <circle class="fajr-particle p-2" cx="45" cy="34" r="0.6"/>
+                  <circle class="fajr-particle p-3" cx="40" cy="38" r="0.7"/>
+                  <circle class="fajr-particle p-4" cx="28" cy="32" r="0.5"/>
+                  <circle class="fajr-particle p-5" cx="52" cy="35" r="0.6"/>
+                </svg>
+              {:else if previewPrayer === 'sunrise'}
+                <!-- Sunrise: Sun rising with glow and particles -->
+                <svg viewBox="0 0 80 50" class="prayer-svg sunrise" style="overflow:visible">
+                  <defs>
+                    <radialGradient id="sunriseGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.5"/>
+                      <stop offset="60%" stop-color="#d4af37" stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="groundGlowSunrise" cx="50%" cy="0%" r="100%">
+                      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <!-- Ground ellipse -->
+                  <ellipse class="ground" cx="40" cy="48" rx="60" ry="8" fill="url(#groundGlowSunrise)"/>
+                  <!-- Sun glow -->
+                  <circle class="sunrise-glow" cx="40" cy="32" r="22" fill="url(#sunriseGlow)"/>
+                  <!-- Sun disc -->
+                  <circle class="sun-disc" cx="40" cy="32" r="9"/>
+                  <!-- Floating particles around sun -->
+                  <circle class="sun-particle sp-1" cx="28" cy="24" r="1"/>
+                  <circle class="sun-particle sp-2" cx="52" cy="26" r="0.8"/>
+                  <circle class="sun-particle sp-3" cx="34" cy="18" r="0.7"/>
+                  <circle class="sun-particle sp-4" cx="48" cy="20" r="0.9"/>
+                  <circle class="sun-particle sp-5" cx="26" cy="34" r="0.6"/>
+                  <circle class="sun-particle sp-6" cx="56" cy="36" r="0.8"/>
+                </svg>
+              {:else if previewPrayer === 'dhuhr'}
+                <!-- Dhuhr: Sun at zenith with glow and particles -->
+                <svg viewBox="0 0 80 55" class="prayer-svg dhuhr" style="overflow:visible">
+                  <defs>
+                    <radialGradient id="groundGlowDhuhr" cx="50%" cy="0%" r="100%">
+                      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.18"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="dhuhrSunGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.55"/>
+                      <stop offset="50%" stop-color="#d4af37" stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <!-- Ground ellipse -->
+                  <ellipse class="ground" cx="40" cy="52" rx="60" ry="8" fill="url(#groundGlowDhuhr)"/>
+                  <!-- Sun glow (larger for zenith) -->
+                  <circle class="zenith-glow" cx="40" cy="14" r="20" fill="url(#dhuhrSunGlow)"/>
+                  <!-- Sun -->
+                  <circle class="zenith-sun" cx="40" cy="14" r="8"/>
+                  <!-- Floating particles -->
+                  <circle class="sun-particle sp-1" cx="26" cy="8" r="1"/>
+                  <circle class="sun-particle sp-2" cx="54" cy="10" r="0.9"/>
+                  <circle class="sun-particle sp-3" cx="32" cy="4" r="0.7"/>
+                  <circle class="sun-particle sp-4" cx="50" cy="6" r="0.8"/>
+                  <circle class="sun-particle sp-5" cx="22" cy="18" r="0.6"/>
+                  <circle class="sun-particle sp-6" cx="58" cy="20" r="0.7"/>
+                  <circle class="sun-particle sp-7" cx="40" cy="2" r="0.8"/>
+                </svg>
+              {:else if previewPrayer === 'asr'}
+                <!-- Asr: Afternoon sun with ground below and floating dust -->
+                <svg viewBox="0 0 80 55" class="prayer-svg asr" style="overflow:visible">
+                  <defs>
+                    <radialGradient id="groundGlowAsr" cx="50%" cy="0%" r="100%">
+                      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.12"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="asrSunGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.35"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <!-- Ground ellipse -->
+                  <ellipse class="ground" cx="40" cy="52" rx="60" ry="8" fill="url(#groundGlowAsr)"/>
+                  <!-- Sun glow -->
+                  <circle class="asr-glow" cx="60" cy="16" r="18" fill="url(#asrSunGlow)"/>
+                  <!-- Afternoon sun (lower in sky, to the side) -->
+                  <circle class="asr-sun" cx="60" cy="16" r="7"/>
+                  <!-- Sun particles -->
+                  <circle class="sun-particle sp-1" cx="48" cy="10" r="0.8"/>
+                  <circle class="sun-particle sp-2" cx="72" cy="12" r="0.7"/>
+                  <circle class="sun-particle sp-3" cx="54" cy="6" r="0.6"/>
+                  <circle class="sun-particle sp-4" cx="68" cy="8" r="0.7"/>
+                  <circle class="sun-particle sp-5" cx="50" cy="20" r="0.5"/>
+                  <!-- Floating dust particles -->
+                  <circle class="asr-dust d-1" cx="18" cy="20" r="0.8"/>
+                  <circle class="asr-dust d-2" cx="32" cy="14" r="0.6"/>
+                  <circle class="asr-dust d-3" cx="25" cy="32" r="0.7"/>
+                  <circle class="asr-dust d-4" cx="40" cy="26" r="0.5"/>
+                  <circle class="asr-dust d-5" cx="14" cy="40" r="0.6"/>
+                  <circle class="asr-dust d-6" cx="35" cy="42" r="0.8"/>
+                  <circle class="asr-dust d-7" cx="48" cy="36" r="0.5"/>
+                  <circle class="asr-dust d-8" cx="22" cy="46" r="0.7"/>
+                </svg>
+              {:else if previewPrayer === 'maghrib'}
+                <!-- Maghrib: Sun setting below horizon, glow fading with it -->
+                <svg viewBox="0 0 80 50" class="prayer-svg maghrib" style="overflow:visible">
+                  <defs>
+                    <radialGradient id="maghribGlowGrad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#e8c252" stop-opacity="0.7"/>
+                      <stop offset="30%" stop-color="#d4af37" stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                    </radialGradient>
+                    <!-- Clip to only show above horizon -->
+                    <clipPath id="aboveHorizonMaghrib">
+                      <rect x="-20" y="-20" width="120" height="62"/>
+                    </clipPath>
+                  </defs>
+                  <!-- Radial glow + sun, both clipped at horizon -->
+                  <g clip-path="url(#aboveHorizonMaghrib)">
+                    <circle class="maghrib-glow" cx="40" cy="46" r="32" fill="url(#maghribGlowGrad)"/>
+                    <circle class="setting-sun" cx="40" cy="46" r="8"/>
+                  </g>
+                  <!-- Horizon line -->
+                  <line class="horizon" x1="0" y1="42" x2="80" y2="42"/>
+                  <!-- Crescent moon appearing -->
+                  <circle class="crescent-outer" cx="62" cy="14" r="7"/>
+                  <circle class="crescent-inner" cx="66" cy="12" r="6"/>
+                  <!-- Stars appearing -->
+                  <circle class="mag-star star-1" cx="16" cy="10" r="1.2"/>
+                  <circle class="mag-star star-2" cx="8" cy="24" r="1"/>
+                  <circle class="mag-star star-3" cx="26" cy="16" r="0.8"/>
+                  <circle class="mag-star star-4" cx="48" cy="8" r="0.9"/>
+                </svg>
+              {:else}
+                <!-- Isha: Night sky with crescent and stars -->
+                <svg viewBox="0 0 80 50" class="prayer-svg isha">
+                  <circle class="isha-crescent-outer" cx="40" cy="20" r="14"/>
+                  <circle class="isha-crescent-inner" cx="48" cy="16" r="12"/>
+                  <circle class="isha-star star-1" cx="16" cy="12" r="1.5"/>
+                  <circle class="isha-star star-2" cx="68" cy="18" r="1.2"/>
+                  <circle class="isha-star star-3" cx="24" cy="38" r="1"/>
+                  <circle class="isha-star star-4" cx="58" cy="40" r="1.3"/>
+                  <circle class="isha-star star-5" cx="12" cy="30" r="0.8"/>
+                  <circle class="isha-glow" cx="40" cy="20" r="20"/>
+                </svg>
+              {/if}
+            </div>
+            {/key}
+            <div class="current-arabic engrave-in">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
+          {/key}
           <div class="current-name">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
           <div class="current-time">{formatTime($prayerTimes[$currentPrayer.current])}</div>
         </div>
 
-        <div class="prayer-divider">
+        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
           <span class="divider-line"></span>
           <span class="divider-countdown">{formatCountdown($countdown)}</span>
           <span class="divider-line"></span>
         </div>
 
-        <div class="next-prayer">
+        <div class="next-prayer" in:fly={{ y: 12, duration: 400, delay: 250 }}>
           <span class="next-label">Next</span>
           <span class="next-name">{prayerNames[$currentPrayer.next]?.en}</span>
           <span class="next-time">{formatTime($prayerTimes[$currentPrayer.next])}</span>
         </div>
 
         <!-- All prayer times -->
-        <div class="all-times">
+        <div class="all-times" in:fly={{ y: 20, duration: 500, delay: 320 }}>
           {#each prayerListOrder as prayer}
             {@const isActive = $currentPrayer.current === prayer}
             <div class="time-row" class:active={isActive}>
@@ -565,6 +752,305 @@
     color: #e8c252;
     line-height: 1.1;
     text-shadow: 0 0 80px rgba(212, 175, 55, 0.3);
+  }
+
+  /* Gentle reveal with golden glow pulse */
+  .current-arabic.engrave-in {
+    animation: goldReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.1s;
+    opacity: 0;
+  }
+
+  @keyframes goldReveal {
+    0% {
+      opacity: 0;
+      transform: scale(0.94);
+      text-shadow: 0 0 0 rgba(212, 175, 55, 0);
+    }
+    50% {
+      opacity: 1;
+      text-shadow: 0 0 40px rgba(232, 194, 82, 0.6);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      text-shadow: 0 0 80px rgba(212, 175, 55, 0.3);
+    }
+  }
+
+  /* ===== PRAYER-SPECIFIC ICONS ===== */
+  .prayer-icon {
+    margin-bottom: 0.5rem;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    opacity: 0;
+    animation: iconFadeIn 0.8s ease-out 0.2s forwards;
+  }
+
+  @keyframes iconFadeIn {
+    to { opacity: 1; }
+  }
+
+  .prayer-svg {
+    height: 70px;
+    width: auto;
+    overflow: visible;
+  }
+
+  /* Shared styles */
+  .prayer-svg .horizon {
+    stroke: rgba(212, 175, 55, 0.3);
+    stroke-width: 0.5;
+  }
+
+  /* === FAJR: Dawn - stars fading, light rising === */
+  .prayer-svg.fajr .fajr-glow {
+    animation: fajrGlow 4s ease-in-out infinite;
+  }
+
+  .prayer-svg.fajr .fajr-star {
+    fill: #e8c252;
+    animation: starFadeOut 4s ease-in-out infinite;
+  }
+
+  .prayer-svg.fajr .star-1 { animation-delay: 0s; }
+  .prayer-svg.fajr .star-2 { animation-delay: 0.6s; }
+  .prayer-svg.fajr .star-3 { animation-delay: 1.2s; }
+  .prayer-svg.fajr .star-4 { animation-delay: 0.3s; }
+  .prayer-svg.fajr .star-5 { animation-delay: 0.9s; }
+  .prayer-svg.fajr .star-6 { animation-delay: 1.5s; }
+
+  .prayer-svg.fajr .fajr-particle {
+    fill: rgba(232, 194, 82, 0.8);
+    animation: particleRise 3s ease-out infinite;
+  }
+
+  .prayer-svg.fajr .p-1 { animation-delay: 0s; }
+  .prayer-svg.fajr .p-2 { animation-delay: 0.5s; }
+  .prayer-svg.fajr .p-3 { animation-delay: 1s; }
+  .prayer-svg.fajr .p-4 { animation-delay: 1.5s; }
+  .prayer-svg.fajr .p-5 { animation-delay: 2s; }
+
+  @keyframes fajrGlow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes starFadeOut {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 0.2; transform: scale(0.6); }
+  }
+
+  @keyframes particleRise {
+    0% { opacity: 0; transform: translateY(0); }
+    20% { opacity: 0.9; }
+    100% { opacity: 0; transform: translateY(-20px); }
+  }
+
+  /* === SUNRISE: Sun rising with particles === */
+  .prayer-svg.sunrise .sun-disc {
+    fill: #e8c252;
+  }
+
+  .prayer-svg.sunrise .sunrise-glow {
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  .prayer-svg.sunrise .sun-particle {
+    fill: #e8c252;
+    animation: sunParticleFloat 4s ease-in-out infinite;
+  }
+
+  .prayer-svg.sunrise .sp-1 { animation-delay: 0s; }
+  .prayer-svg.sunrise .sp-2 { animation-delay: 0.6s; }
+  .prayer-svg.sunrise .sp-3 { animation-delay: 1.2s; }
+  .prayer-svg.sunrise .sp-4 { animation-delay: 0.3s; }
+  .prayer-svg.sunrise .sp-5 { animation-delay: 0.9s; }
+  .prayer-svg.sunrise .sp-6 { animation-delay: 1.5s; }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+
+  @keyframes sunParticleFloat {
+    0%, 100% { opacity: 0.5; transform: translate(0, 0); }
+    25% { opacity: 1; transform: translate(2px, -3px); }
+    50% { opacity: 0.7; transform: translate(-1px, -1px); }
+    75% { opacity: 0.9; transform: translate(1px, -2px); }
+  }
+
+  /* === DHUHR: Sun at zenith with particles === */
+  .prayer-svg.dhuhr .zenith-sun {
+    fill: #e8c252;
+  }
+
+  .prayer-svg.dhuhr .zenith-glow {
+    animation: zenithPulse 3s ease-in-out infinite;
+  }
+
+  .prayer-svg.dhuhr .sun-particle {
+    fill: #e8c252;
+    animation: sunParticleFloat 4s ease-in-out infinite;
+  }
+
+  .prayer-svg.dhuhr .sp-1 { animation-delay: 0s; }
+  .prayer-svg.dhuhr .sp-2 { animation-delay: 0.5s; }
+  .prayer-svg.dhuhr .sp-3 { animation-delay: 1s; }
+  .prayer-svg.dhuhr .sp-4 { animation-delay: 0.3s; }
+  .prayer-svg.dhuhr .sp-5 { animation-delay: 0.8s; }
+  .prayer-svg.dhuhr .sp-6 { animation-delay: 1.3s; }
+  .prayer-svg.dhuhr .sp-7 { animation-delay: 0.6s; }
+
+  @keyframes zenithPulse {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  /* === ASR: Warm afternoon with floating dust === */
+  .prayer-svg.asr .asr-sun {
+    fill: #e8c252;
+  }
+
+  .prayer-svg.asr .asr-glow {
+    animation: asrGlowPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes asrGlowPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  .prayer-svg.asr .sun-particle {
+    fill: #e8c252;
+    animation: sunParticleFloat 4s ease-in-out infinite;
+  }
+
+  .prayer-svg.asr .sp-1 { animation-delay: 0.2s; }
+  .prayer-svg.asr .sp-2 { animation-delay: 0.8s; }
+  .prayer-svg.asr .sp-3 { animation-delay: 0.5s; }
+  .prayer-svg.asr .sp-4 { animation-delay: 1.1s; }
+  .prayer-svg.asr .sp-5 { animation-delay: 0.4s; }
+
+  .prayer-svg.asr .asr-dust {
+    fill: rgba(232, 194, 82, 0.7);
+    animation: dustFloat 5s ease-in-out infinite;
+  }
+
+  .prayer-svg.asr .d-1 { animation-delay: 0s; animation-duration: 4s; }
+  .prayer-svg.asr .d-2 { animation-delay: 0.7s; animation-duration: 5s; }
+  .prayer-svg.asr .d-3 { animation-delay: 1.4s; animation-duration: 4.5s; }
+  .prayer-svg.asr .d-4 { animation-delay: 2.1s; animation-duration: 5.5s; }
+  .prayer-svg.asr .d-5 { animation-delay: 0.3s; animation-duration: 4.2s; }
+  .prayer-svg.asr .d-6 { animation-delay: 1s; animation-duration: 5.2s; }
+  .prayer-svg.asr .d-7 { animation-delay: 1.8s; animation-duration: 4.8s; }
+  .prayer-svg.asr .d-8 { animation-delay: 2.5s; animation-duration: 5s; }
+
+  
+  @keyframes dustFloat {
+    0%, 100% {
+      opacity: 0.3;
+      transform: translate(0, 0);
+    }
+    25% {
+      opacity: 0.8;
+      transform: translate(3px, -4px);
+    }
+    50% {
+      opacity: 0.5;
+      transform: translate(-2px, -2px);
+    }
+    75% {
+      opacity: 0.9;
+      transform: translate(2px, -5px);
+    }
+  }
+
+  /* === MAGHRIB: Sun sinking below horizon === */
+  .prayer-svg.maghrib .maghrib-glow {
+    animation: sunSet 4s ease-in forwards;
+  }
+
+  .prayer-svg.maghrib .setting-sun {
+    fill: #e8c252;
+    animation: sunSet 4s ease-in forwards;
+  }
+
+  .prayer-svg.maghrib .crescent-outer {
+    fill: #e8c252;
+    opacity: 0;
+    animation: crescentAppear 1.5s ease-out 0.5s forwards, crescentGlow 3s ease-in-out 2s infinite;
+  }
+
+  .prayer-svg.maghrib .crescent-inner {
+    fill: #080808;
+  }
+
+  .prayer-svg.maghrib .mag-star {
+    fill: #e8c252;
+    animation: starTwinkle 3s ease-in-out infinite;
+  }
+
+  .prayer-svg.maghrib .star-1 { animation-delay: 0.8s; }
+  .prayer-svg.maghrib .star-2 { animation-delay: 1.2s; }
+  .prayer-svg.maghrib .star-3 { animation-delay: 1.6s; }
+  .prayer-svg.maghrib .star-4 { animation-delay: 2s; }
+
+  @keyframes maghribGlowPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes crescentGlow {
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(232, 194, 82, 0.3)); }
+    50% { filter: drop-shadow(0 0 6px rgba(232, 194, 82, 0.6)); }
+  }
+
+  @keyframes sunSet {
+    0% { transform: translateY(-4px); opacity: 1; }
+    100% { transform: translateY(6px); opacity: 0.4; }
+  }
+
+  @keyframes crescentAppear {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* === ISHA: Night sky === */
+  .prayer-svg.isha .isha-crescent-outer {
+    fill: #e8c252;
+  }
+
+  .prayer-svg.isha .isha-crescent-inner {
+    fill: #080808;
+  }
+
+  .prayer-svg.isha .isha-glow {
+    fill: rgba(212, 175, 55, 0.08);
+    animation: ishaGlow 4s ease-in-out infinite;
+  }
+
+  .prayer-svg.isha .isha-star {
+    fill: #e8c252;
+    animation: starTwinkle 3s ease-in-out infinite;
+  }
+
+  .prayer-svg.isha .star-1 { animation-delay: 0s; }
+  .prayer-svg.isha .star-2 { animation-delay: 0.7s; }
+  .prayer-svg.isha .star-3 { animation-delay: 1.4s; }
+  .prayer-svg.isha .star-4 { animation-delay: 2.1s; }
+  .prayer-svg.isha .star-5 { animation-delay: 2.8s; }
+
+  @keyframes ishaGlow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
   }
 
   .current-name {
