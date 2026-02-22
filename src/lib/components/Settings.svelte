@@ -359,8 +359,8 @@
     align-items: center;
     gap: 1.5rem;
     padding: 1.5rem;
-    padding-top: calc(4.5rem + var(--safe-top));
-    padding-bottom: calc(2rem + var(--safe-bottom));
+    padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;

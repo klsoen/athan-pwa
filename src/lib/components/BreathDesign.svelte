@@ -777,15 +777,14 @@
     flex-direction: column;
     align-items: center;
     padding: 0 1.5rem;
-    padding-top: var(--safe-top);
-    padding-bottom: var(--safe-bottom);
   }
 
   .home-header {
     position: absolute;
-    top: calc(1.25rem + var(--safe-top));
-    left: calc(1.5rem + var(--safe-left));
-    right: calc(1.5rem + var(--safe-right));
+    top: 1.25rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    padding-top: env(safe-area-inset-top, 0px);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1215,7 +1214,7 @@
   /* All prayer times list */
   .all-times {
     margin-top: 2.5rem;
-    margin-bottom: calc(3rem + var(--safe-bottom));
+    margin-bottom: 3.5rem;
     display: flex;
     flex-direction: column;
     gap: clamp(0.6rem, 2vh, 1rem);
@@ -1284,9 +1283,11 @@
   /* Dates row at bottom */
   .dates-row {
     position: absolute;
-    bottom: calc(1.5rem + var(--safe-bottom));
+    bottom: 0;
     left: 0;
     right: 0;
+    /* Account for iOS home indicator */
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1516,12 +1517,12 @@
 
     .all-times {
       margin-top: 1.5rem;
-      margin-bottom: calc(2.5rem + var(--safe-bottom));
+      margin-bottom: 2.5rem;
       gap: 0.4rem;
     }
 
     .dates-row {
-      bottom: calc(1rem + var(--safe-bottom));
+      bottom: 1rem;
     }
   }
 
