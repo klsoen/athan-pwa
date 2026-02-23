@@ -3,7 +3,7 @@
   import { tweened } from 'svelte/motion';
   import { cubicInOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
-  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators } from '$lib/stores/prayer.js';
+  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators, qiblaDirection } from '$lib/stores/prayer.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
@@ -18,6 +18,16 @@
 
   let mounted = false;
   let breathPhase = 0;
+
+  // Qibla compass state
+  let compassHeading = 0;
+  let compassEnabled = false;
+  let compassPermission = 'unknown'; // 'unknown', 'granted', 'denied', 'unavailable'
+
+  // Qibla needle rotation (when 0, needle points up = facing Qibla)
+  $: qiblaNeedleRotation = compassEnabled ? ($qiblaDirection - compassHeading + 360) % 360 : 0;
+  // Aligned when within 5 degrees of pointing up
+  $: qiblaAligned = compassEnabled && (qiblaNeedleRotation < 5 || qiblaNeedleRotation > 355);
 
   // Subtle, meditative breathing - like candlelight
   $: breathScale = 1 + Math.sin(breathPhase * Math.PI / 180) * 0.06;
@@ -281,10 +291,63 @@
       breathPhase = (breathPhase + 1) % 360;
     }, 66);
 
+    // Check compass availability
+    if (window.DeviceOrientationEvent) {
+      // iOS 13+ requires permission
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        compassPermission = 'unknown';
+      } else {
+        // Android or older iOS - start listening
+        compassPermission = 'granted';
+        startCompass();
+      }
+    } else {
+      compassPermission = 'unavailable';
+    }
+
     return () => {
       clearInterval(breathInterval);
+      window.removeEventListener('deviceorientation', handleOrientation);
+      window.removeEventListener('deviceorientationabsolute', handleOrientation);
     };
   });
+
+  function handleOrientation(event) {
+    // iOS provides webkitCompassHeading directly (0-360, 0 = North)
+    // -1 means compass needs calibration
+    if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null && event.webkitCompassHeading >= 0) {
+      compassHeading = event.webkitCompassHeading;
+      compassEnabled = true;
+    } else if (event.alpha !== null && event.alpha !== undefined) {
+      // Android/other: use alpha rotation
+      compassHeading = (360 - event.alpha) % 360;
+      compassEnabled = true;
+    }
+  }
+
+  function startCompass() {
+    // Try absolute orientation first (more reliable for compass on Android)
+    if ('ondeviceorientationabsolute' in window) {
+      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+    } else {
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+  }
+
+  async function requestCompassPermission() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      try {
+        const permission = await DeviceOrientationEvent.requestPermission();
+        compassPermission = permission;
+        if (permission === 'granted') {
+          startCompass();
+        }
+      } catch (e) {
+        console.error('Compass permission error:', e);
+        compassPermission = 'denied';
+      }
+    }
+  }
 
 
 
@@ -466,6 +529,21 @@
               <stop offset="0%" stop-color="var(--theme-accent-bright)"/>
               <stop offset="100%" stop-color="var(--theme-accent)"/>
             </linearGradient>
+            <!-- Qibla aligned pulse glow -->
+            <filter id="qiblaGlow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="1.5" result="innerBlur"/>
+              <feGaussianBlur stdDeviation="4" result="outerBlur"/>
+              <feColorMatrix in="outerBlur" type="matrix"
+                values="2 0 0 0 0.3
+                        0 2 0 0 0.3
+                        0 0 2 0 0.3
+                        0 0 0 1.2 0" result="brightBlur"/>
+              <feMerge>
+                <feMergeNode in="brightBlur"/>
+                <feMergeNode in="innerBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
           </defs>
 
           <!-- Outermost decorative ring -->
@@ -475,6 +553,22 @@
             stroke="rgba(var(--theme-accent-rgb),0.08)"
             stroke-width="0.3"
           />
+
+          <!-- Qibla compass needle -->
+          {#if $clockIndicators.qibla}
+            <g
+              style="transform-origin: 50px 50px; transform: rotate({compassEnabled ? qiblaNeedleRotation : $qiblaDirection}deg); transition: transform 0.15s ease-out;"
+              filter={qiblaAligned ? "url(#qiblaGlow)" : "none"}
+              class:qibla-aligned={qiblaAligned}
+            >
+              <!-- Elegant elongated triangle pointing inward -->
+              <polygon
+                points="50,5 47.5,0 52.5,0"
+                fill={qiblaAligned ? "var(--theme-accent-bright)" : "var(--theme-marker)"}
+                opacity={compassEnabled ? (qiblaAligned ? 1 : 0.7) : 0.5}
+              />
+            </g>
+          {/if}
 
           <!-- Hour tick marks (24) -->
           {#each Array(24) as _, i}
@@ -754,6 +848,25 @@
         </div>
       {/if}
 
+      <!-- Compass permission prompt for iOS -->
+      {#if $clockIndicators.qibla && compassPermission === 'unknown'}
+        <button
+          class="compass-enable"
+          class:blurred={overlayOpen}
+          on:click={requestCompassPermission}
+        >
+          Tap to enable compass
+        </button>
+      {:else if $clockIndicators.qibla && compassPermission === 'granted' && !compassEnabled}
+        <div class="compass-enable" class:blurred={overlayOpen}>
+          Rotate device to calibrate...
+        </div>
+      {:else if $clockIndicators.qibla && compassPermission === 'denied'}
+        <div class="compass-enable" class:blurred={overlayOpen}>
+          Compass permission denied
+        </div>
+      {/if}
+
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
       <div class="prayer-display" class:blurred={overlayOpen} in:scale={{ duration: 400, delay: 80, start: 0.95, opacity: 0 }} out:fade={{ duration: 120 }}>
@@ -997,6 +1110,16 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  /* Qibla aligned pulse animation */
+  @keyframes qiblaPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  :global(.qibla-aligned) {
+    animation: qiblaPulse 1.5s ease-in-out infinite;
   }
 
   .app-container::before {
@@ -1720,6 +1843,34 @@
     padding: 0.4rem 0.8rem;
     background: rgba(var(--theme-accent-rgb), 0.1);
     border-radius: 1rem;
+  }
+
+  .compass-enable {
+    position: absolute;
+    bottom: clamp(80px, 15vh, 120px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--theme-marker);
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .compass-enable:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .compass-enable.blurred {
+    filter: blur(8px);
+    opacity: 0.5;
   }
 
   .indicator-upcoming {

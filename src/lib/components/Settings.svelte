@@ -188,6 +188,15 @@
         </button>
         <button
           class="indicator-toggle"
+          class:active={$clockIndicators.qibla}
+          on:click={() => clockIndicators.toggle('qibla')}
+          type="button"
+        >
+          <span class="indicator-name">Qibla</span>
+          <span class="indicator-desc">Compass needle</span>
+        </button>
+        <button
+          class="indicator-toggle"
           class:active={$clockIndicators.lastThird}
           on:click={() => clockIndicators.toggle('lastThird')}
           type="button"
