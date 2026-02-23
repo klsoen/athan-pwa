@@ -3,8 +3,7 @@
   import { tweened } from 'svelte/motion';
   import { cubicInOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
-  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen } from '$lib/stores/prayer.js';
-  import { currentTheme } from '$lib/stores/theme.js';
+  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators } from '$lib/stores/prayer.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
@@ -77,6 +76,107 @@
     const endAngle = (nightDuration / 24) * 360;
 
     return { start: startAngle, end: endAngle, startTime: startTimeDate };
+  })();
+
+  // Calculate first third end (Hanbali Isha time) - diamond marker only
+  $: firstThirdEnd = (() => {
+    const maghrib = $prayerTimes.maghrib;
+    const fajr = $prayerTimes.fajr;
+    if (!maghrib || !fajr) return { angle: 0, time: null };
+
+    let nightDurationMs = fajr.getTime() - maghrib.getTime();
+    if (nightDurationMs < 0) nightDurationMs += 24 * 60 * 60 * 1000;
+
+    const firstThirdEndMs = maghrib.getTime() + (nightDurationMs / 3);
+    const endTimeDate = new Date(firstThirdEndMs);
+
+    const nightStartHour = maghrib.getHours() + maghrib.getMinutes() / 60;
+    let nightEndHour = fajr.getHours() + fajr.getMinutes() / 60;
+    if (nightEndHour < nightStartHour) nightEndHour += 24;
+
+    const nightDuration = nightEndHour - nightStartHour;
+    const angle = ((nightDuration / 3) / 24) * 360;
+
+    return { angle, time: endTimeDate };
+  })();
+
+  // Friday Dua time (Asr to Maghrib) - only on Fridays
+  $: isFriday = $currentTime.getDay() === 5;
+  $: fridayDuaTime = (() => {
+    if (!isFriday) return null;
+    const asr = $prayerTimes.asr;
+    const maghrib = $prayerTimes.maghrib;
+    if (!asr || !maghrib) return null;
+
+    const startAngle = prayerAngles.asr;
+    const endAngle = 0; // Maghrib is always at 0
+
+    return { start: startAngle, end: endAngle, startTime: asr, endTime: maghrib };
+  })();
+
+  // Qaylula time (mid-day rest) - after Dhuhr until ~60% to Asr
+  $: qaylulaTime = (() => {
+    const dhuhr = $prayerTimes.dhuhr;
+    const asr = $prayerTimes.asr;
+    if (!dhuhr || !asr) return null;
+
+    const durationMs = asr.getTime() - dhuhr.getTime();
+    const endMs = dhuhr.getTime() + (durationMs * 0.6);
+    const endTime = new Date(endMs);
+
+    const startAngle = prayerAngles.dhuhr;
+    // Calculate end angle
+    const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+    const endAngle = timeToAngle(endTime, maghribHour);
+
+    return { start: startAngle, end: endAngle, startTime: dhuhr, endTime };
+  })();
+
+  // Duha time (after sunrise until ~15 min before Dhuhr)
+  $: duhaTime = (() => {
+    const sunrise = $prayerTimes.sunrise;
+    const dhuhr = $prayerTimes.dhuhr;
+    if (!sunrise || !dhuhr) return null;
+
+    // Start 15-20 min after sunrise
+    const startMs = sunrise.getTime() + (20 * 60 * 1000);
+    const startTime = new Date(startMs);
+
+    // End ~15 min before Dhuhr (to avoid zawal/makruh time)
+    const endMs = dhuhr.getTime() - (15 * 60 * 1000);
+    const endTime = new Date(endMs);
+
+    const startAngle = timeToAngle(startTime, maghribHour);
+    const endAngle = timeToAngle(endTime, maghribHour);
+
+    return { start: startAngle, end: endAngle, startTime, endTime };
+  })();
+
+  // Use store for enabled indicators (controlled from Settings)
+
+  // Check if currently in special times
+  $: isInFirstThird = (() => {
+    if (!firstThirdEnd.time || !$prayerTimes.maghrib) return false;
+    const now = $currentTime;
+    return now >= $prayerTimes.maghrib && now < firstThirdEnd.time;
+  })();
+
+  $: isInFridayDua = (() => {
+    if (!fridayDuaTime) return false;
+    const now = $currentTime;
+    return now >= fridayDuaTime.startTime && now < fridayDuaTime.endTime;
+  })();
+
+  $: isInQaylula = (() => {
+    if (!qaylulaTime) return false;
+    const now = $currentTime;
+    return now >= qaylulaTime.startTime && now < qaylulaTime.endTime;
+  })();
+
+  $: isInDuha = (() => {
+    if (!duhaTime) return false;
+    const now = $currentTime;
+    return now >= duhaTime.startTime && now < duhaTime.endTime;
   })();
 
   function getPosition(angle, radius) {
@@ -284,6 +384,19 @@
   $: lastThirdPos = getPosition(lastThirdOfNight.start, 38);
   $: lastThirdLabelPos = getPosition(lastThirdOfNight.start, 58);
 
+  // First third end (diamond only) positions
+  $: firstThirdPos = getPosition(firstThirdEnd.angle, 38);
+  $: firstThirdLabelPos = getPosition(firstThirdEnd.angle, 58);
+
+  // Friday Dua arc positions (inner arc at radius 30)
+  $: fridayDuaArcPath = fridayDuaTime ? getArcPath(fridayDuaTime.start, fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360, 30) : '';
+
+  // Qaylula arc positions (inner arc at radius 27)
+  $: qaylulaArcPath = qaylulaTime ? getArcPath(qaylulaTime.start, qaylulaTime.end, 27) : '';
+
+  // Duha arc positions (inner arc at radius 24)
+  $: duhaArcPath = duhaTime ? getArcPath(duhaTime.start, duhaTime.end, 24) : '';
+
   // Check if we're currently in the last third of the night
   $: isInLastThird = (() => {
     if (!lastThirdOfNight.startTime || !$prayerTimes.fajr) return false;
@@ -339,8 +452,8 @@
             </filter>
             <!-- Gradient for progress arc -->
             <linearGradient id="arcGradient" gradientUnits="userSpaceOnUse" x1="50" y1="10" x2="50" y2="90">
-              <stop offset="0%" stop-color={$currentTheme.accentBright}/>
-              <stop offset="100%" stop-color={$currentTheme.accent}/>
+              <stop offset="0%" stop-color="var(--theme-accent-bright)"/>
+              <stop offset="100%" stop-color="var(--theme-accent)"/>
             </linearGradient>
           </defs>
 
@@ -348,7 +461,7 @@
           <circle
             cx="50" cy="50" r="44"
             fill="none"
-            stroke="rgba({$currentTheme.accentRgb},0.08)"
+            stroke="rgba(var(--theme-accent-rgb),0.08)"
             stroke-width="0.3"
           />
 
@@ -363,7 +476,7 @@
             <line
               x1={startPos.x} y1={startPos.y}
               x2={endPos.x} y2={endPos.y}
-              stroke={isMajor ? `rgba(${$currentTheme.accentRgb},0.3)` : 'rgba(255,255,255,0.08)'}
+              stroke={isMajor ? `rgba($var(--theme-accent-rgb),0.3)` : 'rgba(255,255,255,0.08)'}
               stroke-width={isMajor ? 0.6 : 0.3}
             />
           {/each}
@@ -380,18 +493,54 @@
           <circle
             cx="50" cy="50" r="28"
             fill="none"
-            stroke="rgba({$currentTheme.accentRgb},0.06)"
+            stroke="rgba(var(--theme-accent-rgb),0.06)"
             stroke-width="0.3"
           />
 
           <!-- Last third arc -->
-          <path
-            d={getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33)}
-            fill="none"
-            stroke="rgba({$currentTheme.accentRgb},0.4)"
-            stroke-width="1"
-            stroke-linecap="round"
-          />
+          {#if $clockIndicators.lastThird}
+            <path
+              d={getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33)}
+              fill="none"
+              stroke="rgba(var(--theme-accent-rgb),{isInLastThird ? 0.6 : 0.4})"
+              stroke-width="1"
+              stroke-linecap="round"
+            />
+          {/if}
+
+          <!-- Friday Dua arc (Asr to Maghrib) - only on Fridays -->
+          {#if $clockIndicators.fridayDua && fridayDuaTime}
+            <path
+              d={getArcPath(fridayDuaTime.start, 360, 30)}
+              fill="none"
+              stroke="rgba(100, 200, 150, {isInFridayDua ? 0.6 : 0.35})"
+              stroke-width="1"
+              stroke-linecap="round"
+              stroke-dasharray="2 2"
+            />
+          {/if}
+
+          <!-- Qaylula arc (mid-day rest) -->
+          {#if $clockIndicators.qaylula && qaylulaTime}
+            <path
+              d={qaylulaArcPath}
+              fill="none"
+              stroke="rgba(200, 180, 100, {isInQaylula ? 0.6 : 0.3})"
+              stroke-width="1"
+              stroke-linecap="round"
+            />
+          {/if}
+
+          <!-- Duha arc (morning prayer time) -->
+          {#if $clockIndicators.duha && duhaTime}
+            <path
+              d={duhaArcPath}
+              fill="none"
+              stroke="rgba(255, 180, 100, {isInDuha ? 0.6 : 0.3})"
+              stroke-width="1"
+              stroke-linecap="round"
+            />
+          {/if}
 
           <!-- Day progress arc -->
           {#if $animatedAngle > 1}
@@ -418,7 +567,7 @@
                     y={pos.y - 3}
                     width="6"
                     height="6"
-                    fill={$currentTheme.accentBright}
+                    fill=var(--theme-accent-bright)
                     transform="rotate(45 {pos.x} {pos.y})"
                   />
                 </g>
@@ -428,7 +577,7 @@
                   y={pos.y - 1.5}
                   width="3"
                   height="3"
-                  fill={$currentTheme.accentDim}
+                  fill=var(--theme-accent-dim)
                   transform="rotate(45 {pos.x} {pos.y})"
                 />
               {/if}
@@ -436,35 +585,62 @@
               <!-- Other prayers: circles -->
               {#if isActive}
                 <g filter="url(#activeGlow)">
-                  <circle cx={pos.x} cy={pos.y} r="3.5" fill={$currentTheme.accentBright}/>
+                  <circle cx={pos.x} cy={pos.y} r="3.5" fill=var(--theme-accent-bright)/>
                 </g>
               {:else}
-                <circle cx={pos.x} cy={pos.y} r="2" fill={$currentTheme.accentDim}/>
+                <circle cx={pos.x} cy={pos.y} r="2" fill=var(--theme-accent-dim)/>
               {/if}
             {/if}
           {/each}
 
-          <!-- Last third diamond marker -->
-          {#if isInLastThird}
-            <g filter="url(#activeGlow)">
+          <!-- First third end diamond marker (Hanbali Isha) -->
+          {#if $clockIndicators.firstThirdEnd && firstThirdEnd.time}
+            {#if isInFirstThird}
+              <g filter="url(#activeGlow)">
+                <rect
+                  x={firstThirdPos.x - 2}
+                  y={firstThirdPos.y - 2}
+                  width="4"
+                  height="4"
+                  fill="rgba(150, 200, 255, 0.9)"
+                  transform="rotate(45 {firstThirdPos.x} {firstThirdPos.y})"
+                />
+              </g>
+            {:else}
               <rect
-                x={lastThirdPos.x - 2.5}
-                y={lastThirdPos.y - 2.5}
-                width="5"
-                height="5"
-                fill={$currentTheme.accentBright}
+                x={firstThirdPos.x - 1.5}
+                y={firstThirdPos.y - 1.5}
+                width="3"
+                height="3"
+                fill="rgba(150, 200, 255, 0.5)"
+                transform="rotate(45 {firstThirdPos.x} {firstThirdPos.y})"
+              />
+            {/if}
+          {/if}
+
+          <!-- Last third diamond marker -->
+          {#if $clockIndicators.lastThird}
+            {#if isInLastThird}
+              <g filter="url(#activeGlow)">
+                <rect
+                  x={lastThirdPos.x - 2.5}
+                  y={lastThirdPos.y - 2.5}
+                  width="5"
+                  height="5"
+                  fill=var(--theme-accent-bright)
+                  transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
+                />
+              </g>
+            {:else}
+              <rect
+                x={lastThirdPos.x - 1.5}
+                y={lastThirdPos.y - 1.5}
+                width="3"
+                height="3"
+                fill=var(--theme-accent-dim)
                 transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
               />
-            </g>
-          {:else}
-            <rect
-              x={lastThirdPos.x - 1.5}
-              y={lastThirdPos.y - 1.5}
-              width="3"
-              height="3"
-              fill={$currentTheme.accentDim}
-              transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
-            />
+            {/if}
           {/if}
 
           <!-- Current time indicator -->
@@ -484,7 +660,7 @@
           <circle
             cx="50" cy="50" r="18"
             fill="none"
-            stroke="rgba({$currentTheme.accentRgb},0.04)"
+            stroke="rgba(var(--theme-accent-rgb),0.04)"
             stroke-width="0.5"
           />
         </svg>
@@ -504,15 +680,40 @@
           </div>
         {/each}
 
+        <!-- First Third End label (Hanbali Isha) -->
+        {#if $clockIndicators.firstThirdEnd && firstThirdEnd.time}
+          <div
+            class="clock-label first-third"
+            class:active={isInFirstThird}
+            style="left: {firstThirdLabelPos.x}%; top: {firstThirdLabelPos.y}%;"
+          >
+            <span class="clock-label-name">1st&nbsp;Third&nbsp;End</span>
+            <span class="clock-label-time">{formatTime(firstThirdEnd.time)}</span>
+          </div>
+        {/if}
+
         <!-- Last Third label -->
-        <div
-          class="clock-label last-third"
-          class:active={isInLastThird}
-          style="left: {lastThirdLabelPos.x}%; top: {lastThirdLabelPos.y}%;"
-        >
-          <span class="clock-label-name">Last&nbsp;Third</span>
-          <span class="clock-label-time">{formatTime(lastThirdOfNight.startTime)}</span>
-        </div>
+        {#if $clockIndicators.lastThird}
+          <div
+            class="clock-label last-third"
+            class:active={isInLastThird}
+            style="left: {lastThirdLabelPos.x}%; top: {lastThirdLabelPos.y}%;"
+          >
+            <span class="clock-label-name">Last&nbsp;Third</span>
+            <span class="clock-label-time">{formatTime(lastThirdOfNight.startTime)}</span>
+          </div>
+        {/if}
+
+        <!-- Friday Dua label -->
+        {#if $clockIndicators.fridayDua && fridayDuaTime}
+          <div
+            class="clock-label friday-dua"
+            class:active={isInFridayDua}
+            style="left: 25%; top: 75%;"
+          >
+            <span class="clock-label-name">Jumu'ah&nbsp;Dua</span>
+          </div>
+        {/if}
       </div>
 
       <!-- Center info in clock mode -->
@@ -536,9 +737,9 @@
                 <svg viewBox="0 0 80 50" class="prayer-svg fajr" style="overflow:visible">
                   <defs>
                     <radialGradient id="fajrGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.6"/>
-                      <stop offset="40%" stop-color={$currentTheme.accent} stop-opacity="0.25"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent-bright) stop-opacity="0.6"/>
+                      <stop offset="40%" stop-color=var(--theme-accent) stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <!-- Clip to only show above horizon -->
                     <clipPath id="aboveHorizonFajr">
@@ -568,13 +769,13 @@
                 <svg viewBox="0 0 80 50" class="prayer-svg sunrise" style="overflow:visible">
                   <defs>
                     <radialGradient id="sunriseGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.5"/>
-                      <stop offset="60%" stop-color={$currentTheme.accent} stop-opacity="0.15"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent-bright) stop-opacity="0.5"/>
+                      <stop offset="60%" stop-color=var(--theme-accent) stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="groundGlowSunrise" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.25"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent) stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <filter id="groundBlurSunrise" x="-100%" y="-100%" width="300%" height="300%">
                       <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
@@ -599,13 +800,13 @@
                 <svg viewBox="0 0 80 55" class="prayer-svg dhuhr" style="overflow:visible">
                   <defs>
                     <radialGradient id="groundGlowDhuhr" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.22"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent) stop-opacity="0.22"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="dhuhrSunGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.55"/>
-                      <stop offset="50%" stop-color={$currentTheme.accent} stop-opacity="0.2"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent-bright) stop-opacity="0.55"/>
+                      <stop offset="50%" stop-color=var(--theme-accent) stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <filter id="groundBlurDhuhr" x="-100%" y="-100%" width="300%" height="300%">
                       <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
@@ -631,12 +832,12 @@
                 <svg viewBox="0 0 80 55" class="prayer-svg asr" style="overflow:visible">
                   <defs>
                     <radialGradient id="groundGlowAsr" cx="50%" cy="0%" r="100%">
-                      <stop offset="0%" stop-color={$currentTheme.accent} stop-opacity="0.15"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent) stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <radialGradient id="asrSunGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.35"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent-bright) stop-opacity="0.35"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <filter id="groundBlurAsr" x="-100%" y="-100%" width="300%" height="300%">
                       <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
@@ -669,9 +870,9 @@
                 <svg viewBox="0 0 80 50" class="prayer-svg maghrib" style="overflow:visible">
                   <defs>
                     <radialGradient id="maghribGlowGrad" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color={$currentTheme.accentBright} stop-opacity="0.7"/>
-                      <stop offset="30%" stop-color={$currentTheme.accent} stop-opacity="0.3"/>
-                      <stop offset="100%" stop-color={$currentTheme.accent} stop-opacity="0"/>
+                      <stop offset="0%" stop-color=var(--theme-accent-bright) stop-opacity="0.7"/>
+                      <stop offset="30%" stop-color=var(--theme-accent) stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color=var(--theme-accent) stop-opacity="0"/>
                     </radialGradient>
                     <!-- Clip to only show above horizon -->
                     <clipPath id="aboveHorizonMaghrib">
@@ -1387,6 +1588,37 @@
     color: var(--theme-accent-bright);
     font-weight: 400;
     text-shadow: 0 0 10px rgba(var(--theme-accent-rgb), 0.4);
+  }
+
+  /* First third (Hanbali Isha) label */
+  .clock-label.first-third .clock-label-name {
+    color: rgba(150, 200, 255, 0.5);
+  }
+
+  .clock-label.first-third .clock-label-time {
+    color: rgba(150, 200, 255, 0.4);
+  }
+
+  .clock-label.first-third.active .clock-label-name {
+    color: rgba(150, 200, 255, 0.95);
+    text-shadow: 0 0 12px rgba(150, 200, 255, 0.5);
+  }
+
+  .clock-label.first-third.active .clock-label-time {
+    color: rgba(180, 220, 255, 1);
+    font-weight: 400;
+    text-shadow: 0 0 10px rgba(150, 200, 255, 0.4);
+  }
+
+  /* Friday Dua label */
+  .clock-label.friday-dua .clock-label-name {
+    color: rgba(100, 200, 150, 0.5);
+    font-size: 0.55rem;
+  }
+
+  .clock-label.friday-dua.active .clock-label-name {
+    color: rgba(100, 200, 150, 0.95);
+    text-shadow: 0 0 12px rgba(100, 200, 150, 0.5);
   }
 
   /* Center content in clock mode */

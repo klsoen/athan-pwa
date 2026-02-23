@@ -1,8 +1,7 @@
 <script>
-  import { calculationMethod, customAngles, settingsOpen } from '$lib/stores/prayer.js';
+  import { calculationMethod, customAngles, settingsOpen, clockIndicators } from '$lib/stores/prayer.js';
   import { themes, currentThemeId, setTheme } from '$lib/stores/theme.js';
-  import { fade, fly, scale } from 'svelte/transition';
-  import { cubicOut, backOut } from 'svelte/easing';
+  import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
 
   // Theme list for selector
@@ -121,10 +120,11 @@
   aria-label={isOpen ? 'Close settings' : 'Settings'}
 >
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-    <!-- Three dots that morph into X -->
-    <circle class="dot dot-top" cx="12" cy="5" r="1.5" fill="currentColor" stroke="none" />
-    <circle class="dot dot-mid" cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
-    <circle class="dot dot-bot" cx="12" cy="19" r="1.5" fill="currentColor" stroke="none" />
+    <!-- Gear icon -->
+    <g class="gear">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </g>
     <!-- X lines (hidden by default) -->
     <line class="x-line x-line-1" x1="7" y1="7" x2="17" y2="17" stroke-linecap="round" />
     <line class="x-line x-line-2" x1="17" y1="7" x2="7" y2="17" stroke-linecap="round" />
@@ -140,15 +140,19 @@
     transition:fade={{ duration: 200 }}
   ></button>
 
-  <div class="settings-content" on:click|stopPropagation role="dialog" aria-modal="true">
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div class="settings-content" on:click={close} role="dialog" aria-modal="true">
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="settings-inner" on:click|stopPropagation>
+      <!-- Header -->
+      <div class="settings-header">
+        <span class="settings-title">Settings</span>
+      </div>
 
-    <!-- Header -->
-    <div class="settings-header" in:fly={{ y: -15, duration: 400, delay: 50, easing: cubicOut }}>
-      <span class="settings-title">Settings</span>
-    </div>
-
-    <!-- Theme Selector -->
-    <div class="section" in:fade={{ duration: 300, delay: 80 }}>
+      <!-- Theme Selector -->
+      <div class="section">
       <span class="section-label">Theme</span>
       <div class="theme-grid">
         {#each themeList as theme, i}
@@ -158,7 +162,6 @@
             on:click={() => { setTheme(theme.id); close(); }}
             type="button"
             style="--preview-bg: {theme.bg}; --preview-accent: {theme.accent}; --preview-accent-bright: {theme.accentBright};"
-            in:scale={{ duration: 200, delay: 100 + i * 30, start: 0.9, easing: backOut }}
           >
             <div class="theme-preview">
               <div class="preview-glow"></div>
@@ -170,8 +173,60 @@
       </div>
     </div>
 
+    <!-- Clock Indicators -->
+    <div class="section">
+      <span class="section-label">Clock Indicators</span>
+      <div class="indicators-grid">
+        <button
+          class="indicator-toggle"
+          class:active={$clockIndicators.lastThird}
+          on:click={() => clockIndicators.toggle('lastThird')}
+          type="button"
+        >
+          <span class="indicator-name">Last Third</span>
+          <span class="indicator-desc">Tahajjud time</span>
+        </button>
+        <button
+          class="indicator-toggle"
+          class:active={$clockIndicators.firstThirdEnd}
+          on:click={() => clockIndicators.toggle('firstThirdEnd')}
+          type="button"
+        >
+          <span class="indicator-name">1st Third End</span>
+          <span class="indicator-desc">Hanbali Isha</span>
+        </button>
+        <button
+          class="indicator-toggle"
+          class:active={$clockIndicators.fridayDua}
+          on:click={() => clockIndicators.toggle('fridayDua')}
+          type="button"
+        >
+          <span class="indicator-name">Jumu'ah Dua</span>
+          <span class="indicator-desc">Friday only</span>
+        </button>
+        <button
+          class="indicator-toggle"
+          class:active={$clockIndicators.duha}
+          on:click={() => clockIndicators.toggle('duha')}
+          type="button"
+        >
+          <span class="indicator-name">Duha</span>
+          <span class="indicator-desc">Morning prayer</span>
+        </button>
+        <button
+          class="indicator-toggle"
+          class:active={$clockIndicators.qaylula}
+          on:click={() => clockIndicators.toggle('qaylula')}
+          type="button"
+        >
+          <span class="indicator-name">Qaylula</span>
+          <span class="indicator-desc">Mid-day rest</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Calculation Method -->
-    <div class="section" in:fade={{ duration: 300, delay: 150 }}>
+    <div class="section">
       <span class="section-label">Calculation Method</span>
       <div class="method-grid">
         {#each methods as method, i}
@@ -180,7 +235,6 @@
             class:selected={selectedMethod === method.id}
             on:click={() => selectMethod(method)}
             type="button"
-            in:scale={{ duration: 250, delay: 120 + i * 25, start: 0.9, easing: backOut }}
           >
             <span class="method-name">{method.name}</span>
             {#if method.id !== 'Custom'}
@@ -197,7 +251,6 @@
     <div
       class="section custom-section"
       class:expanded={showCustom || selectedMethod === 'Custom'}
-      in:fly={{ y: 20, duration: 400, delay: 250, easing: cubicOut }}
     >
       <span class="section-label">Custom Angles</span>
       <div class="angles-row">
@@ -258,8 +311,22 @@
       <p class="angle-hint">Degrees below horizon for twilight calculation</p>
     </div>
 
+    <!-- GitHub link -->
+    <a
+      href="https://github.com/klsoen/athan-pwa"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="github-link"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      <span>View on GitHub</span>
+    </a>
+    </div>
+
     <!-- Close hint -->
-    <div class="close-hint" in:fade={{ duration: 300, delay: 400 }}>
+    <div class="close-hint">
       tap anywhere to close
     </div>
   </div>
@@ -298,25 +365,15 @@
     height: 1.1rem;
   }
 
-  /* Dots */
-  .settings-btn .dot {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Gear icon */
+  .settings-btn .gear {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
   }
 
-  .settings-btn.open .dot-top {
-    transform: translate(0, 7px);
+  .settings-btn.open .gear {
     opacity: 0;
-  }
-
-  .settings-btn.open .dot-mid {
-    opacity: 0;
-    transform: scale(0);
-  }
-
-  .settings-btn.open .dot-bot {
-    transform: translate(0, -7px);
-    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
   }
 
   /* X lines */
@@ -357,17 +414,29 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 1rem;
     padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
     padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    cursor: pointer;
   }
 
   .settings-content::-webkit-scrollbar {
     display: none;
+  }
+
+  .settings-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    cursor: default;
   }
 
   .settings-header {
@@ -636,6 +705,92 @@
     margin-top: 0.25rem;
   }
 
+  /* Clock Indicators */
+  .indicators-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .indicator-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.6rem 0.4rem;
+    background: rgba(var(--theme-text-rgb), 0.03);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.06);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 3.2rem;
+  }
+
+  .indicator-toggle:hover {
+    background: rgba(var(--theme-text-rgb), 0.06);
+    border-color: rgba(var(--theme-text-rgb), 0.12);
+  }
+
+  .indicator-toggle.active {
+    background: rgba(var(--theme-accent-rgb), 0.1);
+    border-color: rgba(var(--theme-accent-rgb), 0.4);
+  }
+
+  .indicator-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: rgba(var(--theme-text-rgb), 0.7);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .indicator-toggle.active .indicator-name {
+    color: var(--theme-accent);
+  }
+
+  .indicator-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.55rem;
+    color: rgba(var(--theme-text-rgb), 0.35);
+    text-align: center;
+  }
+
+  .indicator-toggle.active .indicator-desc {
+    color: rgba(var(--theme-accent-rgb), 0.6);
+  }
+
+  .github-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(var(--theme-text-rgb), 0.05);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
+    border-radius: 2rem;
+    color: rgba(var(--theme-text-rgb), 0.5);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .github-link:hover {
+    background: rgba(var(--theme-text-rgb), 0.1);
+    color: rgba(var(--theme-text-rgb), 0.8);
+  }
+
+  .github-link svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .github-link span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+  }
+
   .close-hint {
     font-family: 'Outfit', sans-serif;
     font-size: 0.6rem;
@@ -647,6 +802,10 @@
   @media (max-width: 360px) {
     .method-grid {
       grid-template-columns: 1fr;
+    }
+
+    .indicators-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .angles-row {

@@ -37,6 +37,51 @@ export const customAngles = writable({ fajr: 18, isha: 17 });
 // Settings open state (for blur effect)
 export const settingsOpen = writable(false);
 
+// Clock indicators store (which special times to show)
+// Max 3 arcs can be enabled at once
+const defaultIndicators = {
+  lastThird: true,      // Last third of night (default on)
+  firstThirdEnd: true,  // End of first third (Hanbali Isha) - diamond only
+  fridayDua: true,      // Friday Asr-Maghrib (only shows on Fridays)
+  qaylula: false,       // Mid-day rest time
+  duha: false           // Morning prayer time
+};
+
+function createIndicatorsStore() {
+  // Load from localStorage
+  let initial = defaultIndicators;
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('athan-indicators');
+    if (saved) {
+      initial = { ...defaultIndicators, ...JSON.parse(saved) };
+    }
+  }
+
+  const { subscribe, set, update } = writable(initial);
+
+  return {
+    subscribe,
+    toggle: (key) => {
+      update(state => {
+        const newState = { ...state, [key]: !state[key] };
+        // Save to localStorage
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('athan-indicators', JSON.stringify(newState));
+        }
+        return newState;
+      });
+    },
+    set: (value) => {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('athan-indicators', JSON.stringify(value));
+      }
+      set(value);
+    }
+  };
+}
+
+export const clockIndicators = createIndicatorsStore();
+
 // Current time store (updates every second)
 export const currentTime = writable(new Date());
 
