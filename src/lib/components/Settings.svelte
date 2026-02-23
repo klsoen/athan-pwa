@@ -240,6 +240,9 @@
           <span class="indicator-desc">Mid-day rest</span>
         </button>
       </div>
+      {#if $clockIndicators.qibla}
+        <p class="indicator-note">Qibla is based on your selected city—we never track your live location. May be inaccurate within Makkah or while travelling.</p>
+      {/if}
     </div>
 
     <!-- Calculation Method -->
@@ -778,6 +781,19 @@
 
   .indicator-toggle.active .indicator-desc {
     color: rgba(var(--theme-accent-rgb), 0.6);
+  }
+
+  .indicator-note {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(var(--theme-accent-rgb), 0.8);
+    text-align: center;
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    line-height: 1.4;
+    background: rgba(var(--theme-accent-rgb), 0.08);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(var(--theme-accent-rgb), 0.15);
   }
 
   .github-link {
