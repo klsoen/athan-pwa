@@ -179,6 +179,15 @@
       <div class="indicators-grid">
         <button
           class="indicator-toggle"
+          class:active={$clockIndicators.sunrise}
+          on:click={() => clockIndicators.toggle('sunrise')}
+          type="button"
+        >
+          <span class="indicator-name">Sunrise</span>
+          <span class="indicator-desc">Diamond marker</span>
+        </button>
+        <button
+          class="indicator-toggle"
           class:active={$clockIndicators.lastThird}
           on:click={() => clockIndicators.toggle('lastThird')}
           type="button"

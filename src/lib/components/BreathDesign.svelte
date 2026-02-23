@@ -445,12 +445,19 @@
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-            <!-- Stronger glow for active elements -->
-            <filter id="activeGlow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="3" result="blur"/>
+            <!-- Intense glow for active elements -->
+            <filter id="activeGlow" x="-150%" y="-150%" width="400%" height="400%">
+              <feGaussianBlur stdDeviation="2" result="innerBlur"/>
+              <feGaussianBlur stdDeviation="5" result="outerBlur"/>
+              <feColorMatrix in="outerBlur" type="matrix"
+                values="1.5 0 0 0 0.2
+                        0 1.5 0 0 0.2
+                        0 0 1.5 0 0.2
+                        0 0 0 1 0" result="brightBlur"/>
               <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="blur"/>
+                <feMergeNode in="brightBlur"/>
+                <feMergeNode in="brightBlur"/>
+                <feMergeNode in="innerBlur"/>
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
@@ -563,27 +570,29 @@
             {@const pos = getPosition(prayerAngles[prayer], 38)}
             {@const isActive = $currentPrayer.current === prayer}
             {#if prayer === 'sunrise'}
-              <!-- Sunrise: diamond -->
-              {#if isActive}
-                <g filter="url(#activeGlow)">
+              <!-- Sunrise: diamond indicator (toggleable) -->
+              {#if $clockIndicators.sunrise}
+                {#if isActive}
+                  <g filter="url(#activeGlow)">
+                    <rect
+                      x={pos.x - 2}
+                      y={pos.y - 2}
+                      width="4"
+                      height="4"
+                      fill="var(--theme-marker)"
+                      transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
+                    />
+                  </g>
+                {:else}
                   <rect
-                    x={pos.x - 3}
-                    y={pos.y - 3}
-                    width="6"
-                    height="6"
+                    x={pos.x - 1.5}
+                    y={pos.y - 1.5}
+                    width="3"
+                    height="3"
                     fill="var(--theme-marker)"
                     transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
                   />
-                </g>
-              {:else}
-                <rect
-                  x={pos.x - 1.5}
-                  y={pos.y - 1.5}
-                  width="3"
-                  height="3"
-                  fill="var(--theme-marker)"
-                  transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
-                />
+                {/if}
               {/if}
             {:else}
               <!-- Other prayers: circles -->
