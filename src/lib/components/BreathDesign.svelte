@@ -3,7 +3,7 @@
   import { tweened } from 'svelte/motion';
   import { cubicInOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
-  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators, qiblaDirection } from '$lib/stores/prayer.js';
+  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators, qiblaDirection, labelSize } from '$lib/stores/prayer.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
@@ -18,6 +18,9 @@
 
   let mounted = false;
   let breathPhase = 0;
+
+  // Label size scale factor
+  $: labelScale = $labelSize === 'small' ? 0.85 : $labelSize === 'large' ? 1.2 : 1;
 
   // Qibla compass state
   let compassHeading = 0;
@@ -512,7 +515,7 @@
 
     {#if showFullClock}
       <!-- FULL CLOCK VIEW -->
-      <div class="full-clock" class:blurred={overlayOpen} in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
+      <div class="full-clock" class:blurred={overlayOpen} style="--label-scale: {labelScale};" in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
@@ -1710,7 +1713,7 @@
   .clock-label-name {
     display: block;
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(0.5rem, 1.8vw, 0.7rem);
+    font-size: calc(clamp(0.5rem, 1.8vw, 0.7rem) * var(--label-scale, 1));
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
@@ -1721,7 +1724,7 @@
   .clock-label-time {
     display: block;
     font-family: 'Outfit', sans-serif;
-    font-size: clamp(0.65rem, 2.2vw, 0.9rem);
+    font-size: calc(clamp(0.65rem, 2.2vw, 0.9rem) * var(--label-scale, 1));
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.55);
     font-variant-numeric: tabular-nums;

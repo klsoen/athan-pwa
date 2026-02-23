@@ -1,5 +1,5 @@
 <script>
-  import { calculationMethod, customAngles, settingsOpen, clockIndicators } from '$lib/stores/prayer.js';
+  import { calculationMethod, customAngles, settingsOpen, clockIndicators, labelSize } from '$lib/stores/prayer.js';
   import { themes, currentThemeId, setTheme } from '$lib/stores/theme.js';
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
@@ -243,6 +243,31 @@
       {#if $clockIndicators.qibla}
         <p class="indicator-note">Qibla is based on your selected city—we never track your live location. May be inaccurate within Makkah or while travelling.</p>
       {/if}
+    </div>
+
+    <!-- Label Size -->
+    <div class="section">
+      <span class="section-label">Clock Label Size</span>
+      <div class="size-options">
+        <button
+          class="size-option"
+          class:active={$labelSize === 'small'}
+          on:click={() => labelSize.set('small')}
+          type="button"
+        >Small</button>
+        <button
+          class="size-option"
+          class:active={$labelSize === 'medium'}
+          on:click={() => labelSize.set('medium')}
+          type="button"
+        >Medium</button>
+        <button
+          class="size-option"
+          class:active={$labelSize === 'large'}
+          on:click={() => labelSize.set('large')}
+          type="button"
+        >Large</button>
+      </div>
     </div>
 
     <!-- Calculation Method -->
@@ -794,6 +819,36 @@
     background: rgba(var(--theme-accent-rgb), 0.08);
     border-radius: 0.5rem;
     border: 1px solid rgba(var(--theme-accent-rgb), 0.15);
+  }
+
+  .size-options {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .size-option {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    padding: 0.5rem 1rem;
+    background: rgba(var(--theme-text-rgb), 0.05);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.1);
+    border-radius: 0.5rem;
+    color: rgba(var(--theme-text-rgb), 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .size-option:hover {
+    background: rgba(var(--theme-text-rgb), 0.08);
+    border-color: rgba(var(--theme-text-rgb), 0.15);
+  }
+
+  .size-option.active {
+    background: rgba(var(--theme-accent-rgb), 0.15);
+    border-color: rgba(var(--theme-accent-rgb), 0.4);
+    color: var(--theme-accent);
   }
 
   .github-link {

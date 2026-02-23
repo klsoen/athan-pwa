@@ -84,6 +84,33 @@ function createIndicatorsStore() {
 
 export const clockIndicators = createIndicatorsStore();
 
+// Label size store (controls clock label font size)
+const defaultLabelSize = 'medium'; // 'small', 'medium', 'large'
+
+function createLabelSizeStore() {
+  let initial = defaultLabelSize;
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('athan-label-size');
+    if (saved) {
+      initial = saved;
+    }
+  }
+
+  const { subscribe, set } = writable(initial);
+
+  return {
+    subscribe,
+    set: (value) => {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('athan-label-size', value);
+      }
+      set(value);
+    }
+  };
+}
+
+export const labelSize = createLabelSizeStore();
+
 // Current time store (updates every second)
 export const currentTime = writable(new Date());
 
