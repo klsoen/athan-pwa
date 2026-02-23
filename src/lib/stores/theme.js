@@ -18,6 +18,7 @@ export const themes = {
     accentDim: '#b8943a',
     accentRgb: '212, 175, 55',
     accentBrightRgb: '232, 194, 82',
+    marker: '#a8c8e0', // Cool moonlight against warm gold
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -33,6 +34,7 @@ export const themes = {
     accentDim: '#c49550',
     accentRgb: '224, 176, 112',
     accentBrightRgb: '245, 208, 144',
+    marker: '#c8d8e8', // Soft silver starlight
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -48,6 +50,7 @@ export const themes = {
     accentDim: '#a8843a',
     accentRgb: '212, 168, 85',
     accentBrightRgb: '232, 196, 120',
+    marker: '#a0b8c8', // Cool twilight against sunset
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -63,6 +66,7 @@ export const themes = {
     accentDim: '#d08878',
     accentRgb: '240, 168, 160',
     accentBrightRgb: '255, 212, 204',
+    marker: '#98c8c0', // Soft seafoam morning mist
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -78,6 +82,7 @@ export const themes = {
     accentDim: '#5a8a65',
     accentRgb: '127, 184, 140',
     accentBrightRgb: '168, 212, 178',
+    marker: '#c8b0d0', // Soft lavender dusk
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -93,6 +98,7 @@ export const themes = {
     accentDim: '#5a8a8a',
     accentRgb: '124, 184, 184',
     accentBrightRgb: '168, 216, 216',
+    marker: '#e0a8a0', // Soft coral in water
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -108,6 +114,7 @@ export const themes = {
     accentDim: '#6a8fa8',
     accentRgb: '168, 197, 217',
     accentBrightRgb: '212, 229, 239',
+    marker: '#d8c090', // Warm amber last light
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -123,6 +130,7 @@ export const themes = {
     accentDim: '#c88848',
     accentRgb: '232, 160, 96',
     accentBrightRgb: '248, 192, 128',
+    marker: '#90c8d0', // Cool cyan deep water
     text: '#ffffff',
     textMuted: '#a0a0a0',
     textRgb: '255, 255, 255',
@@ -138,6 +146,7 @@ export const themes = {
     accentDim: '#d08898',
     accentRgb: '240, 168, 184',
     accentBrightRgb: '255, 208, 220',
+    marker: '#c8c898', // Sage gold aged parchment
     text: '#f5e8d0',
     textMuted: '#c0a888',
     textRgb: '245, 232, 208',
@@ -170,6 +179,7 @@ currentThemeId.subscribe((themeId) => {
   root.style.setProperty('--theme-accent-dim', theme.accentDim);
   root.style.setProperty('--theme-accent-rgb', theme.accentRgb);
   root.style.setProperty('--theme-accent-bright-rgb', theme.accentBrightRgb);
+  root.style.setProperty('--theme-marker', theme.marker);
   root.style.setProperty('--theme-text', theme.text);
   root.style.setProperty('--theme-text-muted', theme.textMuted);
   root.style.setProperty('--theme-text-rgb', theme.textRgb);

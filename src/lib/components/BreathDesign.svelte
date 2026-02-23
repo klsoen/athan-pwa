@@ -571,8 +571,8 @@
                     y={pos.y - 3}
                     width="6"
                     height="6"
-                    fill=var(--theme-accent-bright)
-                    transform="rotate(45 {pos.x} {pos.y})"
+                    fill="var(--theme-marker)"
+                    transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
                   />
                 </g>
               {:else}
@@ -581,8 +581,8 @@
                   y={pos.y - 1.5}
                   width="3"
                   height="3"
-                  fill=var(--theme-accent-dim)
-                  transform="rotate(45 {pos.x} {pos.y})"
+                  fill="var(--theme-marker)"
+                  transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
                 />
               {/if}
             {:else}
@@ -606,8 +606,8 @@
                   y={firstThirdPos.y - 2}
                   width="4"
                   height="4"
-                  fill="#96c8ff"
-                  transform="rotate(45 {firstThirdPos.x} {firstThirdPos.y})"
+                  fill="var(--theme-marker)"
+                  transform="rotate({firstThirdEnd.angle + 45} {firstThirdPos.x} {firstThirdPos.y})"
                 />
               </g>
             {:else}
@@ -616,8 +616,8 @@
                 y={firstThirdPos.y - 1.5}
                 width="3"
                 height="3"
-                fill="#96c8ff"
-                transform="rotate(45 {firstThirdPos.x} {firstThirdPos.y})"
+                fill="var(--theme-marker)"
+                transform="rotate({firstThirdEnd.angle + 45} {firstThirdPos.x} {firstThirdPos.y})"
               />
             {/if}
           {/if}
@@ -631,8 +631,8 @@
                   y={lastThirdPos.y - 2}
                   width="4"
                   height="4"
-                  fill="#96c8ff"
-                  transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
+                  fill="var(--theme-marker)"
+                  transform="rotate({lastThirdOfNight.start + 45} {lastThirdPos.x} {lastThirdPos.y})"
                 />
               </g>
             {:else}
@@ -641,8 +641,8 @@
                 y={lastThirdPos.y - 1.5}
                 width="3"
                 height="3"
-                fill="#96c8ff"
-                transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
+                fill="var(--theme-marker)"
+                transform="rotate({lastThirdOfNight.start + 45} {lastThirdPos.x} {lastThirdPos.y})"
               />
             {/if}
           {/if}
