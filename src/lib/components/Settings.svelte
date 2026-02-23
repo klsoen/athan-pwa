@@ -184,7 +184,6 @@
           type="button"
         >
           <span class="indicator-name">Sunrise</span>
-          <span class="indicator-desc">Diamond marker</span>
         </button>
         <button
           class="indicator-toggle"
@@ -202,7 +201,7 @@
           type="button"
         >
           <span class="indicator-name">Last Third</span>
-          <span class="indicator-desc">Tahajjud time</span>
+          <span class="indicator-desc">Best time for dua</span>
         </button>
         <button
           class="indicator-toggle"
@@ -211,7 +210,7 @@
           type="button"
         >
           <span class="indicator-name">1st Third End</span>
-          <span class="indicator-desc">Hanbali Isha</span>
+          <span class="indicator-desc">Isha preferred end</span>
         </button>
         <button
           class="indicator-toggle"
@@ -220,7 +219,7 @@
           type="button"
         >
           <span class="indicator-name">Jumu'ah Dua</span>
-          <span class="indicator-desc">Friday only</span>
+          <span class="indicator-desc">Asr to Maghrib</span>
         </button>
         <button
           class="indicator-toggle"

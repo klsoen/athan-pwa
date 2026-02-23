@@ -683,23 +683,17 @@
               {#if $clockIndicators.sunrise}
                 {#if isActive}
                   <g filter="url(#activeGlow)">
-                    <rect
-                      x={pos.x - 2}
-                      y={pos.y - 2}
-                      width="4"
-                      height="4"
+                    <polygon
+                      points="{pos.x},{pos.y - 2.5} {pos.x + 2},{pos.y} {pos.x},{pos.y + 2.5} {pos.x - 2},{pos.y}"
                       fill="var(--theme-marker)"
-                      transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
+                      transform="rotate({prayerAngles[prayer]} {pos.x} {pos.y})"
                     />
                   </g>
                 {:else}
-                  <rect
-                    x={pos.x - 1.5}
-                    y={pos.y - 1.5}
-                    width="3"
-                    height="3"
+                  <polygon
+                    points="{pos.x},{pos.y - 2} {pos.x + 1.5},{pos.y} {pos.x},{pos.y + 2} {pos.x - 1.5},{pos.y}"
                     fill="var(--theme-marker)"
-                    transform="rotate({prayerAngles[prayer] + 45} {pos.x} {pos.y})"
+                    transform="rotate({prayerAngles[prayer]} {pos.x} {pos.y})"
                   />
                 {/if}
               {/if}
@@ -719,23 +713,17 @@
           {#if $clockIndicators.firstThirdEnd && firstThirdEnd.time}
             {#if isInFirstThird}
               <g filter="url(#activeGlow)">
-                <rect
-                  x={firstThirdPos.x - 2}
-                  y={firstThirdPos.y - 2}
-                  width="4"
-                  height="4"
+                <polygon
+                  points="{firstThirdPos.x},{firstThirdPos.y - 2.5} {firstThirdPos.x + 2},{firstThirdPos.y} {firstThirdPos.x},{firstThirdPos.y + 2.5} {firstThirdPos.x - 2},{firstThirdPos.y}"
                   fill="var(--theme-marker)"
-                  transform="rotate({firstThirdEnd.angle + 45} {firstThirdPos.x} {firstThirdPos.y})"
+                  transform="rotate({firstThirdEnd.angle} {firstThirdPos.x} {firstThirdPos.y})"
                 />
               </g>
             {:else}
-              <rect
-                x={firstThirdPos.x - 1.5}
-                y={firstThirdPos.y - 1.5}
-                width="3"
-                height="3"
+              <polygon
+                points="{firstThirdPos.x},{firstThirdPos.y - 2} {firstThirdPos.x + 1.5},{firstThirdPos.y} {firstThirdPos.x},{firstThirdPos.y + 2} {firstThirdPos.x - 1.5},{firstThirdPos.y}"
                 fill="var(--theme-marker)"
-                transform="rotate({firstThirdEnd.angle + 45} {firstThirdPos.x} {firstThirdPos.y})"
+                transform="rotate({firstThirdEnd.angle} {firstThirdPos.x} {firstThirdPos.y})"
               />
             {/if}
           {/if}
@@ -744,23 +732,17 @@
           {#if $clockIndicators.lastThird}
             {#if isInLastThird}
               <g filter="url(#activeGlow)">
-                <rect
-                  x={lastThirdPos.x - 2}
-                  y={lastThirdPos.y - 2}
-                  width="4"
-                  height="4"
+                <polygon
+                  points="{lastThirdPos.x},{lastThirdPos.y - 2.5} {lastThirdPos.x + 2},{lastThirdPos.y} {lastThirdPos.x},{lastThirdPos.y + 2.5} {lastThirdPos.x - 2},{lastThirdPos.y}"
                   fill="var(--theme-marker)"
-                  transform="rotate({lastThirdOfNight.start + 45} {lastThirdPos.x} {lastThirdPos.y})"
+                  transform="rotate({lastThirdOfNight.start} {lastThirdPos.x} {lastThirdPos.y})"
                 />
               </g>
             {:else}
-              <rect
-                x={lastThirdPos.x - 1.5}
-                y={lastThirdPos.y - 1.5}
-                width="3"
-                height="3"
+              <polygon
+                points="{lastThirdPos.x},{lastThirdPos.y - 2} {lastThirdPos.x + 1.5},{lastThirdPos.y} {lastThirdPos.x},{lastThirdPos.y + 2} {lastThirdPos.x - 1.5},{lastThirdPos.y}"
                 fill="var(--theme-marker)"
-                transform="rotate({lastThirdOfNight.start + 45} {lastThirdPos.x} {lastThirdPos.y})"
+                transform="rotate({lastThirdOfNight.start} {lastThirdPos.x} {lastThirdPos.y})"
               />
             {/if}
           {/if}
