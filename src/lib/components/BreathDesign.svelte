@@ -539,6 +539,15 @@
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
+            <!-- Clean glow for diamond markers -->
+            <filter id="diamondGlow" x="-300%" y="-300%" width="700%" height="700%" filterUnits="objectBoundingBox">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
             <!-- Gradient for progress arc -->
             <linearGradient id="arcGradient" gradientUnits="userSpaceOnUse" x1="50" y1="10" x2="50" y2="90">
               <stop offset="0%" stop-color="var(--theme-accent-bright)"/>
@@ -682,7 +691,7 @@
               <!-- Sunrise: diamond indicator (toggleable) -->
               {#if $clockIndicators.sunrise}
                 {#if isActive}
-                  <g filter="url(#activeGlow)">
+                  <g filter="url(#diamondGlow)">
                     <polygon
                       points="{pos.x},{pos.y - 2.5} {pos.x + 2},{pos.y} {pos.x},{pos.y + 2.5} {pos.x - 2},{pos.y}"
                       fill="var(--theme-marker)"
@@ -712,7 +721,7 @@
           <!-- First third end diamond marker (Hanbali Isha) -->
           {#if $clockIndicators.firstThirdEnd && firstThirdEnd.time}
             {#if isInFirstThird}
-              <g filter="url(#activeGlow)">
+              <g filter="url(#diamondGlow)">
                 <polygon
                   points="{firstThirdPos.x},{firstThirdPos.y - 2.5} {firstThirdPos.x + 2},{firstThirdPos.y} {firstThirdPos.x},{firstThirdPos.y + 2.5} {firstThirdPos.x - 2},{firstThirdPos.y}"
                   fill="var(--theme-marker)"
@@ -731,7 +740,7 @@
           <!-- Last third diamond marker -->
           {#if $clockIndicators.lastThird}
             {#if isInLastThird}
-              <g filter="url(#activeGlow)">
+              <g filter="url(#diamondGlow)">
                 <polygon
                   points="{lastThirdPos.x},{lastThirdPos.y - 2.5} {lastThirdPos.x + 2},{lastThirdPos.y} {lastThirdPos.x},{lastThirdPos.y + 2.5} {lastThirdPos.x - 2},{lastThirdPos.y}"
                   fill="var(--theme-marker)"
