@@ -606,7 +606,7 @@
                   y={firstThirdPos.y - 2}
                   width="4"
                   height="4"
-                  fill="rgba(150, 200, 255, 0.9)"
+                  fill="#96c8ff"
                   transform="rotate(45 {firstThirdPos.x} {firstThirdPos.y})"
                 />
               </g>
@@ -616,7 +616,7 @@
                 y={firstThirdPos.y - 1.5}
                 width="3"
                 height="3"
-                fill="rgba(150, 200, 255, 0.5)"
+                fill="#96c8ff"
                 transform="rotate(45 {firstThirdPos.x} {firstThirdPos.y})"
               />
             {/if}
@@ -627,11 +627,11 @@
             {#if isInLastThird}
               <g filter="url(#activeGlow)">
                 <rect
-                  x={lastThirdPos.x - 2.5}
-                  y={lastThirdPos.y - 2.5}
-                  width="5"
-                  height="5"
-                  fill=var(--theme-accent-bright)
+                  x={lastThirdPos.x - 2}
+                  y={lastThirdPos.y - 2}
+                  width="4"
+                  height="4"
+                  fill="#96c8ff"
                   transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
                 />
               </g>
@@ -641,7 +641,7 @@
                 y={lastThirdPos.y - 1.5}
                 width="3"
                 height="3"
-                fill=var(--theme-accent-dim)
+                fill="#96c8ff"
                 transform="rotate(45 {lastThirdPos.x} {lastThirdPos.y})"
               />
             {/if}
@@ -728,8 +728,8 @@
         <div class="clock-center-next">until {prayerNames[$currentPrayer.next]?.en}</div>
       </div>
 
-      <!-- Special times info below clock -->
-      {#if $clockIndicators.duha || $clockIndicators.qaylula || $clockIndicators.fridayDua || $clockIndicators.lastThird || $clockIndicators.firstThirdEnd}
+      <!-- Special times info below clock - only shown when active -->
+      {#if (isInDuha && $clockIndicators.duha) || (isInQaylula && $clockIndicators.qaylula) || (isInFridayDua && $clockIndicators.fridayDua) || (isInFirstThird && $clockIndicators.firstThirdEnd) || (isInLastThird && $clockIndicators.lastThird)}
         <div class="clock-indicators" class:blurred={overlayOpen}>
           {#if isInDuha && $clockIndicators.duha}
             <span class="indicator-active">Duha until {formatTime(duhaTime.endTime)}</span>
@@ -741,10 +741,6 @@
             <span class="indicator-active">1st Third until {formatTime(firstThirdEnd.time)}</span>
           {:else if isInLastThird && $clockIndicators.lastThird}
             <span class="indicator-active">Last Third until Fajr</span>
-          {:else if $clockIndicators.duha && duhaTime && $currentTime < duhaTime.startTime}
-            <span class="indicator-upcoming">Duha {formatTime(duhaTime.startTime)}</span>
-          {:else if $clockIndicators.lastThird && lastThirdOfNight.startTime}
-            <span class="indicator-upcoming">Last Third {formatTime(lastThirdOfNight.startTime)}</span>
           {/if}
         </div>
       {/if}
