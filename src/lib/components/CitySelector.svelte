@@ -30,18 +30,28 @@
 
     isSearching = true;
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`,
-        {
-          headers: {
-            'Accept-Language': 'en'
-          }
-        }
-      );
-      const data = await response.json();
+      // Search with both original query and "city" appended, merge results
+      const [response1, response2] = await Promise.all([
+        fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        ),
+        fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query + ' city')}&format=json&limit=10&addressdetails=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        )
+      ]);
+
+      const [data1, data2] = await Promise.all([response1.json(), response2.json()]);
+      const data = [...data2, ...data1]; // Prioritize "city" results
 
       searchResults = data
         .map(place => {
+          // Determine if this is a city-level result
+          const placeType = place.type;
+          const hasCity = place.address?.city || place.address?.town || place.address?.village;
+          const isRegion = placeType === 'administrative' || placeType === 'state' || placeType === 'region';
+
           const name = place.address?.city
             || place.address?.town
             || place.address?.village
@@ -53,10 +63,13 @@
             name: name,
             country: place.address?.country || '',
             lat: parseFloat(place.lat),
-            lng: parseFloat(place.lon)
+            lng: parseFloat(place.lon),
+            priority: hasCity ? 0 : (isRegion ? 2 : 1),
+            type: placeType
           };
         })
         .filter(city => city.name)
+        .sort((a, b) => a.priority - b.priority) // Cities first, regions last
         .filter((city, index, self) =>
           index === self.findIndex(c => c.name === city.name && c.country === city.country)
         )

@@ -114,22 +114,24 @@
     return { start: startAngle, end: endAngle, startTime: asr, endTime: maghrib };
   })();
 
-  // Qaylula time (mid-day rest) - after Dhuhr until ~60% to Asr
+  // Qaylula time (mid-day rest) - 30min after Dhuhr until ~60% to Asr
   $: qaylulaTime = (() => {
     const dhuhr = $prayerTimes.dhuhr;
     const asr = $prayerTimes.asr;
     if (!dhuhr || !asr) return null;
 
+    // Start 30 minutes after Dhuhr
+    const startMs = dhuhr.getTime() + (30 * 60 * 1000);
+    const startTime = new Date(startMs);
+
     const durationMs = asr.getTime() - dhuhr.getTime();
     const endMs = dhuhr.getTime() + (durationMs * 0.6);
     const endTime = new Date(endMs);
 
-    const startAngle = prayerAngles.dhuhr;
-    // Calculate end angle
-    const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+    const startAngle = timeToAngle(startTime, maghribHour);
     const endAngle = timeToAngle(endTime, maghribHour);
 
-    return { start: startAngle, end: endAngle, startTime: dhuhr, endTime };
+    return { start: startAngle, end: endAngle, startTime, endTime };
   })();
 
   // Duha time (after sunrise until ~15 min before Dhuhr)
@@ -380,22 +382,24 @@
     return `M ${end.x} ${end.y} A ${radius} ${radius} 0 ${largeArc} 0 ${start.x} ${start.y}`;
   }
 
-  $: lastThirdArcPath = getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 36);
+  // All indicator arcs at same inner radius (33)
+  $: lastThirdArcPath = getArcPath(lastThirdOfNight.start, lastThirdOfNight.end, 33);
+  // Diamond markers stay on the main clock ring (38)
   $: lastThirdPos = getPosition(lastThirdOfNight.start, 38);
   $: lastThirdLabelPos = getPosition(lastThirdOfNight.start, 58);
 
-  // First third end (diamond only) positions
+  // First third end (diamond only) positions - on main clock ring
   $: firstThirdPos = getPosition(firstThirdEnd.angle, 38);
   $: firstThirdLabelPos = getPosition(firstThirdEnd.angle, 58);
 
-  // Friday Dua arc positions (inner arc at radius 30)
-  $: fridayDuaArcPath = fridayDuaTime ? getArcPath(fridayDuaTime.start, fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360, 30) : '';
+  // Friday Dua arc (same radius as Last Third)
+  $: fridayDuaArcPath = fridayDuaTime ? getArcPath(fridayDuaTime.start, fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360, 33) : '';
 
-  // Qaylula arc positions (inner arc at radius 27)
-  $: qaylulaArcPath = qaylulaTime ? getArcPath(qaylulaTime.start, qaylulaTime.end, 27) : '';
+  // Qaylula arc (same radius as Last Third)
+  $: qaylulaArcPath = qaylulaTime ? getArcPath(qaylulaTime.start, qaylulaTime.end, 33) : '';
 
-  // Duha arc positions (inner arc at radius 24)
-  $: duhaArcPath = duhaTime ? getArcPath(duhaTime.start, duhaTime.end, 24) : '';
+  // Duha arc (same radius as Last Third)
+  $: duhaArcPath = duhaTime ? getArcPath(duhaTime.start, duhaTime.end, 33) : '';
 
   // Check if we're currently in the last third of the night
   $: isInLastThird = (() => {
@@ -511,7 +515,7 @@
           <!-- Friday Dua arc (Asr to Maghrib) - only on Fridays -->
           {#if $clockIndicators.fridayDua && fridayDuaTime}
             <path
-              d={getArcPath(fridayDuaTime.start, 360, 30)}
+              d={getArcPath(fridayDuaTime.start, 360, 33)}
               fill="none"
               stroke="rgba(100, 200, 150, {isInFridayDua ? 0.6 : 0.35})"
               stroke-width="1"
@@ -723,6 +727,27 @@
         <div class="clock-center-countdown">{formatCountdown($countdown)}</div>
         <div class="clock-center-next">until {prayerNames[$currentPrayer.next]?.en}</div>
       </div>
+
+      <!-- Special times info below clock -->
+      {#if $clockIndicators.duha || $clockIndicators.qaylula || $clockIndicators.fridayDua || $clockIndicators.lastThird || $clockIndicators.firstThirdEnd}
+        <div class="clock-indicators" class:blurred={overlayOpen}>
+          {#if isInDuha && $clockIndicators.duha}
+            <span class="indicator-active">Duha until {formatTime(duhaTime.endTime)}</span>
+          {:else if isInQaylula && $clockIndicators.qaylula}
+            <span class="indicator-active">Qaylula until {formatTime(qaylulaTime.endTime)}</span>
+          {:else if isInFridayDua && $clockIndicators.fridayDua}
+            <span class="indicator-active">Jumu'ah Dua until Maghrib</span>
+          {:else if isInFirstThird && $clockIndicators.firstThirdEnd}
+            <span class="indicator-active">1st Third until {formatTime(firstThirdEnd.time)}</span>
+          {:else if isInLastThird && $clockIndicators.lastThird}
+            <span class="indicator-active">Last Third until Fajr</span>
+          {:else if $clockIndicators.duha && duhaTime && $currentTime < duhaTime.startTime}
+            <span class="indicator-upcoming">Duha {formatTime(duhaTime.startTime)}</span>
+          {:else if $clockIndicators.lastThird && lastThirdOfNight.startTime}
+            <span class="indicator-upcoming">Last Third {formatTime(lastThirdOfNight.startTime)}</span>
+          {/if}
+        </div>
+      {/if}
 
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
@@ -1664,6 +1689,40 @@
     color: rgba(var(--theme-accent-rgb), 0.6);
     margin-top: 0.3rem;
     letter-spacing: 0.1em;
+  }
+
+  /* Clock indicators info */
+  .clock-indicators {
+    position: absolute;
+    bottom: clamp(80px, 15vh, 120px);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    transition: filter 0.3s ease;
+  }
+
+  .clock-indicators.blurred {
+    filter: blur(8px);
+    opacity: 0.5;
+  }
+
+  .indicator-active {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(var(--theme-accent-rgb), 0.9);
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.8rem;
+    background: rgba(var(--theme-accent-rgb), 0.1);
+    border-radius: 1rem;
+  }
+
+  .indicator-upcoming {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: rgba(var(--theme-text-rgb), 0.4);
+    letter-spacing: 0.05em;
   }
 
   /* Tap hint */

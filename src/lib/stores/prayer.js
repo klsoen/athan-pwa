@@ -92,6 +92,18 @@ if (typeof window !== 'undefined') {
   }, 1000);
 }
 
+// Check if current date is in Ramadan (Hijri month 9)
+function isRamadan(date) {
+  try {
+    const hijri = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+      month: 'numeric'
+    }).format(date);
+    return parseInt(hijri) === 9;
+  } catch (e) {
+    return false;
+  }
+}
+
 // Prayer times derived from location, method, and custom angles
 export const prayerTimes = derived(
   [location, calculationMethod, customAngles],
@@ -109,7 +121,12 @@ export const prayerTimes = derived(
         params = CalculationMethod[$method]();
       }
 
+      // Umm al-Qura uses 120 min for Isha during Ramadan (instead of 90)
       const date = new Date();
+      if ($method === 'UmmAlQura' && isRamadan(date)) {
+        params.adjustments = { ...params.adjustments, isha: 30 };
+      }
+
       const times = new PrayerTimes(coords, date, params);
 
       return {
