@@ -23,11 +23,26 @@
   let compassHeading = 0;
   let compassEnabled = false;
   let compassPermission = 'unknown'; // 'unknown', 'granted', 'denied', 'unavailable'
+  let qiblaNeedleRotation = 0;
+  let lastRawRotation = 0;
 
-  // Qibla needle rotation (when 0, needle points up = facing Qibla)
-  $: qiblaNeedleRotation = compassEnabled ? ($qiblaDirection - compassHeading + 360) % 360 : 0;
-  // Aligned when within 5 degrees of pointing up
-  $: qiblaAligned = compassEnabled && (qiblaNeedleRotation < 5 || qiblaNeedleRotation > 355);
+  // Smooth rotation that doesn't jump at 0/360 boundary
+  $: {
+    if (compassEnabled) {
+      let rawRotation = ($qiblaDirection - compassHeading + 360) % 360;
+      // Calculate shortest path
+      let delta = rawRotation - lastRawRotation;
+      if (delta > 180) delta -= 360;
+      if (delta < -180) delta += 360;
+      qiblaNeedleRotation += delta;
+      lastRawRotation = rawRotation;
+    } else {
+      qiblaNeedleRotation = $qiblaDirection;
+      lastRawRotation = $qiblaDirection;
+    }
+  }
+  // Aligned when within 5 degrees of pointing up (0, 360, 720, etc.)
+  $: qiblaAligned = compassEnabled && (Math.abs(qiblaNeedleRotation % 360) < 5 || Math.abs(qiblaNeedleRotation % 360) > 355);
 
   // Subtle, meditative breathing - like candlelight
   $: breathScale = 1 + Math.sin(breathPhase * Math.PI / 180) * 0.06;
@@ -557,13 +572,13 @@
           <!-- Qibla compass needle -->
           {#if $clockIndicators.qibla}
             <g
-              style="transform-origin: 50px 50px; transform: rotate({compassEnabled ? qiblaNeedleRotation : $qiblaDirection}deg); transition: transform 0.15s ease-out;"
+              style="transform-origin: 50px 50px; transform: rotate({qiblaNeedleRotation}deg); transition: transform 0.1s linear;"
               filter={qiblaAligned ? "url(#qiblaGlow)" : "none"}
               class:qibla-aligned={qiblaAligned}
             >
-              <!-- Elegant elongated triangle pointing inward -->
+              <!-- Elegant elongated triangle pointing outward -->
               <polygon
-                points="50,5 47.5,0 52.5,0"
+                points="50,0 47.5,5 52.5,5"
                 fill={qiblaAligned ? "var(--theme-accent-bright)" : "var(--theme-marker)"}
                 opacity={compassEnabled ? (qiblaAligned ? 1 : 0.7) : 0.5}
               />
