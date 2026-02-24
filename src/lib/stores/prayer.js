@@ -121,6 +121,32 @@ if (typeof window !== 'undefined') {
   }, 1000);
 }
 
+// Get current time in city's timezone as a comparable Date
+// This converts the current moment to "what time is showing on a clock in that city"
+function getCityTime(cityTimezone) {
+  if (!cityTimezone) return new Date();
+
+  const now = new Date();
+  // Get the time string in the city's timezone
+  const cityTimeStr = now.toLocaleString('en-US', {
+    timeZone: cityTimezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
+  // Parse it back to a Date (this Date will have the city's wall clock time)
+  const [datePart, timePart] = cityTimeStr.split(', ');
+  const [month, day, year] = datePart.split('/');
+  const [hour, minute, second] = timePart.split(':');
+
+  return new Date(year, month - 1, day, hour, minute, second);
+}
+
 // Check if current date is in Ramadan (Hijri month 9)
 function isRamadan(date) {
   try {
@@ -150,8 +176,10 @@ export const prayerTimes = derived(
         params = CalculationMethod[$method]();
       }
 
+      // Use the city's current date for calculation
+      const date = getCityTime($location.timezone);
+
       // Umm al-Qura uses 120 min for Isha during Ramadan (instead of 90)
-      const date = new Date();
       if ($method === 'UmmAlQura' && isRamadan(date)) {
         params.adjustments = { ...params.adjustments, isha: 30 };
       }
@@ -181,18 +209,35 @@ export const prayerTimes = derived(
   }
 );
 
-// Current and next prayer
+// Current and next prayer (uses city timezone for comparison)
 export const currentPrayer = derived(
-  [prayerTimes, currentTime],
-  ([$times, $now]) => {
+  [prayerTimes, currentTime, location],
+  ([$times, $now, $location]) => {
     if (!$times || !$times.fajr) {
       return { current: 'isha', next: 'fajr', nextTime: new Date() };
     }
 
+    // Get current time in the city's timezone for proper comparison
+    const cityNow = getCityTime($location.timezone);
+
+    // Convert prayer times to comparable format (hours/minutes in city timezone)
+    const getCityHoursMinutes = (date) => {
+      const str = date.toLocaleTimeString('en-US', {
+        timeZone: $location.timezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      const [h, m] = str.split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    const nowMinutes = cityNow.getHours() * 60 + cityNow.getMinutes();
     const prayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
     for (let i = prayers.length - 1; i >= 0; i--) {
-      if ($now >= $times[prayers[i]]) {
+      const prayerMinutes = getCityHoursMinutes($times[prayers[i]]);
+      if (nowMinutes >= prayerMinutes) {
         return {
           current: prayers[i],
           next: prayers[(i + 1) % prayers.length],
@@ -212,20 +257,48 @@ export const currentPrayer = derived(
   }
 );
 
-// Time until next prayer
+// Time until next prayer (uses city timezone)
 export const countdown = derived(
-  [currentPrayer, currentTime],
-  ([$prayer, $now]) => {
-    if (!$prayer || !$prayer.nextTime) {
+  [currentPrayer, currentTime, location, prayerTimes],
+  ([$prayer, $now, $location, $times]) => {
+    if (!$prayer || !$times) {
       return { hours: 0, minutes: 0, seconds: 0, total: 0 };
     }
 
-    const diff = $prayer.nextTime - $now;
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    // Get current time in city's timezone
+    const cityNow = getCityTime($location.timezone);
+    const nowMinutes = cityNow.getHours() * 60 + cityNow.getMinutes();
+    const nowSeconds = cityNow.getSeconds();
 
-    return { hours, minutes, seconds, total: diff };
+    // Get next prayer time in city's timezone
+    const nextPrayer = $prayer.next;
+    const nextTime = $times[nextPrayer];
+    if (!nextTime) {
+      return { hours: 0, minutes: 0, seconds: 0, total: 0 };
+    }
+
+    const nextStr = nextTime.toLocaleTimeString('en-US', {
+      timeZone: $location.timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    const [nextH, nextM] = nextStr.split(':').map(Number);
+    let nextMinutes = nextH * 60 + nextM;
+
+    // If next prayer is tomorrow (e.g., Fajr after Isha)
+    if (nextMinutes <= nowMinutes && $prayer.current === 'isha') {
+      nextMinutes += 24 * 60; // Add a day
+    }
+
+    const diffMinutes = nextMinutes - nowMinutes;
+    const diffSeconds = (diffMinutes * 60) - nowSeconds;
+
+    const hours = Math.floor(diffSeconds / 3600);
+    const minutes = Math.floor((diffSeconds % 3600) / 60);
+    const seconds = diffSeconds % 60;
+
+    return { hours, minutes, seconds: Math.max(0, seconds), total: diffSeconds * 1000 };
   }
 );
 

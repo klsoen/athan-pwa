@@ -1,6 +1,5 @@
 <script>
   import '../app.css';
-  import '$lib/stores/theme.js';
   import { onMount } from 'svelte';
 
   onMount(() => {
@@ -21,4 +20,15 @@
   });
 </script>
 
-<slot />
+<div class="app-root">
+  <slot />
+</div>
+
+<style>
+  .app-root {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+</style>

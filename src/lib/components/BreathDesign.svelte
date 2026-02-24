@@ -1,14 +1,28 @@
 <script>
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
-  import { cubicInOut } from 'svelte/easing';
+  import { cubicInOut, cubicOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
   import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators, qiblaDirection, labelSize } from '$lib/stores/prayer.js';
+  import { currentTheme } from '$lib/stores/theme.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
   // Combined overlay state for blur
   $: overlayOpen = $citySelectorOpen || $settingsOpen;
+
+  // Ring opacity multiplier for light/dark mode compatibility
+  $: ringMult = parseFloat($currentTheme?.ringOpacity || '1');
+  // Glow intensity for light/dark mode (reduced in light mode to avoid eye strain)
+  $: glowIntensity = parseFloat($currentTheme?.glowIntensity || '1');
+  // Pre-computed opacity values for SVG elements - higher caps for brighter clock
+  $: ringOpacity = {
+    faint: Math.min(0.06 * ringMult, 0.6),
+    subtle: Math.min(0.10 * ringMult, 0.7),
+    light: Math.min(0.15 * ringMult, 0.8),
+    medium: Math.min(0.25 * ringMult, 0.9),
+    strong: Math.min(0.40 * ringMult, 1.0),
+  };
 
   // Animated progress angle for arc and dot
   const animatedAngle = tweened(0, {
@@ -20,7 +34,8 @@
   let breathPhase = 0;
 
   // Label size scale factor
-  $: labelScale = $labelSize === 'small' ? 0.85 : $labelSize === 'large' ? 1.2 : 1;
+  // Label sizes: small=1.0, medium=1.2 (default), large=1.45
+  $: labelScale = $labelSize === 'small' ? 1.0 : $labelSize === 'large' ? 1.45 : 1.2;
 
   // Qibla compass state
   let compassHeading = 0;
@@ -219,12 +234,12 @@
 
   // Calculate moon phase (0 = new moon, 0.5 = full moon, 1 = new moon)
   function getMoonPhase(date) {
-    // Known new moon: January 6, 2000 at 18:14 UTC
-    const knownNewMoon = new Date(Date.UTC(2000, 0, 6, 18, 14, 0));
+    // Known new moon: February 18, 2026 (recent reference for accuracy)
+    const knownNewMoon = new Date(Date.UTC(2026, 1, 18, 0, 0, 0));
     const lunarCycle = 29.53058867; // days
 
     const daysSinceKnown = (date.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
-    const phase = (daysSinceKnown % lunarCycle) / lunarCycle;
+    let phase = (daysSinceKnown % lunarCycle) / lunarCycle;
 
     return phase < 0 ? phase + 1 : phase;
   }
@@ -246,35 +261,64 @@
     return { illumination, waxing, phase };
   }
 
+  // Generate SVG path for moon phase using proper astronomical geometry
+  // The terminator (shadow line) is an ellipse seen edge-on
+  function getMoonPath(cx, cy, r, illumination, waxing) {
+    // Round to nearest 10% for discrete phase display
+    const illum = Math.round(illumination * 10) / 10;
+
+    if (illum <= 0.03) {
+      // New moon - show thin outline only
+      return { type: 'new', path: '' };
+    }
+
+    if (illum >= 0.97) {
+      // Full moon - complete circle
+      return { type: 'full', path: '' };
+    }
+
+    // The terminator is modeled as an ellipse
+    // At 50% illumination, it's a straight line (ellipse width = 0)
+    // At 0% or 100%, it matches the outer circle
+    // The ellipse horizontal radius varies with illumination
+    const terminatorRx = Math.abs(Math.cos(illumination * Math.PI)) * r;
+
+    // For waxing: right side is lit, terminator curves from left
+    // For waning: left side is lit, terminator curves from right
+
+    // Build path: outer arc on lit side + terminator arc
+    // Start at top of moon, arc to bottom on lit side, arc back via terminator
+
+    const topY = cy - r;
+    const botY = cy + r;
+
+    // Sweep direction for outer arc (1 = clockwise, 0 = counter-clockwise)
+    // For waxing (right lit): go clockwise from top to bottom
+    // For waning (left lit): go counter-clockwise from top to bottom
+    const outerSweep = waxing ? 1 : 0;
+
+    // Terminator sweep direction depends on phase
+    // Crescent (illum < 0.5): terminator curves INTO lit side (less visible)
+    // Gibbous (illum > 0.5): terminator curves AWAY from lit side (more visible)
+    const terminatorSweep = illumination < 0.5
+      ? (waxing ? 0 : 1)  // Crescent: curve into lit area
+      : (waxing ? 1 : 0); // Gibbous: curve away from lit area
+
+    // SVG path
+    const path = `M ${cx} ${topY} ` +
+      `A ${r} ${r} 0 0 ${outerSweep} ${cx} ${botY} ` +
+      `A ${terminatorRx} ${r} 0 0 ${terminatorSweep} ${cx} ${topY} Z`;
+
+    return { type: 'phase', path };
+  }
+
   $: moonData = getMoonData($currentTime);
 
-  // Moon rendering calculations for Maghrib (small moon)
-  $: maghribMoon = (() => {
-    const r = 7, cx = 62, cy = 14, innerR = 7.2;
-    // Use sqrt for more accurate crescent width mapping
-    // Thin crescent at low illumination, fuller at high
-    const crescentWidth = r * 2 * Math.pow(moonData.illumination, 0.6);
-    const offset = crescentWidth / 2;
-    return {
-      cx, cy, r, innerR,
-      innerCx: moonData.waxing ? cx - offset : cx + offset,
-      innerCy: cy,
-      showInner: moonData.illumination < 0.92
-    };
-  })();
+  // Moon path for Maghrib (small moon)
+  $: maghribMoon = getMoonPath(62, 14, 7, moonData.illumination, moonData.waxing);
 
-  // Moon rendering calculations for Isha (large moon)
-  $: ishaMoon = (() => {
-    const r = 14, cx = 40, cy = 20, innerR = 14.5;
-    const crescentWidth = r * 2 * Math.pow(moonData.illumination, 0.6);
-    const offset = crescentWidth / 2;
-    return {
-      cx, cy, r, innerR,
-      innerCx: moonData.waxing ? cx - offset : cx + offset,
-      innerCy: cy,
-      showInner: moonData.illumination < 0.92
-    };
-  })();
+  // Moon path for Isha (large moon)
+  $: ishaMoon = getMoonPath(40, 20, 14, moonData.illumination, moonData.waxing);
 
   let breathInterval;
   let showFullClock = false;
@@ -519,7 +563,7 @@
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
-            <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <filter id="softGlow" x="-300%" y="-300%" width="700%" height="700%">
               <feGaussianBlur stdDeviation="2" result="blur"/>
               <feMerge>
                 <feMergeNode in="blur"/>
@@ -527,7 +571,7 @@
               </feMerge>
             </filter>
             <!-- Intense glow for active elements -->
-            <filter id="activeGlow" x="-150%" y="-150%" width="400%" height="400%">
+            <filter id="activeGlow" x="-300%" y="-300%" width="700%" height="700%">
               <feGaussianBlur stdDeviation="2" result="innerBlur"/>
               <feGaussianBlur stdDeviation="5" result="outerBlur"/>
               <feColorMatrix in="outerBlur" type="matrix"
@@ -573,11 +617,11 @@
             </filter>
           </defs>
 
-          <!-- Outermost decorative ring -->
+          <!-- Outer frame ring -->
           <circle
             cx="50" cy="50" r="44"
             fill="none"
-            stroke="rgba(var(--theme-accent-rgb),0.08)"
+            stroke="rgba(var(--theme-accent-rgb),{ringOpacity.light})"
             stroke-width="0.3"
           />
 
@@ -608,7 +652,7 @@
             <line
               x1={startPos.x} y1={startPos.y}
               x2={endPos.x} y2={endPos.y}
-              stroke={isMajor ? `rgba($var(--theme-accent-rgb),0.3)` : 'rgba(255,255,255,0.08)'}
+              stroke={isMajor ? `rgba(var(--theme-accent-rgb),${ringOpacity.strong})` : `rgba(var(--theme-text-rgb),${ringOpacity.light})`}
               stroke-width={isMajor ? 0.6 : 0.3}
             />
           {/each}
@@ -617,16 +661,8 @@
           <circle
             cx="50" cy="50" r="38"
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="rgba(var(--theme-text-rgb),{ringOpacity.subtle})"
             stroke-width="2"
-          />
-
-          <!-- Inner decorative ring -->
-          <circle
-            cx="50" cy="50" r="28"
-            fill="none"
-            stroke="rgba(var(--theme-accent-rgb),0.06)"
-            stroke-width="0.3"
           />
 
           <!-- Last third arc -->
@@ -682,7 +718,7 @@
               stroke="url(#arcGradient)"
               stroke-width="2"
               stroke-linecap="round"
-              filter="url(#softGlow)"
+              filter="url(#softGlow)" opacity={glowIntensity}
             />
           {/if}
 
@@ -694,7 +730,7 @@
               <!-- Sunrise: diamond indicator (toggleable) -->
               {#if $clockIndicators.sunrise}
                 {#if isActive}
-                  <g filter="url(#diamondGlow)">
+                  <g filter="url(#diamondGlow)" opacity={glowIntensity}>
                     <polygon
                       points="{pos.x},{pos.y - 2.5} {pos.x + 2},{pos.y} {pos.x},{pos.y + 2.5} {pos.x - 2},{pos.y}"
                       fill="var(--theme-marker)"
@@ -712,7 +748,7 @@
             {:else}
               <!-- Other prayers: circles -->
               {#if isActive}
-                <g filter="url(#activeGlow)">
+                <g filter="url(#activeGlow)" opacity={glowIntensity}>
                   <circle cx={pos.x} cy={pos.y} r="3.5" fill=var(--theme-accent-bright)/>
                 </g>
               {:else}
@@ -724,7 +760,7 @@
           <!-- First third end diamond marker (Hanbali Isha) -->
           {#if $clockIndicators.firstThirdEnd && firstThirdEnd.time}
             {#if isInFirstThird}
-              <g filter="url(#diamondGlow)">
+              <g filter="url(#diamondGlow)" opacity={glowIntensity}>
                 <polygon
                   points="{firstThirdPos.x},{firstThirdPos.y - 2.5} {firstThirdPos.x + 2},{firstThirdPos.y} {firstThirdPos.x},{firstThirdPos.y + 2.5} {firstThirdPos.x - 2},{firstThirdPos.y}"
                   fill="var(--theme-marker)"
@@ -743,7 +779,7 @@
           <!-- Last third diamond marker -->
           {#if $clockIndicators.lastThird}
             {#if isInLastThird}
-              <g filter="url(#diamondGlow)">
+              <g filter="url(#diamondGlow)" opacity={glowIntensity}>
                 <polygon
                   points="{lastThirdPos.x},{lastThirdPos.y - 2.5} {lastThirdPos.x + 2},{lastThirdPos.y} {lastThirdPos.x},{lastThirdPos.y + 2.5} {lastThirdPos.x - 2},{lastThirdPos.y}"
                   fill="var(--theme-marker)"
@@ -765,20 +801,13 @@
             <circle
               cx="50" cy="12" r="3"
               fill="rgba(255,255,255,{isAnimating ? 0.25 : 0})"
-              filter="url(#softGlow)"
+              filter="url(#softGlow)" opacity={glowIntensity}
               style="transition: fill 0.5s ease-out;"
             />
             <circle cx="50" cy="12" r="2" fill="white"/>
             <circle cx="50" cy="11.5" r="0.8" fill="rgba(255,255,255,0.8)"/>
           </g>
 
-          <!-- Center circle accent -->
-          <circle
-            cx="50" cy="50" r="18"
-            fill="none"
-            stroke="rgba(var(--theme-accent-rgb),0.04)"
-            stroke-width="0.5"
-          />
         </svg>
 
         <!-- Prayer labels around clock -->
@@ -834,10 +863,14 @@
 
       <!-- Center info in clock mode -->
       <div class="clock-center" class:blurred={overlayOpen}>
-        <div class="clock-center-arabic">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
-        <div class="clock-center-english">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+        {#key $currentPrayer.current}
+          <div class="clock-center-arabic" in:fly={{ y: 8, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -8, duration: 200 }}>{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
+          <div class="clock-center-english" in:fly={{ y: 6, duration: 500, delay: 200, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+        {/key}
         <div class="clock-center-countdown">{formatCountdown($countdown)}</div>
-        <div class="clock-center-next">until {prayerNames[$currentPrayer.next]?.en}</div>
+        {#key $currentPrayer.next}
+          <div class="clock-center-next" in:fly={{ y: 4, duration: 500, delay: 250, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>until {prayerNames[$currentPrayer.next]?.en}</div>
+        {/key}
       </div>
 
       <!-- Special times info below clock - only shown when active -->
@@ -1039,9 +1072,12 @@
                   <!-- Horizon line -->
                   <line class="horizon" x1="0" y1="42" x2="80" y2="42"/>
                   <!-- Moon with actual phase -->
-                  <circle class="crescent-outer" cx={maghribMoon.cx} cy={maghribMoon.cy} r={maghribMoon.r}/>
-                  {#if maghribMoon.showInner}
-                    <circle class="crescent-inner" cx={maghribMoon.innerCx} cy={maghribMoon.innerCy} r={maghribMoon.innerR}/>
+                  {#if maghribMoon.type === 'full'}
+                    <circle class="moon-fill" cx="62" cy="14" r="7"/>
+                  {:else if maghribMoon.type === 'new'}
+                    <circle class="moon-outline" cx="62" cy="14" r="7"/>
+                  {:else}
+                    <path class="moon-fill" d={maghribMoon.path}/>
                   {/if}
                   <!-- Stars appearing -->
                   <circle class="mag-star star-1" cx="16" cy="10" r="1.2"/>
@@ -1052,25 +1088,42 @@
               {:else}
                 <!-- Isha: Night sky with moon and stars -->
                 <svg viewBox="0 0 80 50" class="prayer-svg isha">
+                  <defs>
+                    <linearGradient id="shootingStarGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="var(--theme-accent-bright)" stop-opacity="0"/>
+                      <stop offset="60%" stop-color="var(--theme-accent-bright)" stop-opacity="0.5"/>
+                      <stop offset="100%" stop-color="var(--theme-accent-bright)" stop-opacity="1"/>
+                    </linearGradient>
+                  </defs>
                   <!-- Moon with actual phase -->
-                  <circle class="isha-crescent-outer" cx={ishaMoon.cx} cy={ishaMoon.cy} r={ishaMoon.r}/>
-                  {#if ishaMoon.showInner}
-                    <circle class="isha-crescent-inner" cx={ishaMoon.innerCx} cy={ishaMoon.innerCy} r={ishaMoon.innerR}/>
+                  {#if ishaMoon.type === 'full'}
+                    <circle class="isha-moon-fill" cx="40" cy="20" r="14"/>
+                  {:else if ishaMoon.type === 'new'}
+                    <circle class="isha-moon-outline" cx="40" cy="20" r="14"/>
+                  {:else}
+                    <path class="isha-moon-fill" d={ishaMoon.path}/>
                   {/if}
                   <circle class="isha-star star-1" cx="16" cy="12" r="1.5"/>
                   <circle class="isha-star star-2" cx="68" cy="18" r="1.2"/>
                   <circle class="isha-star star-3" cx="24" cy="38" r="1"/>
                   <circle class="isha-star star-4" cx="58" cy="40" r="1.3"/>
                   <circle class="isha-star star-5" cx="12" cy="30" r="0.8"/>
+                  <!-- Shooting star (tail trails behind, star at front moving down-left) -->
+                  <g class="shooting-star">
+                    <line x1="12" y1="0" x2="0" y2="8" stroke="url(#shootingStarGrad)" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="0" cy="8" r="1" fill="var(--theme-accent-bright)"/>
+                  </g>
                 </svg>
               {/if}
             </div>
             {/key}
             <div class="current-arabic engrave-in">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
+            <div class="current-name" in:fly={{ y: 6, duration: 500, delay: 100, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
           {/key}
-          <div class="current-name">{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
           <div class="tap-hint" class:blurred={overlayOpen}>tap for full clock</div>
-          <div class="current-time">{formatTime($prayerTimes[$currentPrayer.current])}</div>
+          {#key $currentPrayer.current}
+            <div class="current-time" in:fly={{ y: 4, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($prayerTimes[$currentPrayer.current])}</div>
+          {/key}
         </div>
 
         <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
@@ -1081,8 +1134,10 @@
 
         <div class="next-prayer" in:fly={{ y: 12, duration: 400, delay: 250 }}>
           <span class="next-label">Next</span>
-          <span class="next-name">{prayerNames[$currentPrayer.next]?.en}</span>
-          <span class="next-time">{formatTime($prayerTimes[$currentPrayer.next])}</span>
+          {#key $currentPrayer.next}
+            <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{prayerNames[$currentPrayer.next]?.en}</span>
+            <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($prayerTimes[$currentPrayer.next])}</span>
+          {/key}
         </div>
 
         <!-- All prayer times -->
@@ -1163,6 +1218,7 @@
   }
 
   /* Breathing glow - centered on prayer display */
+  /* Glow intensity controlled by --theme-glow-intensity (1 for dark, 0.3 for light) */
   .breath-glow {
     position: absolute;
     top: 50%;
@@ -1170,6 +1226,7 @@
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;
+    opacity: var(--theme-glow-intensity, 1);
   }
 
   .breath-glow.outer {
@@ -1450,14 +1507,18 @@
     animation: sunSet 4s ease-in forwards;
   }
 
-  .prayer-svg.maghrib .crescent-outer {
+  .prayer-svg.maghrib .moon-fill {
     fill: var(--theme-accent-bright);
     opacity: 0;
     animation: crescentAppear 1.5s ease-out 0.5s forwards;
   }
 
-  .prayer-svg.maghrib .crescent-inner {
-    fill: var(--theme-bg);
+  .prayer-svg.maghrib .moon-outline {
+    fill: none;
+    stroke: var(--theme-accent-bright);
+    stroke-width: 0.3;
+    opacity: 0;
+    animation: crescentAppear 1.5s ease-out 0.5s forwards;
   }
 
   .prayer-svg.maghrib .mag-star {
@@ -1486,12 +1547,15 @@
   }
 
   /* === ISHA: Night sky === */
-  .prayer-svg.isha .isha-crescent-outer {
+  .prayer-svg.isha .isha-moon-fill {
     fill: var(--theme-accent-bright);
   }
 
-  .prayer-svg.isha .isha-crescent-inner {
-    fill: var(--theme-bg);
+  .prayer-svg.isha .isha-moon-outline {
+    fill: none;
+    stroke: var(--theme-accent-bright);
+    stroke-width: 0.5;
+    opacity: 0.4;
   }
 
   .prayer-svg.isha .isha-star {
@@ -1504,6 +1568,32 @@
   .prayer-svg.isha .star-3 { animation-delay: 1.4s; }
   .prayer-svg.isha .star-4 { animation-delay: 2.1s; }
   .prayer-svg.isha .star-5 { animation-delay: 2.8s; }
+
+  /* Shooting star animation */
+  .prayer-svg.isha .shooting-star {
+    opacity: 0;
+    animation: shootingStar 10s linear infinite;
+    animation-delay: 2s;
+  }
+
+  @keyframes shootingStar {
+    0%, 75% {
+      opacity: 0;
+      transform: translate(70px, 2px);
+    }
+    76% {
+      opacity: 1;
+      transform: translate(65px, 5px);
+    }
+    90% {
+      opacity: 0.6;
+      transform: translate(20px, 35px);
+    }
+    91%, 100% {
+      opacity: 0;
+      transform: translate(15px, 38px);
+    }
+  }
 
   @keyframes starTwinkle {
     0%, 100% { opacity: 0.3; }
@@ -1754,33 +1844,33 @@
 
   /* First third (Hanbali Isha) label */
   .clock-label.first-third .clock-label-name {
-    color: rgba(150, 200, 255, 0.5);
+    color: rgba(var(--theme-accent-rgb), 0.5);
   }
 
   .clock-label.first-third .clock-label-time {
-    color: rgba(150, 200, 255, 0.4);
+    color: rgba(var(--theme-accent-rgb), 0.4);
   }
 
   .clock-label.first-third.active .clock-label-name {
-    color: rgba(150, 200, 255, 0.95);
-    text-shadow: 0 0 12px rgba(150, 200, 255, 0.5);
+    color: rgba(var(--theme-accent-bright-rgb), 0.95);
+    text-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.5);
   }
 
   .clock-label.first-third.active .clock-label-time {
-    color: rgba(180, 220, 255, 1);
+    color: var(--theme-accent-bright);
     font-weight: 400;
-    text-shadow: 0 0 10px rgba(150, 200, 255, 0.4);
+    text-shadow: 0 0 10px rgba(var(--theme-accent-rgb), 0.4);
   }
 
   /* Friday Dua label */
   .clock-label.friday-dua .clock-label-name {
-    color: rgba(100, 200, 150, 0.5);
+    color: rgba(var(--theme-accent-rgb), 0.5);
     font-size: 0.55rem;
   }
 
   .clock-label.friday-dua.active .clock-label-name {
-    color: rgba(100, 200, 150, 0.95);
-    text-shadow: 0 0 12px rgba(100, 200, 150, 0.5);
+    color: rgba(var(--theme-accent-bright-rgb), 0.95);
+    text-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.5);
   }
 
   /* Center content in clock mode */

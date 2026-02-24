@@ -1,11 +1,25 @@
 <script>
   import { calculationMethod, customAngles, settingsOpen, clockIndicators, labelSize } from '$lib/stores/prayer.js';
-  import { themes, currentThemeId, setTheme } from '$lib/stores/theme.js';
+  import { darkThemes, lightThemes, currentThemeId, setTheme, themeMode, setThemeMode } from '$lib/stores/theme.js';
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
 
-  // Theme list for selector
-  const themeList = Object.values(themes);
+  // Theme lists for selector
+  $: activeThemes = $themeMode === 'light' ? lightThemes : darkThemes;
+  $: themeList = Object.values(activeThemes);
+
+  // Switch to a mode and set a valid theme for that mode if needed
+  function switchToMode(mode) {
+    setThemeMode(mode);
+    const targetThemes = mode === 'light' ? lightThemes : darkThemes;
+    // If current theme doesn't exist in the new mode, pick the first one
+    if (!targetThemes[$currentThemeId]) {
+      const firstThemeId = Object.keys(targetThemes)[0];
+      if (firstThemeId) {
+        setTheme(firstThemeId);
+      }
+    }
+  }
 
   const methods = [
     { id: 'MuslimWorldLeague', name: 'Muslim World League', fajr: 18, isha: 17 },
@@ -154,8 +168,38 @@
       <!-- Theme Selector -->
       <div class="section">
       <span class="section-label">Theme</span>
+
+      <!-- Dark/Light/Texture Mode Switcher -->
+      <div class="mode-switcher">
+        <button
+          class="mode-tab"
+          class:active={$themeMode === 'dark'}
+          on:click={() => switchToMode('dark')}
+          type="button"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" class="mode-icon">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
+          </svg>
+          <span>Dark</span>
+        </button>
+        <button
+          class="mode-tab"
+          class:active={$themeMode === 'light'}
+          on:click={() => switchToMode('light')}
+          type="button"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mode-icon">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+          <span>Light</span>
+          <span class="new-badge">NEW</span>
+        </button>
+      </div>
+
       <div class="theme-grid">
         {#each themeList as theme, i}
+          {@const isNewDarkTheme = $themeMode === 'dark' && (theme.id === 'sakura' || theme.id === 'ember')}
           <button
             class="theme-card"
             class:selected={$currentThemeId === theme.id}
@@ -163,6 +207,9 @@
             type="button"
             style="--preview-bg: {theme.bg}; --preview-accent: {theme.accent}; --preview-accent-bright: {theme.accentBright};"
           >
+            {#if isNewDarkTheme}
+              <span class="new-badge theme-badge">NEW</span>
+            {/if}
             <div class="theme-preview">
               <div class="preview-glow"></div>
               <div class="preview-dot"></div>
@@ -512,6 +559,76 @@
     letter-spacing: 0.15em;
   }
 
+  /* Mode switcher (Light/Dark tabs) */
+  .mode-switcher {
+    display: flex;
+    background: rgba(var(--theme-text-rgb), 0.04);
+    border: 1px solid rgba(var(--theme-text-rgb), 0.08);
+    border-radius: 2rem;
+    padding: 0.2rem;
+    gap: 0.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mode-tab {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.2rem;
+    background: transparent;
+    border: none;
+    border-radius: 1.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: rgba(var(--theme-text-rgb), 0.45);
+  }
+
+  .mode-tab:hover {
+    color: rgba(var(--theme-text-rgb), 0.7);
+    background: rgba(var(--theme-text-rgb), 0.04);
+  }
+
+  .mode-tab.active {
+    background: rgba(var(--theme-accent-rgb), 0.15);
+    color: var(--theme-accent);
+  }
+
+  .mode-tab span:not(.new-badge) {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .mode-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .new-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    padding: 0.15rem 0.35rem;
+    background: var(--theme-accent);
+    color: var(--theme-bg);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .new-badge.theme-badge {
+    top: 2px;
+    right: 2px;
+    font-size: 0.45rem;
+    padding: 0.1rem 0.25rem;
+  }
+
   /* Theme grid */
   .theme-grid {
     display: grid;
@@ -522,6 +639,7 @@
   }
 
   .theme-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;

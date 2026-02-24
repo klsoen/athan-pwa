@@ -10,6 +10,7 @@
   /* Default theme: Refined Gold */
   --theme-bg: #080808;
   --theme-bg-gradient: none;
+  --theme-bg-texture: none;
   --theme-accent: #d4af37;
   --theme-accent-bright: #e8c252;
   --theme-accent-dim: #b8943a;
