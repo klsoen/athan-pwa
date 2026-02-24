@@ -43,6 +43,7 @@ html, body {
   text-size-adjust: 100%;
   background: var(--theme-bg);
   color: var(--theme-text);
+  touch-action: manipulation;
 }
 
 /* iOS standalone PWA - slightly smaller fonts to match other platforms */
