@@ -66,6 +66,7 @@
   let compassHeading = 0;
   let compassEnabled = false;
   let compassPermission = 'unknown'; // 'unknown', 'granted', 'denied', 'unavailable'
+  let compassListening = false;
   let qiblaNeedleRotation = 0;
   let lastRawRotation = 0;
 
@@ -373,6 +374,20 @@
   }
 
   onMount(() => {
+    mounted = true;
+
+    const handleQiblaPermission = (event) => {
+      const status = event?.detail?.status;
+      if (!status) return;
+
+      compassPermission = status;
+      if (status === 'granted') {
+        startCompass();
+      } else if (status === 'denied') {
+        stopCompass();
+      }
+    };
+
     // Breathing animation - slower, more meditative (4-second cycle)
     breathInterval = setInterval(() => {
       breathPhase = (breathPhase + 1) % 360;
@@ -383,19 +398,27 @@
       // iOS 13+ requires permission
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         compassPermission = 'unknown';
+        if ($clockIndicators.qibla) {
+          startCompass();
+        }
       } else {
         // Android or older iOS - start listening
         compassPermission = 'granted';
-        startCompass();
+        if ($clockIndicators.qibla) {
+          startCompass();
+        }
       }
     } else {
       compassPermission = 'unavailable';
     }
 
+    window.addEventListener('athan:qibla-permission', handleQiblaPermission);
+
     return () => {
+      mounted = false;
       clearInterval(breathInterval);
-      window.removeEventListener('deviceorientation', handleOrientation);
-      window.removeEventListener('deviceorientationabsolute', handleOrientation);
+      stopCompass();
+      window.removeEventListener('athan:qibla-permission', handleQiblaPermission);
     };
   });
 
@@ -413,26 +436,33 @@
   }
 
   function startCompass() {
+    if (typeof window === 'undefined') return;
+    if (compassListening) return;
     // Try absolute orientation first (more reliable for compass on Android)
     if ('ondeviceorientationabsolute' in window) {
       window.addEventListener('deviceorientationabsolute', handleOrientation, true);
     } else {
       window.addEventListener('deviceorientation', handleOrientation, true);
     }
+    compassListening = true;
   }
 
-  async function requestCompassPermission() {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      try {
-        const permission = await DeviceOrientationEvent.requestPermission();
-        compassPermission = permission;
-        if (permission === 'granted') {
-          startCompass();
-        }
-      } catch (e) {
-        console.error('Compass permission error:', e);
-        compassPermission = 'denied';
+  function stopCompass() {
+    if (typeof window === 'undefined') return;
+    if (!compassListening) return;
+    window.removeEventListener('deviceorientation', handleOrientation);
+    window.removeEventListener('deviceorientationabsolute', handleOrientation);
+    compassListening = false;
+    compassEnabled = false;
+  }
+
+  $: if (mounted) {
+    if ($clockIndicators.qibla) {
+      if (compassPermission !== 'unavailable' && compassPermission !== 'denied') {
+        startCompass();
       }
+    } else {
+      stopCompass();
     }
   }
 
@@ -929,7 +959,7 @@
             <path
               d={getArcPath(fridayDuaTime.start, 360, 33)}
               fill="none"
-              stroke="rgba(100, 200, 150, {isInFridayDua ? 0.6 : 0.35})"
+              stroke="rgba(var(--theme-accent-bright-rgb), {isInFridayDua ? 0.58 : 0.32})"
               stroke-width="1"
               stroke-linecap="round"
               stroke-dasharray="2 2"
@@ -1128,16 +1158,7 @@
         </div>
       {/if}
 
-      <!-- Compass permission prompt for iOS -->
-      {#if $clockIndicators.qibla && compassPermission === 'unknown'}
-        <button
-          class="compass-enable"
-          class:blurred={overlayOpen}
-          on:click={requestCompassPermission}
-        >
-          Tap to enable compass
-        </button>
-      {:else if $clockIndicators.qibla && compassPermission === 'granted' && !compassEnabled}
+      {#if $clockIndicators.qibla && compassPermission === 'granted' && !compassEnabled}
         <div class="compass-enable" class:blurred={overlayOpen}>
           Rotate device to calibrate...
         </div>
@@ -2112,6 +2133,7 @@
     align-items: center;
     gap: 0.65rem;
     transition: filter 0.3s ease-out;
+    z-index: 3;
   }
 
   .date-nav {
@@ -2590,7 +2612,7 @@
 
   .compass-enable {
     position: absolute;
-    bottom: clamp(30px, 8vh, 60px);
+    bottom: calc(max(1.25rem, env(safe-area-inset-bottom, 0px)) + clamp(4.75rem, 11vh, 6.25rem));
     left: 50%;
     transform: translateX(-50%);
     font-family: 'Outfit', sans-serif;
@@ -2604,6 +2626,7 @@
     border-radius: 1.5rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 4;
   }
 
   .compass-enable:hover {
@@ -2759,6 +2782,12 @@
     .date-nav-icon {
       width: 1.38rem;
       height: 1.38rem;
+    }
+
+    .compass-enable {
+      bottom: calc(max(0.9rem, env(safe-area-inset-bottom, 0px)) + clamp(4.15rem, 12vh, 5.4rem));
+      font-size: 0.66rem;
+      padding: 0.34rem 0.7rem;
     }
   }
 
