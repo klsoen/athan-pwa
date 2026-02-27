@@ -1,5 +1,5 @@
 <script>
-  import { calculationMethod, customAngles, settingsOpen, clockIndicators, labelSize } from '$lib/stores/prayer.js';
+  import { calculationMethod, customAngles, settingsOpen, clockIndicators, labelSize, salahNotifications, location } from '$lib/stores/prayer.js';
   import { darkThemes, lightThemes, currentThemeId, setTheme, themeMode, setThemeMode } from '$lib/stores/theme.js';
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
@@ -42,6 +42,31 @@
   let fajrAngle = 18;
   let ishaAngle = 17;
   let showCustom = false;
+  let notificationStatus = 'default';
+
+  async function toggleSalahNotifications() {
+    if ($salahNotifications.enabled) {
+      await salahNotifications.disable();
+      notificationStatus = typeof Notification !== 'undefined' ? Notification.permission : 'default';
+      return;
+    }
+
+    const result = await salahNotifications.enable({
+      method: selectedMethod,
+      location: {
+        name: $location.name,
+        latitude: $location.latitude,
+        longitude: $location.longitude,
+        timezone: $location.timezone
+      }
+    });
+    if (!result.ok) {
+      notificationStatus = result.reason || 'default';
+      return;
+    }
+
+    notificationStatus = 'granted';
+  }
 
   function open() {
     isOpen = true;
@@ -94,6 +119,10 @@
   }
 
   onMount(() => {
+    if (typeof Notification !== 'undefined') {
+      notificationStatus = Notification.permission;
+    }
+
     if (typeof localStorage !== 'undefined') {
       const savedMethod = localStorage.getItem('athan-method');
       const savedAngles = localStorage.getItem('athan-angles');
@@ -290,6 +319,34 @@
       {#if $clockIndicators.qibla}
         <p class="indicator-note">Qibla is based on your selected city—we never track your live location. May be inaccurate within Makkah or while travelling.</p>
       {/if}
+    </div>
+
+    <!-- Salah Notifications -->
+    <div class="section">
+      <span class="section-label">Salah Notifications</span>
+      <button
+        class="indicator-toggle notification-toggle"
+        class:active={$salahNotifications.enabled}
+        on:click={toggleSalahNotifications}
+        type="button"
+      >
+        <span class="indicator-name">Prayer Time Alerts</span>
+        <span class="indicator-desc">
+          {$salahNotifications.enabled ? 'On' : 'Off'} ·
+          {notificationStatus === 'granted' ? ' Permission granted' : notificationStatus === 'denied' ? ' Permission blocked' : ' Tap to request permission'}
+          {#if $salahNotifications.enabled}
+            {$salahNotifications.delivery === 'push' ? ' · Push delivery' : ' · Local delivery'}
+          {/if}
+        </span>
+      </button>
+      <p class="indicator-note">
+        Alerts are for Fajr, Dhuhr, Asr, Maghrib, and Isha.
+        {#if $salahNotifications.delivery === 'push'}
+          Push delivery is enabled for closed/background notifications.
+        {:else}
+          Local delivery works while app is active. Configure push backend for closed/background delivery.
+        {/if}
+      </p>
     </div>
 
     <!-- Label Size -->

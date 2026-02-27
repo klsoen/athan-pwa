@@ -7,6 +7,7 @@ A beautiful, privacy-focused Islamic prayer times app built as a Progressive Web
 - Animated sky that changes with prayer times
 - Accurate prayer time calculations (adhan-js)
 - Countdown to next prayer
+- Optional salah notifications
 - Geolocation support
 - Works offline
 - No tracking, no analytics
@@ -41,6 +42,28 @@ Build and deploy the `build/` folder to any static host:
 - Netlify
 - Cloudflare Pages
 - GitHub Pages
+
+## Web Push For Closed-App Notifications
+
+The app now supports Web Push subscription flow for true background/closed-app prayer alerts.
+
+Set these public env vars in your deployment:
+
+- `PUBLIC_WEB_PUSH_PUBLIC_KEY`: VAPID public key (base64url)
+- `PUBLIC_WEB_PUSH_API_BASE_URL`: your backend base URL
+
+Client-side calls expected backend endpoints:
+
+- `POST /api/push/subscribe`
+  - body: `{ subscription, context }`
+- `POST /api/push/update`
+  - body: `{ endpoint, context }`
+- `POST /api/push/unsubscribe`
+  - body: `{ endpoint }`
+
+`context` includes selected location + calculation method so your backend can schedule each prayer notification.
+
+If push config is missing, app falls back to local in-app notifications while open.
 
 ## Adding to Home Screen
 

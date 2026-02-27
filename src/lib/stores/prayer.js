@@ -1,5 +1,6 @@
 import { writable, derived } from 'svelte/store';
 import * as adhan from 'adhan';
+import { hasPushConfig, isWebPushSupported, subscribeToPrayerPush, unsubscribeFromPrayerPush, updatePrayerPushContext } from '$lib/push.js';
 
 const Coordinates = adhan.Coordinates;
 const CalculationMethod = adhan.CalculationMethod;
@@ -110,6 +111,87 @@ function createLabelSizeStore() {
 }
 
 export const labelSize = createLabelSizeStore();
+
+// Salah notification preferences
+const defaultNotificationPrefs = {
+  enabled: false,
+  delivery: 'none'
+};
+
+function createSalahNotificationsStore() {
+  let initial = defaultNotificationPrefs;
+
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('athan-salah-notifications');
+    if (saved) {
+      try {
+        initial = { ...defaultNotificationPrefs, ...JSON.parse(saved) };
+      } catch (_) {
+        initial = defaultNotificationPrefs;
+      }
+    }
+  }
+
+  if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission !== 'granted') {
+    initial = { ...initial, enabled: false, delivery: 'none' };
+  }
+
+  const { subscribe, update } = writable(initial);
+
+  function persist(next) {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('athan-salah-notifications', JSON.stringify(next));
+    }
+  }
+
+  return {
+    subscribe,
+    async enable(context = {}) {
+      if (typeof window === 'undefined' || !('Notification' in window)) {
+        return { ok: false, reason: 'unsupported' };
+      }
+
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        update((state) => {
+          const next = { ...state, enabled: false, delivery: 'none' };
+          persist(next);
+          return next;
+        });
+        return { ok: false, reason: permission };
+      }
+
+      let delivery = 'local';
+      if (isWebPushSupported() && hasPushConfig()) {
+        const pushResult = await subscribeToPrayerPush(context);
+        if (pushResult.ok) {
+          delivery = 'push';
+        }
+      }
+
+      update((state) => {
+        const next = { ...state, enabled: true, delivery };
+        persist(next);
+        return next;
+      });
+
+      return { ok: true, delivery };
+    },
+    async disable() {
+      await unsubscribeFromPrayerPush();
+      update((state) => {
+        const next = { ...state, enabled: false, delivery: 'none' };
+        persist(next);
+        return next;
+      });
+    },
+    async syncContext(context = {}) {
+      await updatePrayerPushContext(context);
+    }
+  };
+}
+
+export const salahNotifications = createSalahNotificationsStore();
 
 // Current time store (updates every second)
 export const currentTime = writable(new Date());
@@ -339,3 +421,85 @@ export const prayerNames = {
   isha: { en: 'Isha', ar: 'العشاء' }
 };
 
+// Schedule local prayer notifications while app is running
+if (typeof window !== 'undefined') {
+  const timedPrayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+  let timers = [];
+  let latestTimes = null;
+  let latestLocation = null;
+  let notificationsEnabled = false;
+  let notificationDelivery = 'none';
+
+  function clearTimers() {
+    timers.forEach((id) => clearTimeout(id));
+    timers = [];
+  }
+
+  function scheduleNotifications() {
+    clearTimers();
+
+    if (!notificationsEnabled || !latestTimes || !latestLocation) return;
+    // Push delivery handles closed/background notifications server-side.
+    // Keep local timers for local mode only.
+    if (notificationDelivery !== 'local') return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const now = Date.now();
+
+    timedPrayers.forEach((prayer) => {
+      const prayerTime = latestTimes[prayer];
+      if (!prayerTime) return;
+
+      const delay = prayerTime.getTime() - now;
+      if (delay <= 0 || delay > 2147483647) return;
+
+      const id = setTimeout(() => {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+        const prayerName = prayerNames[prayer]?.en || prayer;
+        const title = `${prayerName} time`;
+        const body = `It's time for ${prayerName}${latestLocation?.name ? ` in ${latestLocation.name}` : ''}.`;
+        const dateTag = prayerTime.toISOString().slice(0, 10);
+
+        new Notification(title, {
+          body,
+          tag: `athan-${prayer}-${dateTag}`,
+          renotify: true
+        });
+      }, delay);
+
+      timers.push(id);
+    });
+  }
+
+  salahNotifications.subscribe((state) => {
+    notificationsEnabled = Boolean(state.enabled);
+    notificationDelivery = state.delivery || 'none';
+    scheduleNotifications();
+  });
+
+  prayerTimes.subscribe((times) => {
+    latestTimes = times;
+    scheduleNotifications();
+  });
+
+  location.subscribe((loc) => {
+    latestLocation = loc;
+    scheduleNotifications();
+    if (notificationsEnabled && notificationDelivery === 'push') {
+      salahNotifications.syncContext({
+        location: { name: loc.name, latitude: loc.latitude, longitude: loc.longitude, timezone: loc.timezone }
+      });
+    }
+  });
+
+  calculationMethod.subscribe((method) => {
+    if (notificationsEnabled && notificationDelivery === 'push') {
+      const loc = latestLocation;
+      salahNotifications.syncContext({
+        method,
+        location: loc ? { name: loc.name, latitude: loc.latitude, longitude: loc.longitude, timezone: loc.timezone } : null
+      });
+    }
+  });
+}
