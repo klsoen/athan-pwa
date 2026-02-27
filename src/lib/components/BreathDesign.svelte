@@ -765,6 +765,13 @@
 
   // Friday Dua arc (same radius as Last Third)
   $: fridayDuaArcPath = fridayDuaTime ? getArcPath(fridayDuaTime.start, fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360, 33) : '';
+  $: fridayDuaLabelPos = (() => {
+    if (!fridayDuaTime) return { x: 25, y: 75 };
+    const endAngle = fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360;
+    const arcSpan = endAngle - fridayDuaTime.start;
+    const labelAngle = (fridayDuaTime.start + (arcSpan / 2)) % 360;
+    return getPosition(labelAngle, 48);
+  })();
 
   // Qaylula arc (same radius as Last Third)
   $: qaylulaArcPath = qaylulaTime ? getArcPath(qaylulaTime.start, qaylulaTime.end, 33) : '';
@@ -1102,7 +1109,7 @@
           <div
             class="clock-label friday-dua"
             class:active={isInFridayDua}
-            style="left: 25%; top: 75%;"
+            style="left: {fridayDuaLabelPos.x}%; top: {fridayDuaLabelPos.y}%;"
           >
             <span class="clock-label-name">Jumu'ah&nbsp;Dua</span>
           </div>
