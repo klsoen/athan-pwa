@@ -711,7 +711,7 @@
             <path
               d={getArcPath(fridayDuaTime.start, 360, 33)}
               fill="none"
-              stroke="rgba(100, 200, 150, {isInFridayDua ? 0.6 : 0.35})"
+              stroke="rgba(var(--theme-accent-bright-rgb), {isInFridayDua ? 0.58 : 0.32})"
               stroke-width="1"
               stroke-linecap="round"
               stroke-dasharray="2 2"
