@@ -3,13 +3,31 @@
   import { tweened } from 'svelte/motion';
   import { cubicInOut, cubicOut } from 'svelte/easing';
   import { fade, scale, fly } from 'svelte/transition';
-  import { prayerTimes, currentPrayer, countdown, prayerNames, location, currentTime, citySelectorOpen, settingsOpen, clockIndicators, qiblaDirection, labelSize } from '$lib/stores/prayer.js';
+  import {
+    prayerTimes as todayPrayerTimes,
+    currentPrayer as todayCurrentPrayer,
+    countdown as todayCountdown,
+    selectedPrayerTimes as prayerTimes,
+    selectedCurrentPrayer as currentPrayer,
+    selectedCountdown as countdown,
+    prayerNames,
+    location,
+    currentTime,
+    citySelectorOpen,
+    settingsOpen,
+    clockIndicators,
+    qiblaDirection,
+    labelSize,
+    dateOffset
+  } from '$lib/stores/prayer.js';
   import { currentTheme } from '$lib/stores/theme.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
+  let calendarOpen = false;
+
   // Combined overlay state for blur
-  $: overlayOpen = $citySelectorOpen || $settingsOpen;
+  $: overlayOpen = $citySelectorOpen || $settingsOpen || calendarOpen;
 
   // Ring opacity multiplier for light/dark mode compatibility
   $: ringMult = parseFloat($currentTheme?.ringOpacity || '1');
@@ -32,6 +50,13 @@
 
   let mounted = false;
   let breathPhase = 0;
+  let dateSwipeDirection = 1;
+  let calendarMonth = new Date();
+  const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  let calendarTouchStartX = 0;
+  let calendarTouchStartY = 0;
+  let calendarTouchStartAt = 0;
+  let calendarMonthSwipeDirection = 1;
 
   // Label size scale factor
   // Label sizes: small=1.0, medium=1.2 (default), large=1.45
@@ -326,7 +351,7 @@
   let animationTimeout;
 
   function toggleClock() {
-    if (!$citySelectorOpen) {
+    if (!overlayOpen) {
       showFullClock = !showFullClock;
 
       // Animate arc when opening clock
@@ -433,6 +458,232 @@
     return date.toLocaleTimeString('en-US', options);
   }
 
+  function normalizeDate(date) {
+    const normalized = new Date(date);
+    normalized.setHours(12, 0, 0, 0);
+    return normalized;
+  }
+
+  function getBaseDay() {
+    return normalizeDate($todayPrayerTimes.dhuhr || $todayPrayerTimes.fajr || $currentTime);
+  }
+
+  function getDateFromOffset(offset) {
+    const date = getBaseDay();
+    date.setDate(date.getDate() + offset);
+    return date;
+  }
+
+  function isSameDay(a, b) {
+    return a.getFullYear() === b.getFullYear()
+      && a.getMonth() === b.getMonth()
+      && a.getDate() === b.getDate();
+  }
+
+  function openCalendar() {
+    calendarOpen = true;
+    const selectedDay = getDateFromOffset($dateOffset);
+    calendarMonth = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), 1, 12, 0, 0, 0);
+  }
+
+  function closeCalendar() {
+    calendarOpen = false;
+  }
+
+  function closeCalendarToHome() {
+    calendarOpen = false;
+    showFullClock = false;
+  }
+
+  function shiftCalendarMonth(months) {
+    if (!months) return;
+    calendarMonthSwipeDirection = months > 0 ? 1 : -1;
+    const next = new Date(calendarMonth);
+    next.setMonth(next.getMonth() + months);
+    calendarMonth = next;
+  }
+
+  function handleCalendarTouchStart(event) {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    calendarTouchStartX = touch.clientX;
+    calendarTouchStartY = touch.clientY;
+    calendarTouchStartAt = Date.now();
+  }
+
+  function handleCalendarTouchEnd(event) {
+    const touch = event.changedTouches?.[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - calendarTouchStartX;
+    const deltaY = touch.clientY - calendarTouchStartY;
+    const duration = Date.now() - calendarTouchStartAt;
+
+    // Horizontal intent with enough travel and reasonable speed.
+    if (Math.abs(deltaX) < 44) return;
+    if (Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+    if (duration > 650) return;
+
+    shiftCalendarMonth(deltaX < 0 ? 1 : -1);
+  }
+
+  function getCalendarCells(monthDate) {
+    const startOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1, 12, 0, 0, 0);
+    const start = new Date(startOfMonth);
+    start.setDate(start.getDate() - startOfMonth.getDay());
+
+    const cells = [];
+    for (let i = 0; i < 42; i++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
+      cells.push(day);
+    }
+    return cells;
+  }
+
+  function getCalendarMonthLabel(date) {
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  function getHijriDayNumber(date) {
+    const day = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+      day: 'numeric'
+    }).format(date);
+    return day.replace(/[^\d]/g, '') || day;
+  }
+
+  function getHijriMonthMeta(date) {
+    const monthNumRaw = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+      month: 'numeric'
+    }).format(date);
+    const yearRaw = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+      year: 'numeric'
+    }).format(date);
+
+    const monthNum = parseInt(monthNumRaw, 10);
+    const yearNum = yearRaw.replace(/[^\d]/g, '');
+    const name = hijriMonths[monthNum - 1] || monthNumRaw;
+
+    return {
+      monthNum,
+      yearNum,
+      name,
+      key: `${monthNum}-${yearNum}`
+    };
+  }
+
+  function getHijriMonthsInGregorianMonth(monthDate) {
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const first = new Date(year, month, 1, 12, 0, 0, 0);
+    const last = new Date(year, month + 1, 0, 12, 0, 0, 0);
+    const months = [];
+    const seen = new Set();
+
+    for (let day = 1; day <= last.getDate(); day++) {
+      const date = new Date(year, month, day, 12, 0, 0, 0);
+      const meta = getHijriMonthMeta(date);
+      if (seen.has(meta.key)) continue;
+      seen.add(meta.key);
+      months.push(meta);
+    }
+
+    if (months.length === 0) {
+      months.push(getHijriMonthMeta(first));
+    }
+
+    return months;
+  }
+
+  function selectCalendarDate(day) {
+    const today = getBaseDay();
+    const target = normalizeDate(day);
+    const nextOffset = Math.round((target.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
+
+    if (nextOffset !== $dateOffset) {
+      dateSwipeDirection = nextOffset > $dateOffset ? 1 : -1;
+      dateOffset.set(nextOffset);
+    }
+
+    closeCalendar();
+  }
+
+  function handleCalendarKeydown(e) {
+    if (e.key === 'Escape' && calendarOpen) {
+      closeCalendar();
+    }
+  }
+
+  function shiftDate(days) {
+    if (!days) return;
+    dateSwipeDirection = days > 0 ? 1 : -1;
+    dateOffset.update((value) => value + days);
+  }
+
+  function jumpCalendarToToday() {
+    const today = getBaseDay();
+    const targetMonth = new Date(today.getFullYear(), today.getMonth(), 1, 12, 0, 0, 0);
+    const currentMonthIndex = (calendarMonth.getFullYear() * 12) + calendarMonth.getMonth();
+    const targetMonthIndex = (targetMonth.getFullYear() * 12) + targetMonth.getMonth();
+
+    if (targetMonthIndex !== currentMonthIndex) {
+      calendarMonthSwipeDirection = targetMonthIndex > currentMonthIndex ? 1 : -1;
+      calendarMonth = targetMonth;
+    }
+
+    if ($dateOffset !== 0) {
+      dateSwipeDirection = $dateOffset > 0 ? -1 : 1;
+      dateOffset.set(0);
+    }
+  }
+
+  function getOffsetLabel(offset) {
+    if (offset === 0) return 'Today';
+    if (offset === 1) return 'Tomorrow';
+    if (offset === -1) return 'Yesterday';
+    return offset > 0 ? `${offset} days ahead` : `${Math.abs(offset)} days back`;
+  }
+
+  function dateListSlide(node, { direction = 1, duration = 430 } = {}) {
+    const distance = node.getBoundingClientRect().width + 64;
+    return {
+      duration,
+      easing: cubicInOut,
+      css: (t, u) => `
+        transform: translate3d(${u * direction * distance}px, 0, 0);
+        opacity: ${0.18 + (0.82 * t)};
+      `
+    };
+  }
+
+  function calendarMonthSlide(node, { direction = 1, duration = 380 } = {}) {
+    const distance = node.getBoundingClientRect().width + 36;
+    return {
+      duration,
+      easing: cubicInOut,
+      css: (t, u) => `
+        transform: translate3d(${u * direction * distance}px, 0, 0);
+        opacity: ${0.35 + (0.65 * t)};
+      `
+    };
+  }
+
+  function getDateAnchor() {
+    return $prayerTimes.dhuhr || $prayerTimes.fajr || $currentTime;
+  }
+
+  $: selectedCalendarDate = getDateFromOffset($dateOffset);
+  $: todayCalendarDate = getDateFromOffset(0);
+  $: calendarCells = getCalendarCells(calendarMonth);
+  $: calendarHijriMonths = getHijriMonthsInGregorianMonth(calendarMonth);
+  $: selectedHijriMonth = getHijriMonthMeta(selectedCalendarDate);
+  $: activeCalendarHijriMonthKey = calendarHijriMonths.some((month) => month.key === selectedHijriMonth.key)
+    ? selectedHijriMonth.key
+    : calendarHijriMonths[0]?.key;
+
   // Get Hijri date
   const hijriMonths = [
     'Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani',
@@ -442,17 +693,12 @@
 
   function getHijriDate() {
     try {
-      let date = $currentTime;
-
-      // Islamic day begins at Maghrib - if past Maghrib, use next day for Hijri
-      if ($prayerTimes.maghrib && date >= $prayerTimes.maghrib) {
-        date = new Date(date.getTime() + 24 * 60 * 60 * 1000);
-      }
+      const date = getDateAnchor();
 
       // Get Hijri date parts
-      const day = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric' }).format(date);
-      const monthNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric' }).format(date);
-      const year = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { year: 'numeric' }).format(date);
+      const day = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric', timeZone: $location.timezone }).format(date);
+      const monthNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric', timeZone: $location.timezone }).format(date);
+      const year = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { year: 'numeric', timeZone: $location.timezone }).format(date);
 
       // Use our own month names (Android fallback)
       const monthName = hijriMonths[parseInt(monthNum) - 1] || monthNum;
@@ -466,20 +712,20 @@
     }
   }
 
-  // Recalculate when time or Maghrib changes (Islamic day starts at Maghrib)
-  $: hijriDate = ($currentTime, $prayerTimes.maghrib, getHijriDate());
+  $: hijriDate = ($currentTime, $prayerTimes.dhuhr, $dateOffset, getHijriDate());
 
   // Get Gregorian date
   function getGregorianDate() {
-    const date = $currentTime;
+    const date = getDateAnchor();
     return date.toLocaleDateString('en-US', {
+      timeZone: $location.timezone,
       weekday: 'long',
       day: 'numeric',
       month: 'long'
     });
   }
 
-  $: gregorianDate = getGregorianDate();
+  $: gregorianDate = ($currentTime, $prayerTimes.dhuhr, $dateOffset, getGregorianDate());
 
   // Calculate current position on 24-hour clock (relative to Maghrib)
   $: currentTimeAngle = (() => {
@@ -538,6 +784,8 @@
   // Day progress arc (from Maghrib to current time)
   $: dayProgressPath = currentTimeAngle > 1 ? getArcPath(0, currentTimeAngle, 38) : '';
 </script>
+
+<svelte:window on:keydown={handleCalendarKeydown} />
 
 <div class="app-container" on:click={toggleClock} role="button" tabindex="0" on:keydown={(e) => e.key === 'Enter' && toggleClock()}>
 
@@ -867,9 +1115,9 @@
           <div class="clock-center-arabic" in:fly={{ y: 8, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -8, duration: 200 }}>{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
           <div class="clock-center-english" in:fly={{ y: 6, duration: 500, delay: 200, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
         {/key}
-        <div class="clock-center-countdown">{formatCountdown($countdown)}</div>
-        {#key $currentPrayer.next}
-          <div class="clock-center-next" in:fly={{ y: 4, duration: 500, delay: 250, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>until {prayerNames[$currentPrayer.next]?.en}</div>
+        <div class="clock-center-countdown">{formatCountdown($todayCountdown)}</div>
+        {#key $todayCurrentPrayer.next}
+          <div class="clock-center-next" in:fly={{ y: 4, duration: 500, delay: 250, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>until {prayerNames[$todayCurrentPrayer.next]?.en}</div>
         {/key}
       </div>
 
@@ -1128,38 +1376,149 @@
 
         <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
           <span class="divider-line"></span>
-          <span class="divider-countdown">{formatCountdown($countdown)}</span>
+          <span class="divider-countdown">{formatCountdown($todayCountdown)}</span>
           <span class="divider-line"></span>
         </div>
 
         <div class="next-prayer" in:fly={{ y: 12, duration: 400, delay: 250 }}>
           <span class="next-label">Next</span>
-          {#key $currentPrayer.next}
-            <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{prayerNames[$currentPrayer.next]?.en}</span>
-            <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($prayerTimes[$currentPrayer.next])}</span>
+          {#key $todayCurrentPrayer.next}
+            <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{prayerNames[$todayCurrentPrayer.next]?.en}</span>
+            <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($todayPrayerTimes[$todayCurrentPrayer.next])}</span>
           {/key}
         </div>
 
         <!-- All prayer times -->
-        <div class="all-times" in:fly={{ y: 20, duration: 500, delay: 320 }}>
-          {#each prayerListOrder as prayer}
-            {@const isActive = $currentPrayer.current === prayer}
-            <div class="time-row" class:active={isActive}>
-              <span class="time-name">{prayerNames[prayer]?.en}</span>
-              <span class="time-dots"></span>
-              <span class="time-value">{formatTime($prayerTimes[prayer])}</span>
+        <div class="all-times-stage">
+          {#key $dateOffset}
+            <div
+              class="all-times"
+              in:dateListSlide={{ direction: dateSwipeDirection > 0 ? 1 : -1, duration: 420 }}
+              out:dateListSlide={{ direction: dateSwipeDirection > 0 ? -1 : 1, duration: 420 }}
+            >
+              {#each prayerListOrder as prayer}
+                {@const isActive = $currentPrayer.current === prayer}
+                <div class="time-row" class:active={isActive}>
+                  <span class="time-name">{prayerNames[prayer]?.en}</span>
+                  <span class="time-dots"></span>
+                  <span class="time-value">{formatTime($prayerTimes[prayer])}</span>
+                </div>
+              {/each}
             </div>
-          {/each}
+          {/key}
         </div>
       </div>
     {/if}
 
     <!-- Dates at bottom (both views) -->
     <div class="dates-row" class:blurred={overlayOpen}>
-      <span class="date-hijri">{hijriDate}</span>
-      <span class="date-separator">·</span>
-      <span class="date-gregorian">{gregorianDate}</span>
+      <button class="date-nav date-nav-prev" type="button" aria-label="Previous day" on:click|stopPropagation={() => shiftDate(-1)}>
+        <svg class="date-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15 5.5 L8.5 12 L15 18.5" />
+        </svg>
+      </button>
+
+      <button class="date-core" type="button" aria-label="Open calendar" on:click|stopPropagation={openCalendar}>
+        <span class="date-offset">{getOffsetLabel($dateOffset)}</span>
+        <div class="date-line">
+          <span class="date-hijri">{hijriDate}</span>
+          <span class="date-separator">·</span>
+          <span class="date-gregorian">{gregorianDate}</span>
+        </div>
+      </button>
+
+      <button class="date-nav date-nav-next" type="button" aria-label="Next day" on:click|stopPropagation={() => shiftDate(1)}>
+        <svg class="date-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 5.5 L15.5 12 L9 18.5" />
+        </svg>
+      </button>
     </div>
+
+    {#if calendarOpen}
+      <button
+        class="calendar-backdrop"
+        type="button"
+        aria-label="Close calendar"
+        on:click|stopPropagation={closeCalendarToHome}
+        transition:fade={{ duration: 180 }}
+      ></button>
+
+      <div
+        class="calendar-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Choose date"
+      >
+        <div
+          class="calendar-sheet"
+          on:touchstart={handleCalendarTouchStart}
+          on:touchend={handleCalendarTouchEnd}
+          transition:scale={{ duration: 260, start: 0.96, opacity: 0 }}
+        >
+          <div class="calendar-header">
+            <button class="calendar-month-nav" type="button" aria-label="Previous month" on:click|stopPropagation={() => shiftCalendarMonth(-1)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 5.5 L8.5 12 L15 18.5" />
+              </svg>
+            </button>
+            <div class="calendar-month-titles">
+              <div class="calendar-month-label">{getCalendarMonthLabel(calendarMonth)}</div>
+              <div class="calendar-hijri-months">
+                {#each calendarHijriMonths as month}
+                  <span class="calendar-hijri-month" class:active={month.key === activeCalendarHijriMonthKey}>
+                    {month.name}
+                  </span>
+                {/each}
+              </div>
+            </div>
+            <button class="calendar-month-nav" type="button" aria-label="Next month" on:click|stopPropagation={() => shiftCalendarMonth(1)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 5.5 L15.5 12 L9 18.5" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="calendar-grid-stage">
+            {#key `${calendarMonth.getFullYear()}-${calendarMonth.getMonth()}`}
+              <div
+                class="calendar-grid-sheet"
+                in:calendarMonthSlide={{ direction: calendarMonthSwipeDirection > 0 ? 1 : -1, duration: 360 }}
+                out:calendarMonthSlide={{ direction: calendarMonthSwipeDirection > 0 ? -1 : 1, duration: 320 }}
+              >
+                <div class="calendar-weekdays">
+                  {#each weekdayLabels as label}
+                    <span>{label}</span>
+                  {/each}
+                </div>
+
+                <div class="calendar-grid">
+                  {#each calendarCells as cell}
+                    {@const inMonth = cell.getMonth() === calendarMonth.getMonth()}
+                    {@const isSelected = isSameDay(cell, selectedCalendarDate)}
+                    {@const isToday = isSameDay(cell, todayCalendarDate)}
+                    <button
+                      class="calendar-day"
+                      class:out-month={!inMonth}
+                      class:selected={isSelected}
+                      class:today={isToday}
+                      type="button"
+                      on:click|stopPropagation={() => selectCalendarDate(cell)}
+                    >
+                      <span class="calendar-day-greg">{cell.getDate()}</span>
+                      <span class="calendar-day-hijri">{getHijriDayNumber(cell)}</span>
+                    </button>
+                  {/each}
+                </div>
+              </div>
+            {/key}
+          </div>
+
+          <button class="calendar-today" type="button" on:click|stopPropagation={jumpCalendarToToday}>
+            Back To Today
+          </button>
+        </div>
+      </div>
+    {/if}
 
 
   </div>
@@ -1673,16 +2032,25 @@
   }
 
   /* All prayer times list */
-  .all-times {
+  .all-times-stage {
     margin-top: clamp(1rem, 3vh, 2.5rem);
     margin-bottom: clamp(2rem, 5vh, 3.5rem);
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.5rem, 1.5vh, 1rem);
     width: 100%;
     max-width: min(320px, 85vw);
     margin-left: auto;
     margin-right: auto;
+    min-height: clamp(11.2rem, 22vh, 14rem);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .all-times {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1.5vh, 1rem);
+    justify-content: flex-start;
   }
 
   .time-row {
@@ -1752,13 +2120,310 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.65rem;
     transition: filter 0.3s ease-out;
+  }
+
+  .date-nav {
+    width: clamp(3.2rem, 9.2vw, 4rem);
+    height: clamp(3.2rem, 9.2vw, 4rem);
+    border-radius: 999px;
+    border: 1px solid rgba(var(--theme-text-rgb), 0.16);
+    background: rgba(var(--theme-text-rgb), 0.04);
+    color: rgba(var(--theme-text-rgb), 0.68);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.24s ease;
+  }
+
+  .date-nav-icon {
+    width: clamp(1.58rem, 4.7vw, 1.95rem);
+    height: clamp(1.58rem, 4.7vw, 1.95rem);
+    display: block;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+
+  .date-nav:active {
+    transform: scale(0.96);
+  }
+
+  .date-core {
+    min-width: min(250px, 72vw);
+    border: 1px solid rgba(var(--theme-accent-rgb), 0.18);
+    border-radius: 999px;
+    background: linear-gradient(
+      120deg,
+      rgba(var(--theme-accent-rgb), 0.08),
+      rgba(var(--theme-text-rgb), 0.03)
+    );
+    padding: 0.3rem 0.8rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.12rem;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: border-color 0.25s ease, transform 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    color: inherit;
+  }
+
+  .date-core:active {
+    transform: scale(0.99);
+  }
+
+  .date-core:hover {
+    border-color: rgba(var(--theme-accent-rgb), 0.32);
+  }
+
+  .date-offset {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(var(--theme-accent-bright-rgb), 0.56);
+  }
+
+  .calendar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(4, 6, 14, 0.22);
+    border: 0;
+    backdrop-filter: blur(2px);
+  }
+
+  .calendar-dialog {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.4rem, 4vh, 2.5rem) clamp(1.4rem, 6vw, 3rem);
+    background:
+      radial-gradient(circle at 50% 35%, rgba(var(--theme-accent-rgb), 0.12), transparent 60%),
+      linear-gradient(180deg, rgba(var(--theme-text-rgb), 0.06), rgba(var(--theme-text-rgb), 0.03));
+    backdrop-filter: blur(18px) saturate(125%);
+    z-index: 1201;
+    pointer-events: none;
+  }
+
+  .calendar-sheet {
+    width: min(500px, 86vw);
+    min-height: min(74vh, 660px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.9rem, 2vh, 1.2rem);
+    pointer-events: auto;
+  }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .calendar-month-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.3rem, 3.7vw, 1.9rem);
+    letter-spacing: 0.06em;
+    color: rgba(var(--theme-accent-bright-rgb), 0.9);
+  }
+
+  .calendar-month-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.12rem;
+  }
+
+  .calendar-hijri-months {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: min(72vw, 360px);
+  }
+
+  .calendar-hijri-month {
+    font-family: 'Amiri', serif;
+    font-size: clamp(0.74rem, 2.1vw, 0.88rem);
+    letter-spacing: 0.04em;
+    color: rgba(var(--theme-text-rgb), 0.5);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+  }
+
+  .calendar-hijri-month.active {
+    color: rgba(var(--theme-accent-rgb), 0.82);
+    text-shadow: 0 0 14px rgba(var(--theme-accent-rgb), 0.22);
+  }
+
+  .calendar-month-nav {
+    width: clamp(2.35rem, 7vw, 2.9rem);
+    height: clamp(2.35rem, 7vw, 2.9rem);
+    border-radius: 999px;
+    border: 1px solid rgba(var(--theme-text-rgb), 0.12);
+    background: rgba(var(--theme-text-rgb), 0.08);
+    color: rgba(var(--theme-text-rgb), 0.72);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  .calendar-month-nav:active {
+    transform: scale(0.96);
+  }
+
+  .calendar-month-nav svg {
+    width: 1.06rem;
+    height: 1.06rem;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+
+  .calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .calendar-weekdays span {
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(0.62rem, 1.8vw, 0.76rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(var(--theme-text-rgb), 0.42);
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+    gap: clamp(0.42rem, 1.4vw, 0.62rem);
+    justify-items: center;
+  }
+
+  .calendar-grid-stage {
+    width: 100%;
+    min-height: clamp(21rem, 54vh, 25rem);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calendar-grid-sheet {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .calendar-day {
+    width: clamp(2.45rem, 10.5vw, 3.3rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--theme-text-rgb), 0.09);
+    background: rgba(var(--theme-text-rgb), 0.09);
+    color: rgba(var(--theme-text-rgb), 0.78);
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(0.85rem, 2.4vw, 1rem);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    transition: all 0.22s ease;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.05rem;
+  }
+
+  .calendar-day-greg {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(0.84rem, 2.3vw, 1rem);
+    line-height: 1;
+  }
+
+  .calendar-day-hijri {
+    font-family: 'Amiri', serif;
+    font-size: clamp(0.5rem, 1.5vw, 0.62rem);
+    line-height: 1;
+    color: rgba(var(--theme-accent-rgb), 0.55);
+  }
+
+  .calendar-day.out-month {
+    color: rgba(var(--theme-text-rgb), 0.3);
+    background: transparent;
+    border-color: rgba(var(--theme-text-rgb), 0.04);
+  }
+
+  .calendar-day.out-month .calendar-day-hijri {
+    color: rgba(var(--theme-text-rgb), 0.22);
+  }
+
+  .calendar-day.today {
+    border-color: rgba(var(--theme-accent-rgb), 0.45);
+    color: rgba(var(--theme-accent-bright-rgb), 0.92);
+  }
+
+  .calendar-day.selected {
+    border-color: rgba(var(--theme-accent-rgb), 0.7);
+    background: radial-gradient(circle at 35% 30%, rgba(var(--theme-accent-bright-rgb), 0.4), rgba(var(--theme-accent-rgb), 0.27));
+    color: rgba(var(--theme-accent-bright-rgb), 1);
+    box-shadow: 0 0 30px rgba(var(--theme-accent-rgb), 0.3);
+  }
+
+  .calendar-day.selected .calendar-day-hijri {
+    color: rgba(var(--theme-accent-bright-rgb), 0.92);
+  }
+
+  .calendar-today {
+    margin-top: 0.4rem;
+    min-width: min(320px, 72vw);
+    border-radius: 999px;
+    border: 1px solid rgba(var(--theme-accent-rgb), 0.24);
+    background: linear-gradient(
+      120deg,
+      rgba(var(--theme-accent-rgb), 0.12),
+      rgba(var(--theme-text-rgb), 0.05)
+    );
+    color: rgba(var(--theme-accent-bright-rgb), 0.9);
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(0.68rem, 1.8vw, 0.8rem);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 0.66rem 1.2rem;
+  }
+
+  .date-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
   }
 
   .date-hijri {
     font-family: 'Amiri', serif;
-    font-size: 0.8rem;
+    font-size: 0.74rem;
     color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
 
@@ -1768,7 +2433,7 @@
 
   .date-gregorian {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.35);
   }
@@ -2031,6 +2696,16 @@
     .clock-center-countdown {
       font-size: 1rem;
     }
+
+    .date-nav {
+      width: 2.95rem;
+      height: 2.95rem;
+    }
+
+    .date-nav-icon {
+      width: 1.42rem;
+      height: 1.42rem;
+    }
   }
 
   @media (max-width: 320px) {
@@ -2062,6 +2737,16 @@
     .clock-center-english {
       font-size: 0.7rem;
     }
+
+    .date-nav {
+      width: 2.7rem;
+      height: 2.7rem;
+    }
+
+    .date-nav-icon {
+      width: 1.28rem;
+      height: 1.28rem;
+    }
   }
 
   @media (max-height: 700px) {
@@ -2069,20 +2754,42 @@
       margin: 1.25rem 0;
     }
 
-    .all-times {
+    .all-times-stage {
       margin-top: 1.5rem;
       margin-bottom: 2.5rem;
+      min-height: 10.4rem;
+    }
+
+    .all-times {
       gap: 0.4rem;
     }
 
     .dates-row {
       bottom: 1rem;
     }
+
+    .date-core {
+      padding: 0.24rem 0.68rem 0.32rem;
+    }
+
+    .date-nav {
+      width: 2.9rem;
+      height: 2.9rem;
+    }
+
+    .date-nav-icon {
+      width: 1.38rem;
+      height: 1.38rem;
+    }
   }
 
   @media (max-height: 600px) {
-    .all-times {
+    .all-times-stage {
       margin-top: 1rem;
+      min-height: 9.4rem;
+    }
+
+    .all-times {
       gap: 0.4rem;
     }
 
@@ -2092,6 +2799,29 @@
 
     .time-value {
       font-size: 0.8rem;
+    }
+
+    .date-nav {
+      width: 2.45rem;
+      height: 2.45rem;
+    }
+
+    .date-nav-icon {
+      width: 1.14rem;
+      height: 1.14rem;
+    }
+
+    .date-core {
+      min-width: min(228px, 72vw);
+      padding: 0.2rem 0.6rem 0.28rem;
+    }
+
+    .date-hijri {
+      font-size: 0.66rem;
+    }
+
+    .date-gregorian {
+      font-size: 0.62rem;
     }
   }
 
