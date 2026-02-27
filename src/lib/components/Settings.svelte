@@ -42,6 +42,16 @@
   let fajrAngle = 18;
   let ishaAngle = 17;
   let showCustom = false;
+  let qiblaPermissionNote = '';
+
+  function emitQiblaPermission(status) {
+    if (typeof window === 'undefined') return;
+    try {
+      window.dispatchEvent(new CustomEvent('athan:qibla-permission', { detail: { status } }));
+    } catch (error) {
+      // Ignore event dispatch issues; UI state is source of truth.
+    }
+  }
 
   function open() {
     isOpen = true;
@@ -85,6 +95,42 @@
       localStorage.setItem('athan-method', selectedMethod);
       localStorage.setItem('athan-angles', JSON.stringify({ fajr: fajrAngle, isha: ishaAngle }));
     }
+  }
+
+  async function toggleQiblaIndicator() {
+    qiblaPermissionNote = '';
+
+    // Turning off never needs a permission flow.
+    if ($clockIndicators.qibla) {
+      clockIndicators.toggle('qibla');
+      return;
+    }
+
+    // iOS compass permission flow: ask at toggle time.
+    if (
+      typeof window !== 'undefined'
+      && window.DeviceOrientationEvent
+      && typeof window.DeviceOrientationEvent.requestPermission === 'function'
+    ) {
+      try {
+        const permission = await window.DeviceOrientationEvent.requestPermission();
+        if (permission === 'granted') {
+          clockIndicators.toggle('qibla');
+          emitQiblaPermission('granted');
+        } else {
+          qiblaPermissionNote = 'Compass permission was denied. Enable it in Safari settings to use Qibla.';
+          emitQiblaPermission('denied');
+        }
+      } catch (error) {
+        qiblaPermissionNote = 'Could not request compass permission right now.';
+        emitQiblaPermission('denied');
+      }
+      return;
+    }
+
+    // Non-iOS browsers usually do not require an explicit permission prompt.
+    clockIndicators.toggle('qibla');
+    emitQiblaPermission('granted');
   }
 
   function handleKeydown(e) {
@@ -235,7 +281,7 @@
         <button
           class="indicator-toggle"
           class:active={$clockIndicators.qibla}
-          on:click={() => clockIndicators.toggle('qibla')}
+          on:click={toggleQiblaIndicator}
           type="button"
         >
           <span class="indicator-name">Qibla</span>
@@ -289,6 +335,9 @@
       </div>
       {#if $clockIndicators.qibla}
         <p class="indicator-note">Qibla is based on your selected city—we never track your live location. May be inaccurate within Makkah or while travelling.</p>
+      {/if}
+      {#if qiblaPermissionNote}
+        <p class="indicator-note">{qiblaPermissionNote}</p>
       {/if}
     </div>
 

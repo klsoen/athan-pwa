@@ -41,7 +41,7 @@ export const settingsOpen = writable(false);
 // Max 3 arcs can be enabled at once
 const defaultIndicators = {
   sunrise: true,        // Sunrise marker (default on)
-  qibla: true,          // Qibla compass needle (default on)
+  qibla: false,         // Qibla compass needle (default off)
   lastThird: true,      // Last third of night (default on)
   firstThirdEnd: true,  // End of first third (Hanbali Isha) - diamond only
   fridayDua: true,      // Friday Asr-Maghrib (only shows on Fridays)
@@ -338,4 +338,3 @@ export const prayerNames = {
   maghrib: { en: 'Maghrib', ar: 'المغرب' },
   isha: { en: 'Isha', ar: 'العشاء' }
 };
-
