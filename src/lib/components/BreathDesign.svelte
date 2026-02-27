@@ -765,13 +765,6 @@
 
   // Friday Dua arc (same radius as Last Third)
   $: fridayDuaArcPath = fridayDuaTime ? getArcPath(fridayDuaTime.start, fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360, 33) : '';
-  $: fridayDuaLabelPos = (() => {
-    if (!fridayDuaTime) return { x: 25, y: 75 };
-    const endAngle = fridayDuaTime.end > fridayDuaTime.start ? fridayDuaTime.end : 360;
-    const arcSpan = endAngle - fridayDuaTime.start;
-    const labelAngle = (fridayDuaTime.start + (arcSpan / 2)) % 360;
-    return getPosition(labelAngle, 48);
-  })();
 
   // Qaylula arc (same radius as Last Third)
   $: qaylulaArcPath = qaylulaTime ? getArcPath(qaylulaTime.start, qaylulaTime.end, 33) : '';
@@ -1104,16 +1097,6 @@
           </div>
         {/if}
 
-        <!-- Friday Dua label -->
-        {#if $clockIndicators.fridayDua && fridayDuaTime}
-          <div
-            class="clock-label friday-dua"
-            class:active={isInFridayDua}
-            style="left: {fridayDuaLabelPos.x}%; top: {fridayDuaLabelPos.y}%;"
-          >
-            <span class="clock-label-name">Jumu'ah&nbsp;Dua</span>
-          </div>
-        {/if}
       </div>
 
       <!-- Center info in clock mode -->
@@ -2532,17 +2515,6 @@
     color: var(--theme-accent-bright);
     font-weight: 400;
     text-shadow: 0 0 10px rgba(var(--theme-accent-rgb), 0.4);
-  }
-
-  /* Friday Dua label */
-  .clock-label.friday-dua .clock-label-name {
-    color: rgba(var(--theme-accent-rgb), 0.5);
-    font-size: 0.55rem;
-  }
-
-  .clock-label.friday-dua.active .clock-label-name {
-    color: rgba(var(--theme-accent-bright-rgb), 0.95);
-    text-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.5);
   }
 
   /* Center content in clock mode */
