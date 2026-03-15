@@ -469,9 +469,12 @@
 
 
   function formatCountdown(cd) {
-    if (cd.hours > 0) return `${cd.hours}h ${cd.minutes}m`;
-    if (cd.minutes > 0) return `${cd.minutes}m ${cd.seconds}s`;
-    return `${cd.seconds}s`;
+    const h = String(cd.hours).padStart(2, '0');
+    const m = String(cd.minutes).padStart(2, '0');
+    const s = String(Math.max(0, cd.seconds)).padStart(2, '0');
+    if (cd.hours > 0) return `${h}hr ${m}m ${s}s`;
+    if (cd.minutes > 0) return `${m}m ${s}s`;
+    return `${s}s`;
   }
 
   function formatTime(date) {
@@ -2010,6 +2013,8 @@
     font-weight: 200;
     color: rgba(var(--theme-accent-rgb), 0.8);
     letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   /* Next prayer */
@@ -2050,7 +2055,7 @@
     max-width: min(320px, 85vw);
     margin-left: auto;
     margin-right: auto;
-    min-height: clamp(11.2rem, 22vh, 14rem);
+    min-height: clamp(15rem, 30vh, 18rem);
     position: relative;
     overflow: hidden;
   }
@@ -2065,9 +2070,10 @@
   }
 
   .time-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   .time-name {
@@ -2077,12 +2083,11 @@
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    width: 80px;
-    flex-shrink: 0;
+    text-align: right;
+    white-space: nowrap;
   }
 
   .time-dots {
-    flex: 1;
     height: 1px;
     background: linear-gradient(90deg,
       rgba(var(--theme-text-rgb), 0.1) 0%,
@@ -2098,9 +2103,8 @@
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
-    text-align: right;
+    text-align: left;
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .time-row.active .time-name {
@@ -2759,7 +2763,7 @@
     .all-times-stage {
       margin-top: 1.5rem;
       margin-bottom: 2.5rem;
-      min-height: 10.4rem;
+      min-height: 13rem;
     }
 
     .all-times {
@@ -2794,7 +2798,7 @@
   @media (max-height: 600px) {
     .all-times-stage {
       margin-top: 1rem;
-      min-height: 9.4rem;
+      min-height: 11rem;
     }
 
     .all-times {
