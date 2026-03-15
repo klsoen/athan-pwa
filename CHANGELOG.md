@@ -1,123 +1,120 @@
 # Changelog
 
-## v2.4.0 — 2026-03-15
-### Added
+Versioning: `MAJOR.FEATURE.UPDATE.FIX`
+- **MAJOR** — complete overhauls or rebrands
+- **FEATURE** — new functionality added
+- **UPDATE** — meaningful changes to existing features
+- **FIX** — small corrections, tweaks, patches
+
+---
+
+## v2.4.0.1 — 2026-03-15
+### Fix
+- Updated `azanicn.png` settings logo with new version
+- Switched changelog versioning from 3-point to 4-point (`MAJOR.FEATURE.UPDATE.FIX`)
+
+---
+
+## v2.4.0.0 — 2026-03-15
+### Feature
 - Husky pre-commit hook: blocks any commit where `CHANGELOG.md` was not staged/updated
 - `prepare` script in `package.json` so hooks install automatically for all contributors after `npm install`
 - Changelog rule added to `CLAUDE.md` so Claude always updates the changelog before committing
 
 ---
 
-## v2.3.4 — 2026-03-15
-### Updated
-- Replaced `azanicn.png` (settings about logo) with updated version provided
-- Moved new file from project root to `static/images/azanicn.png`
-- Removed leftover `azanicn.png` from project root
+## v2.3.0.3 — 2026-03-15
+### Fix
+- Updated `azanicn.png` settings logo with new version provided
+- Removed leftover file from project root
 
 ---
 
-## v2.3.3 — 2026-03-15
-### Changed
+## v2.3.0.2 — 2026-03-15
+### Fix
 - Moved countdown display to appear **below** "Next [prayer] [time]" line
-- Previous order: countdown → next prayer
-- New order: next prayer → countdown
+- Previous order: countdown → next prayer / New order: next prayer → countdown
 
 ---
 
-## v2.3.2 — 2026-03-15 (`c56bd8c`)
-### Fixed
-- White dot glow on the clock was being cropped when near the top during startup animation
-- SVG filter `softGlow` switched from `filterUnits="objectBoundingBox"` (percentage-based) to `filterUnits="userSpaceOnUse"` with absolute bounds `x="-30" y="-30" width="160" height="160"`
+## v2.3.0.1 — 2026-03-15 (`c56bd8c`)
+### Fix
+- White dot glow on the clock was being cropped near the top during startup animation
+- SVG filter `softGlow` switched to `filterUnits="userSpaceOnUse"` with absolute bounds `x="-30" y="-30" width="160" height="160"`
 
 ---
 
-## v2.3.1 — 2026-03-15 (`df190a9`)
-### Fixed
-- Main page was stuck to the top of the screen — replaced `position: absolute; top: 50%` on `.prayer-display` with flex column centering (`justify-content: center`) on `.home-view`
-- Bottom padding added (`5.5rem`) to account for the absolutely-positioned `.dates-row`
-- Prayer list was stretching/contracting vertically on tall phones — removed all `clamp(x, Yvh, z)` values from `.all-times-stage`, replaced with fixed `min-height: 15rem` and fixed margins
+## v2.3.0.0 — 2026-03-15 (`df190a9`, `b69e460`)
+### Feature
+- About section added at the bottom of Settings: logo, app name, tagline, GitHub button
 
-### Changed
+### Update
 - Settings about logo enlarged from `2rem` → `3rem`
+- Main page centered using flex column layout instead of absolute positioning
+- Prayer list fixed sizing — removed `clamp(Yvh)` values to prevent vertical stretching on tall phones
 
 ---
 
-## v2.3.0 — 2026-03-15 (`b69e460`)
-### Added
-- About section at the bottom of the Settings panel
-  - Logo (`/images/azanicn.png`) on the left
-  - App name "Azan" and tagline "Beautiful Islamic prayer times" in center
-  - GitHub button linking to the repo on the right
-
----
-
-## v2.2.2 — 2026-03-15 (`dd4e7ca`)
-### Fixed
+## v2.2.0.2 — 2026-03-15 (`dd4e7ca`)
+### Fix
 - Countdown unit label corrected from "hr" → "h" (e.g. `01h 23m`)
 
 ---
 
-## v2.2.1 — 2026-03-15 (`afe8b18`)
-### Changed
+## v2.2.0.1 — 2026-03-15 (`afe8b18`)
+### Fix
 - Countdown no longer shows seconds when hours remain
-  - Format when hours > 0: `HHh MMm`
-  - Format when under an hour: `MMm SSs`
+  - Hours remaining: `HHh MMm`
+  - Under an hour: `MMm SSs`
 
 ---
 
-## v2.2.0 — 2026-03-15 (`d059f72`)
-### Added
-- Prayer row state styling: past = greyed, active = gold (existing), future = whiter
+## v2.2.0.0 — 2026-03-15 (`d059f72`, `627f2c2`)
+### Feature
+- Prayer row state styling: past = greyed, active = gold, future = whiter
 
-### Fixed
-- Prayer list lines are now equal length on both sides
-  - Used CSS Grid `display: contents` on `.time-row` so all rows share a single grid on `.all-times`
-  - Columns sized with `max-content` so the widest name (SUNRISE) sets the column width for all rows
-  - Corrected: first attempt used fixed pixel widths (`width: 100px`, `width: 72px`) which clipped times like "12:31 PM"
-  - Corrected: line after Maghrib was shorter because each `.time-row` had been its own independent grid
-- Time values right-aligned in prayer list
-- Countdown no longer jumps as digits change
-  - Zero-padded with `String.padStart(2, '0')`
-  - `font-variant-numeric: tabular-nums` applied
-  - `white-space: nowrap` applied
-
-### Changed
-- Next prayer label: "Next" centered, prayer name centered, time balanced on right
-  - Corrected: first attempt used `grid-template-columns: 1fr auto 1fr` which made outer margins too wide — reverted to `display: flex` with `gap: 0.6rem`
+### Update
+- Prayer list lines equal length on both sides using CSS Grid `display: contents` on `.time-row`
+  - Fixed: first attempt used fixed pixel widths which clipped times like "12:31 PM"
+  - Fixed: Maghrib line was shorter because each row was its own independent grid
+- Time values right-aligned
+- Countdown fixed-width — zero-padded, `tabular-nums`, `white-space: nowrap`
+- Next prayer layout: "Next" label left, name centered, time right
+  - Fixed: `grid-template-columns: 1fr auto 1fr` made margins too wide — reverted to flex with `gap: 0.6rem`
 
 ---
 
-## v2.1.0 — 2026-03-15 (`ee644f8`)
-### Changed
-- Replaced all app icons using new Azan branding
-  - `azanapp.png` → source for home screen icons (`icon-192.png`, `icon-512.png`)
-  - `azanfavicon.png` → source for browser favicon (`favicon.png`)
-  - Icons regenerated using `sips`
-- Created `static/images/` directory and moved all source images there
+## v2.1.0.0 — 2026-03-15 (`ee644f8`)
+### Feature
+- Replaced all app icons with new Azan branding
+  - `azanapp.png` → `icon-192.png`, `icon-512.png`
+  - `azanfavicon.png` → `favicon.png`
+  - Icons regenerated with `sips`
+- Created `static/images/` directory, moved all source images there
 
 ---
 
-## v2.0.1 — 2026-03-15
-### Fixed
-- `manifest.json` and `app.html` had `!Azan` (kept `!` prefix by mistake from prior branding) — removed `!` from both
+## v2.0.0.1 — 2026-03-15
+### Fix
+- `manifest.json` and `app.html` had `!Azan` — removed the `!` prefix left over from prior branding
 
 ---
 
-## v2.0.0 — 2026-03-15 (`2912590`)
-### Changed — Complete rebrand from Athan to Azan
+## v2.0.0.0 — 2026-03-15 (`2912590`)
+### Major — Complete rebrand from Athan to Azan
 - `package.json`: `name` → `azan-pwa`
 - `src/app.html`: `<title>` → `Azan`
 - `static/manifest.json`: `name` and `short_name` → `Azan`
-- `src/service-worker.js`: cache name → `azan-v1`
-- `src/lib/components/CitySelector.svelte`: all `localStorage` keys `athan-city` → `azan-city`
-- `src/lib/stores/prayer.js`: `athan-indicators` → `azan-indicators`, `athan-label-size` → `azan-label-size`
-- `src/lib/stores/theme.js`: `athan-theme` → `azan-theme`, `athan-theme-mode` → `azan-theme-mode`
-- `src/lib/components/Settings.svelte`: `athan-method` → `azan-method`, `athan-angles` → `azan-angles`, event `athan:qibla-permission` → `azan:qibla-permission`
-- `src/lib/components/BreathDesign.svelte`: event `athan:qibla-permission` → `azan:qibla-permission`
+- `src/service-worker.js`: cache → `azan-v1`
+- `CitySelector.svelte`: `localStorage` keys `athan-city` → `azan-city`
+- `prayer.js`: `athan-indicators` → `azan-indicators`, `athan-label-size` → `azan-label-size`
+- `theme.js`: `athan-theme` → `azan-theme`, `athan-theme-mode` → `azan-theme-mode`
+- `Settings.svelte`: `athan-method` → `azan-method`, `athan-angles` → `azan-angles`, event → `azan:qibla-permission`
+- `BreathDesign.svelte`: event → `azan:qibla-permission`
 
 ---
 
-## v1.0.0 — prior history
+## v1.0.0.0 — prior history
 
 | Commit | Description |
 |--------|-------------|
