@@ -24,6 +24,11 @@
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
+  // Design: Refined Islamic Minimalism
+  // Monochromatic gold (#d4af37) on deep black (#080808)
+  // Amiri for Arabic, Cormorant Garamond for English display, Outfit for UI
+  // Motion: Subtle, purposeful animations - no bouncing or excessive effects
+
   let calendarOpen = false;
 
   // Combined overlay state for blur
