@@ -1576,9 +1576,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 1.5rem;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    justify-content: center;
+    padding: max(1.5rem, env(safe-area-inset-top, 1.5rem)) 1.5rem max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
+    overflow: hidden;
   }
 
   .home-header {
@@ -1619,10 +1619,6 @@
 
   /* Main prayer display */
   .prayer-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     text-align: center;
     width: 100%;
     max-width: 320px;
@@ -2052,13 +2048,13 @@
 
   /* All prayer times list */
   .all-times-stage {
-    margin-top: clamp(1rem, 3vh, 2.5rem);
-    margin-bottom: clamp(2rem, 5vh, 3.5rem);
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
     width: 100%;
     max-width: min(320px, 85vw);
     margin-left: auto;
     margin-right: auto;
-    min-height: clamp(15rem, 30vh, 18rem);
+    min-height: 15rem;
     position: relative;
     overflow: hidden;
   }
@@ -2069,7 +2065,7 @@
     display: grid;
     grid-template-columns: max-content 1fr max-content;
     column-gap: 0.75rem;
-    row-gap: clamp(0.5rem, 1.5vh, 1rem);
+    row-gap: 0.75rem;
     align-content: flex-start;
     align-items: center;
   }
@@ -2788,8 +2784,8 @@
     }
 
     .all-times-stage {
-      margin-top: 1.5rem;
-      margin-bottom: 2.5rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
       min-height: 13rem;
     }
 

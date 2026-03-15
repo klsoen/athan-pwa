@@ -1042,9 +1042,9 @@
   }
 
   .about-logo {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.4rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.6rem;
     object-fit: cover;
   }
 
