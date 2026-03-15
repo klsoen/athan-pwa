@@ -310,8 +310,8 @@ export const lightThemes = {
 export const themes = { ...darkThemes };
 
 // Load saved settings
-const savedTheme = browser ? localStorage.getItem('athan-theme') : null;
-const savedMode = browser ? localStorage.getItem('athan-theme-mode') : null;
+const savedTheme = browser ? localStorage.getItem('azan-theme') : null;
+const savedMode = browser ? localStorage.getItem('azan-theme-mode') : null;
 const initialTheme = savedTheme && (darkThemes[savedTheme] || lightThemes[savedTheme]) ? savedTheme : 'gold';
 const initialMode = savedMode === 'light' ? 'light' : 'dark';
 
@@ -366,7 +366,7 @@ let currentMode = initialMode;
 currentThemeId.subscribe((themeId) => {
   if (!browser) return;
   currentId = themeId;
-  localStorage.setItem('athan-theme', themeId);
+  localStorage.setItem('azan-theme', themeId);
 
   const theme = getActiveTheme(themeId, currentMode);
   currentTheme.set(theme);
@@ -377,7 +377,7 @@ currentThemeId.subscribe((themeId) => {
 themeMode.subscribe((mode) => {
   if (!browser) return;
   currentMode = mode;
-  localStorage.setItem('athan-theme-mode', mode);
+  localStorage.setItem('azan-theme-mode', mode);
 
   const theme = getActiveTheme(currentId, mode);
   currentTheme.set(theme);

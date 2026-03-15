@@ -1,4 +1,4 @@
-# Athan PWA - Claude Code Instructions
+# Azan PWA - Claude Code Instructions
 
 ## UI/Frontend Changes
 

@@ -106,7 +106,7 @@
     location.set(cityData);
 
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('athan-city', JSON.stringify({ ...city, timezone }));
+      localStorage.setItem('azan-city', JSON.stringify({ ...city, timezone }));
     }
   }
 
@@ -131,7 +131,7 @@
 
   onMount(async () => {
     if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('athan-city');
+      const saved = localStorage.getItem('azan-city');
       if (saved) {
         const city = JSON.parse(saved);
         selectedCity = city;
@@ -139,7 +139,7 @@
         let timezone = city.timezone;
         if (!timezone) {
           timezone = await fetchTimezone(city.lat, city.lng);
-          localStorage.setItem('athan-city', JSON.stringify({ ...city, timezone }));
+          localStorage.setItem('azan-city', JSON.stringify({ ...city, timezone }));
         }
 
         location.set({

@@ -412,13 +412,13 @@
       compassPermission = 'unavailable';
     }
 
-    window.addEventListener('athan:qibla-permission', handleQiblaPermission);
+    window.addEventListener('azan:qibla-permission', handleQiblaPermission);
 
     return () => {
       mounted = false;
       clearInterval(breathInterval);
       stopCompass();
-      window.removeEventListener('athan:qibla-permission', handleQiblaPermission);
+      window.removeEventListener('azan:qibla-permission', handleQiblaPermission);
     };
   });
 

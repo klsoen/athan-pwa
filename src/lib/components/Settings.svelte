@@ -47,7 +47,7 @@
   function emitQiblaPermission(status) {
     if (typeof window === 'undefined') return;
     try {
-      window.dispatchEvent(new CustomEvent('athan:qibla-permission', { detail: { status } }));
+      window.dispatchEvent(new CustomEvent('azan:qibla-permission', { detail: { status } }));
     } catch (error) {
       // Ignore event dispatch issues; UI state is source of truth.
     }
@@ -92,8 +92,8 @@
 
   function saveSettings() {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('athan-method', selectedMethod);
-      localStorage.setItem('athan-angles', JSON.stringify({ fajr: fajrAngle, isha: ishaAngle }));
+      localStorage.setItem('azan-method', selectedMethod);
+      localStorage.setItem('azan-angles', JSON.stringify({ fajr: fajrAngle, isha: ishaAngle }));
     }
   }
 
@@ -141,8 +141,8 @@
 
   onMount(() => {
     if (typeof localStorage !== 'undefined') {
-      const savedMethod = localStorage.getItem('athan-method');
-      const savedAngles = localStorage.getItem('athan-angles');
+      const savedMethod = localStorage.getItem('azan-method');
+      const savedAngles = localStorage.getItem('azan-angles');
 
       if (savedMethod) {
         selectedMethod = savedMethod;

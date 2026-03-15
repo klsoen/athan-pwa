@@ -56,7 +56,7 @@ function createIndicatorsStore() {
   // Load from localStorage
   let initial = defaultIndicators;
   if (typeof localStorage !== 'undefined') {
-    const saved = localStorage.getItem('athan-indicators');
+    const saved = localStorage.getItem('azan-indicators');
     if (saved) {
       initial = { ...defaultIndicators, ...JSON.parse(saved) };
     }
@@ -71,14 +71,14 @@ function createIndicatorsStore() {
         const newState = { ...state, [key]: !state[key] };
         // Save to localStorage
         if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('athan-indicators', JSON.stringify(newState));
+          localStorage.setItem('azan-indicators', JSON.stringify(newState));
         }
         return newState;
       });
     },
     set: (value) => {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('athan-indicators', JSON.stringify(value));
+        localStorage.setItem('azan-indicators', JSON.stringify(value));
       }
       set(value);
     }
@@ -93,7 +93,7 @@ const defaultLabelSize = 'medium'; // 'small', 'medium', 'large'
 function createLabelSizeStore() {
   let initial = defaultLabelSize;
   if (typeof localStorage !== 'undefined') {
-    const saved = localStorage.getItem('athan-label-size');
+    const saved = localStorage.getItem('azan-label-size');
     if (saved) {
       initial = saved;
     }
@@ -105,7 +105,7 @@ function createLabelSizeStore() {
     subscribe,
     set: (value) => {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('athan-label-size', value);
+        localStorage.setItem('azan-label-size', value);
       }
       set(value);
     }
