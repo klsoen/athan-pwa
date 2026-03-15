@@ -472,9 +472,8 @@
     const h = String(cd.hours).padStart(2, '0');
     const m = String(cd.minutes).padStart(2, '0');
     const s = String(Math.max(0, cd.seconds)).padStart(2, '0');
-    if (cd.hours > 0) return `${h}hr ${m}m ${s}s`;
-    if (cd.minutes > 0) return `${m}m ${s}s`;
-    return `${s}s`;
+    if (cd.hours > 0) return `${h}hr ${m}m`;
+    return `${m}m ${s}s`;
   }
 
   function formatTime(date) {
