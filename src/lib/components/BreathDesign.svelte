@@ -1412,7 +1412,11 @@
             >
               {#each prayerListOrder as prayer}
                 {@const isActive = $currentPrayer.current === prayer}
-                <div class="time-row" class:active={isActive}>
+                {@const activeIndex = prayerListOrder.indexOf($currentPrayer.current)}
+                {@const thisIndex = prayerListOrder.indexOf(prayer)}
+                {@const isPast = thisIndex < activeIndex}
+                {@const isFuture = thisIndex > activeIndex}
+                <div class="time-row" class:active={isActive} class:past={isPast} class:future={isFuture}>
                   <span class="time-name">{prayerNames[prayer]?.en}</span>
                   <span class="time-dots"></span>
                   <span class="time-value">{formatTime($prayerTimes[prayer])}</span>
@@ -2019,13 +2023,10 @@
 
   /* Next prayer */
   .next-prayer {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    width: 100%;
-    max-width: min(320px, 85vw);
-    margin-left: auto;
-    margin-right: auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.6rem;
   }
 
   .next-label {
@@ -2035,14 +2036,12 @@
     color: rgba(var(--theme-text-rgb), 0.3);
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    text-align: left;
   }
 
   .next-name {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
     color: rgba(var(--theme-text-rgb), 0.6);
-    text-align: center;
   }
 
   .next-time {
@@ -2050,7 +2049,6 @@
     font-size: 0.85rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
-    text-align: right;
   }
 
   /* All prayer times list */
@@ -2069,17 +2067,16 @@
   .all-times {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.5rem, 1.5vh, 1rem);
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    column-gap: 0.75rem;
+    row-gap: clamp(0.5rem, 1.5vh, 1rem);
+    align-content: flex-start;
+    align-items: center;
   }
 
   .time-row {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
-    align-items: center;
-    gap: 0.75rem;
+    display: contents;
   }
 
   .time-name {
@@ -2089,7 +2086,6 @@
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    text-align: right;
     white-space: nowrap;
   }
 
@@ -2109,8 +2105,34 @@
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
-    text-align: left;
+    text-align: right;
     white-space: nowrap;
+  }
+
+  .time-row.past .time-name,
+  .time-row.past .time-value {
+    color: rgba(var(--theme-text-rgb), 0.25);
+  }
+
+  .time-row.past .time-dots {
+    background: linear-gradient(90deg,
+      rgba(var(--theme-text-rgb), 0.06) 0%,
+      rgba(var(--theme-text-rgb), 0.03) 50%,
+      rgba(var(--theme-text-rgb), 0.06) 100%
+    );
+  }
+
+  .time-row.future .time-name,
+  .time-row.future .time-value {
+    color: rgba(var(--theme-text-rgb), 0.85);
+  }
+
+  .time-row.future .time-dots {
+    background: linear-gradient(90deg,
+      rgba(var(--theme-text-rgb), 0.18) 0%,
+      rgba(var(--theme-text-rgb), 0.08) 50%,
+      rgba(var(--theme-text-rgb), 0.18) 100%
+    );
   }
 
   .time-row.active .time-name {
