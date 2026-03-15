@@ -689,11 +689,16 @@
 
   /* Theme grid */
   .theme-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 0.6rem;
     width: 100%;
     max-width: 320px;
+  }
+
+  .theme-grid > :global(*) {
+    width: calc((100% - 1.2rem) / 3);
   }
 
   .theme-card {
@@ -769,11 +774,16 @@
 
   /* Method grid */
   .method-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
     width: 100%;
-    max-width: 360px;
+    max-width: 320px;
+  }
+
+  .method-grid > :global(*) {
+    width: calc((100% - 0.5rem) / 2);
   }
 
   .method-card {
@@ -928,11 +938,16 @@
 
   /* Clock Indicators */
   .indicators-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
     width: 100%;
     max-width: 320px;
+  }
+
+  .indicators-grid > :global(*) {
+    width: calc((100% - 1rem) / 3);
   }
 
   .indicator-toggle {
@@ -1107,12 +1122,12 @@
 
   /* Responsive */
   @media (max-width: 360px) {
-    .method-grid {
-      grid-template-columns: 1fr;
+    .method-grid > :global(*) {
+      width: 100%;
     }
 
-    .indicators-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .indicators-grid > :global(*) {
+      width: calc((100% - 0.5rem) / 2);
     }
 
     .angles-row {

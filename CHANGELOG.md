@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.4.0.2 — 2026-03-16
+### Fix
+- Center orphan items in last row of theme, indicator, and calculation method grids
+- Match calculation method grid max-width to indicators grid (320px)
+
+---
+
 ## v2.4.0.1 — 2026-03-15
 ### Fix
 - Updated `azanicn.png` settings logo with new version
