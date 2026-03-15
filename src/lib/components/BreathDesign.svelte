@@ -417,13 +417,13 @@
       compassPermission = 'unavailable';
     }
 
-    window.addEventListener('athan:qibla-permission', handleQiblaPermission);
+    window.addEventListener('azan:qibla-permission', handleQiblaPermission);
 
     return () => {
       mounted = false;
       clearInterval(breathInterval);
       stopCompass();
-      window.removeEventListener('athan:qibla-permission', handleQiblaPermission);
+      window.removeEventListener('azan:qibla-permission', handleQiblaPermission);
     };
   });
 
@@ -474,9 +474,12 @@
 
 
   function formatCountdown(cd) {
-    if (cd.hours > 0) return `${cd.hours}h ${cd.minutes}m`;
-    if (cd.minutes > 0) return `${cd.minutes}m ${cd.seconds}s`;
-    return `${cd.seconds}s`;
+    const h = String(cd.hours).padStart(2, '0');
+    const m = String(cd.minutes).padStart(2, '0');
+    const s = String(Math.max(0, cd.seconds)).padStart(2, '0');
+    if (cd.hours > 0) return `${h}hr ${m}m ${s}s`;
+    if (cd.minutes > 0) return `${m}m ${s}s`;
+    return `${s}s`;
   }
 
   function formatTime(date) {
@@ -1414,7 +1417,11 @@
             >
               {#each prayerListOrder as prayer}
                 {@const isActive = $currentPrayer.current === prayer}
-                <div class="time-row" class:active={isActive}>
+                {@const activeIndex = prayerListOrder.indexOf($currentPrayer.current)}
+                {@const thisIndex = prayerListOrder.indexOf(prayer)}
+                {@const isPast = thisIndex < activeIndex}
+                {@const isFuture = thisIndex > activeIndex}
+                <div class="time-row" class:active={isActive} class:past={isPast} class:future={isFuture}>
                   <span class="time-name">{prayerNames[prayer]?.en}</span>
                   <span class="time-dots"></span>
                   <span class="time-value">{formatTime($prayerTimes[prayer])}</span>
@@ -2015,6 +2022,8 @@
     font-weight: 200;
     color: rgba(var(--theme-accent-rgb), 0.8);
     letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   /* Next prayer */
@@ -2022,7 +2031,7 @@
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
 
   .next-label {
@@ -2042,8 +2051,8 @@
 
   .next-time {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 300;
+    font-size: 0.85rem;
+    font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
   }
 
@@ -2055,7 +2064,7 @@
     max-width: min(320px, 85vw);
     margin-left: auto;
     margin-right: auto;
-    min-height: clamp(11.2rem, 22vh, 14rem);
+    min-height: clamp(15rem, 30vh, 18rem);
     position: relative;
     overflow: hidden;
   }
@@ -2063,16 +2072,16 @@
   .all-times {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.5rem, 1.5vh, 1rem);
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    column-gap: 0.75rem;
+    row-gap: clamp(0.5rem, 1.5vh, 1rem);
+    align-content: flex-start;
+    align-items: center;
   }
 
   .time-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: contents;
   }
 
   .time-name {
@@ -2082,12 +2091,10 @@
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    width: 80px;
-    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .time-dots {
-    flex: 1;
     height: 1px;
     background: linear-gradient(90deg,
       rgba(var(--theme-text-rgb), 0.1) 0%,
@@ -2105,7 +2112,32 @@
     font-variant-numeric: tabular-nums;
     text-align: right;
     white-space: nowrap;
-    flex-shrink: 0;
+  }
+
+  .time-row.past .time-name,
+  .time-row.past .time-value {
+    color: rgba(var(--theme-text-rgb), 0.25);
+  }
+
+  .time-row.past .time-dots {
+    background: linear-gradient(90deg,
+      rgba(var(--theme-text-rgb), 0.06) 0%,
+      rgba(var(--theme-text-rgb), 0.03) 50%,
+      rgba(var(--theme-text-rgb), 0.06) 100%
+    );
+  }
+
+  .time-row.future .time-name,
+  .time-row.future .time-value {
+    color: rgba(var(--theme-text-rgb), 0.85);
+  }
+
+  .time-row.future .time-dots {
+    background: linear-gradient(90deg,
+      rgba(var(--theme-text-rgb), 0.18) 0%,
+      rgba(var(--theme-text-rgb), 0.08) 50%,
+      rgba(var(--theme-text-rgb), 0.18) 100%
+    );
   }
 
   .time-row.active .time-name {
@@ -2764,7 +2796,7 @@
     .all-times-stage {
       margin-top: 1.5rem;
       margin-bottom: 2.5rem;
-      min-height: 10.4rem;
+      min-height: 13rem;
     }
 
     .all-times {
@@ -2799,7 +2831,7 @@
   @media (max-height: 600px) {
     .all-times-stage {
       margin-top: 1rem;
-      min-height: 9.4rem;
+      min-height: 11rem;
     }
 
     .all-times {

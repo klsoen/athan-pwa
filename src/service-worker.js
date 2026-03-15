@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = 'athan-v1';
+const CACHE_NAME = 'azan-v1';
 
 // Assets to cache immediately
 const PRECACHE_ASSETS = [
