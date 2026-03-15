@@ -843,7 +843,7 @@
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
-            <filter id="softGlow" x="-300%" y="-300%" width="700%" height="700%">
+            <filter id="softGlow" x="-30" y="-30" width="160" height="160" filterUnits="userSpaceOnUse">
               <feGaussianBlur stdDeviation="2" result="blur"/>
               <feMerge>
                 <feMergeNode in="blur"/>
