@@ -472,7 +472,7 @@
     const h = String(cd.hours).padStart(2, '0');
     const m = String(cd.minutes).padStart(2, '0');
     const s = String(Math.max(0, cd.seconds)).padStart(2, '0');
-    if (cd.hours > 0) return `${h}hr ${m}m`;
+    if (cd.hours > 0) return `${h}h ${m}m`;
     return `${m}m ${s}s`;
   }
 
