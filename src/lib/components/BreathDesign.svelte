@@ -2019,10 +2019,13 @@
 
   /* Next prayer */
   .next-prayer {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+    max-width: min(320px, 85vw);
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .next-label {
@@ -2032,19 +2035,22 @@
     color: rgba(var(--theme-text-rgb), 0.3);
     text-transform: uppercase;
     letter-spacing: 0.15em;
+    text-align: left;
   }
 
   .next-name {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
     color: rgba(var(--theme-text-rgb), 0.6);
+    text-align: center;
   }
 
   .next-time {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 300;
+    font-size: 0.85rem;
+    font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
+    text-align: right;
   }
 
   /* All prayer times list */
