@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#080808"/>
-
-  <!-- Single elegant crescent -->
-  <circle cx="16" cy="16" r="9" fill="#d4af37"/>
-  <circle cx="19.5" cy="13" r="7.5" fill="#080808"/>
-</svg>
