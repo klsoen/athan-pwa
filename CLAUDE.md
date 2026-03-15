@@ -26,6 +26,15 @@ This app follows a **Refined Islamic Minimalism** aesthetic:
 - `src/lib/stores/prayer.js` - Prayer time calculations and state
 - `src/app.css` - Global styles
 
+## Changelog Rule
+
+**Always update `CHANGELOG.md` before every commit — no exceptions.**
+
+- Read the current latest version at the top of the file
+- Increment appropriately: patch (`.x`) for fixes/small changes, minor (`x.0`) for new features, major for breaking changes
+- Add the new version block at the top of the file with today's date and a clear description of what changed, including any corrections made
+- Stage `CHANGELOG.md` along with the other changed files
+
 ## Technical Notes
 
 - Uses `adhan` library for prayer time calculations

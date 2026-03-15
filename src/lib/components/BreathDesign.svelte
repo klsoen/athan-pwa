@@ -848,7 +848,7 @@
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
-            <filter id="softGlow" x="-300%" y="-300%" width="700%" height="700%">
+            <filter id="softGlow" x="-30" y="-30" width="160" height="160" filterUnits="userSpaceOnUse">
               <feGaussianBlur stdDeviation="2" result="blur"/>
               <feMerge>
                 <feMergeNode in="blur"/>
@@ -1392,18 +1392,18 @@
           {/key}
         </div>
 
-        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
-          <span class="divider-line"></span>
-          <span class="divider-countdown">{formatCountdown($todayCountdown)}</span>
-          <span class="divider-line"></span>
-        </div>
-
         <div class="next-prayer" in:fly={{ y: 12, duration: 400, delay: 250 }}>
           <span class="next-label">Next</span>
           {#key $todayCurrentPrayer.next}
             <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{prayerNames[$todayCurrentPrayer.next]?.en}</span>
             <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($todayPrayerTimes[$todayCurrentPrayer.next])}</span>
           {/key}
+        </div>
+
+        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
+          <span class="divider-line"></span>
+          <span class="divider-countdown">{formatCountdown($todayCountdown)}</span>
+          <span class="divider-line"></span>
         </div>
 
         <!-- All prayer times -->
@@ -1581,9 +1581,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 1.5rem;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    justify-content: center;
+    padding: max(1.5rem, env(safe-area-inset-top, 1.5rem)) 1.5rem max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
+    overflow: hidden;
   }
 
   .home-header {
@@ -1624,10 +1624,6 @@
 
   /* Main prayer display */
   .prayer-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     text-align: center;
     width: 100%;
     max-width: 320px;
@@ -2057,13 +2053,13 @@
 
   /* All prayer times list */
   .all-times-stage {
-    margin-top: clamp(1rem, 3vh, 2.5rem);
-    margin-bottom: clamp(2rem, 5vh, 3.5rem);
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
     width: 100%;
     max-width: min(320px, 85vw);
     margin-left: auto;
     margin-right: auto;
-    min-height: clamp(15rem, 30vh, 18rem);
+    min-height: 15rem;
     position: relative;
     overflow: hidden;
   }
@@ -2074,7 +2070,7 @@
     display: grid;
     grid-template-columns: max-content 1fr max-content;
     column-gap: 0.75rem;
-    row-gap: clamp(0.5rem, 1.5vh, 1rem);
+    row-gap: 0.75rem;
     align-content: flex-start;
     align-items: center;
   }
@@ -2793,8 +2789,8 @@
     }
 
     .all-times-stage {
-      margin-top: 1.5rem;
-      margin-bottom: 2.5rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
       min-height: 13rem;
     }
 
