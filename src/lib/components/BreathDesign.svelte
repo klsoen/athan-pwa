@@ -1387,18 +1387,18 @@
           {/key}
         </div>
 
-        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
-          <span class="divider-line"></span>
-          <span class="divider-countdown">{formatCountdown($todayCountdown)}</span>
-          <span class="divider-line"></span>
-        </div>
-
         <div class="next-prayer" in:fly={{ y: 12, duration: 400, delay: 250 }}>
           <span class="next-label">Next</span>
           {#key $todayCurrentPrayer.next}
             <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{prayerNames[$todayCurrentPrayer.next]?.en}</span>
             <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($todayPrayerTimes[$todayCurrentPrayer.next])}</span>
           {/key}
+        </div>
+
+        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
+          <span class="divider-line"></span>
+          <span class="divider-countdown">{formatCountdown($todayCountdown)}</span>
+          <span class="divider-line"></span>
         </div>
 
         <!-- All prayer times -->

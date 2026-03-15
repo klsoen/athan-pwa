@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Check if CHANGELOG.md is staged in this commit
+if ! git diff --cached --name-only | grep -q "^CHANGELOG.md$"; then
+  echo ""
+  echo "  ✗ Commit blocked: CHANGELOG.md was not updated."
+  echo ""
+  echo "  Please add an entry to CHANGELOG.md before committing."
+  echo "  Use the next patch/minor/major version (e.g. v2.3.5)"
+  echo "  and briefly describe what changed."
+  echo ""
+  exit 1
+fi
