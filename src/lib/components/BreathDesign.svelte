@@ -2671,14 +2671,6 @@
     opacity: 0.5;
   }
 
-  .indicator-upcoming {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 400;
-    color: rgba(var(--theme-text-rgb), 0.4);
-    letter-spacing: 0.05em;
-  }
-
   /* Tap hint */
   .tap-hint {
     font-family: 'Outfit', sans-serif;

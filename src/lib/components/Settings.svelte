@@ -57,6 +57,11 @@
 
   $: primaryNotifications = notificationDefinitions.filter((definition) => primaryNotificationIds.includes(definition.id));
   $: specialNotifications = notificationDefinitions.filter((definition) => specialNotificationIds.includes(definition.id));
+  $: notificationTiles = [...primaryNotifications, ...specialNotifications];
+
+  function getNotificationDescription(id) {
+    return specialNotificationIds.includes(id) ? 'Special reminder' : 'Prayer alert';
+  }
 
   function emitQiblaPermission(status) {
     if (typeof window === 'undefined') return;
@@ -315,7 +320,7 @@
       </button>
 
       <div class="indicators-grid notification-grid">
-        {#each primaryNotifications as definition}
+        {#each notificationTiles as definition}
           <button
             class="indicator-toggle"
             class:active={$notificationPreferences.types[definition.id]}
@@ -323,21 +328,7 @@
             type="button"
           >
             <span class="indicator-name">{definition.label}</span>
-            <span class="indicator-desc">Prayer alert</span>
-          </button>
-        {/each}
-      </div>
-
-      <div class="indicators-grid notification-grid">
-        {#each specialNotifications as definition}
-          <button
-            class="indicator-toggle"
-            class:active={$notificationPreferences.types[definition.id]}
-            on:click={() => handleNotificationTypeToggle(definition.id)}
-            type="button"
-          >
-            <span class="indicator-name">{definition.label}</span>
-            <span class="indicator-desc">Special reminder</span>
+            <span class="indicator-desc">{getNotificationDescription(definition.id)}</span>
           </button>
         {/each}
       </div>
@@ -1032,10 +1023,6 @@
     max-width: 320px;
     margin-bottom: 0.75rem;
     padding: 0.85rem 0.75rem;
-  }
-
-  .notification-grid + .notification-grid {
-    margin-top: 0.5rem;
   }
 
   .indicator-toggle {
