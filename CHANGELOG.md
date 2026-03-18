@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.1.2 — 2026-03-18
+### Fix
+- Reworded the notification settings helper text so the reminders section reads more clearly for end users
+
+---
+
 ## v2.5.1.1 — 2026-03-18
 ### Fix
 - Added the live PWA link to the README so the hosted app is easy to open directly from the repo

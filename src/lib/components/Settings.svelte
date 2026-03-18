@@ -312,9 +312,9 @@
           {#if $notificationState.syncing}
             Syncing reminders...
           {:else if $notificationPreferences.enabled}
-            Prayer times sync through Netlify Functions
+            Prayer reminders update automatically
           {:else}
-            Anonymous prayer reminders only
+            Get gentle reminders for each prayer
           {/if}
         </span>
       </button>
