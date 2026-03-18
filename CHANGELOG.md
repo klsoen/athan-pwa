@@ -8,6 +8,17 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.0.0 — 2026-03-18
+### Feature
+- Added Netlify Functions and Blob-backed web push scaffolding for anonymous prayer reminder delivery
+- Added notification scheduling for the five daily prayers, sunrise, last third of the night, first third end, and new Islamic month at Maghrib
+
+### Update
+- Added notification controls to Settings with enable/disable state and per-reminder toggles using the existing settings design language
+- Extended the service worker to display push notifications and reopen Azan when a reminder is tapped
+
+---
+
 ## v2.4.0.2 — 2026-03-16
 ### Fix
 - Center orphan items in last row of theme, indicator, and calculation method grids

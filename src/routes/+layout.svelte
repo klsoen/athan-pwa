@@ -1,6 +1,7 @@
 <script>
   import '../app.css';
   import { onMount } from 'svelte';
+  import { destroyNotifications, initializeNotifications } from '$lib/stores/notifications.js';
 
   onMount(() => {
     function setScreenDimensions() {
@@ -13,10 +14,14 @@
     }
 
     setScreenDimensions();
+    initializeNotifications();
     window.addEventListener('resize', setScreenDimensions);
     window.addEventListener('orientationchange', () => setTimeout(setScreenDimensions, 100));
 
-    return () => window.removeEventListener('resize', setScreenDimensions);
+    return () => {
+      window.removeEventListener('resize', setScreenDimensions);
+      destroyNotifications();
+    };
   });
 </script>
 
