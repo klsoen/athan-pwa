@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.1.1 — 2026-03-18
+### Fix
+- Added the live PWA link to the README so the hosted app is easy to open directly from the repo
+
+---
+
 ## v2.5.1.0 — 2026-03-18
 ### Feature
 - Rewrote the README around Azan's privacy-first product story, including the anonymous push architecture, local-first Qibla approach, and deployment guidance

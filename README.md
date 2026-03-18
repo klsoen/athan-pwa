@@ -15,6 +15,10 @@
 </p>
 
 <p align="center">
+  <a href="https://privateathan.netlify.app/"><strong>Open the live PWA</strong></a>
+</p>
+
+<p align="center">
   <img src="docs/readme/privacy-flow.svg" alt="Privacy-first notification flow diagram" width="100%" />
 </p>
 
