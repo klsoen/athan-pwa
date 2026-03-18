@@ -97,3 +97,7 @@ export default async () => {
 
   return Response.json({ ok: true, sentCount, processed: records.length });
 };
+
+export const config = {
+  schedule: '* * * * *'
+};

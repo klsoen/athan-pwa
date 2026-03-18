@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.0.2 — 2026-03-18
+### Fix
+- Moved the prayer push cron configuration into the Netlify function so scheduled runs are registered on deploy
+- Removed the invalid scheduled-function block from `netlify.toml` so production reminders can actually execute
+
+---
+
 ## v2.5.0.1 — 2026-03-18
 ### Fix
 - Removed the extra break between prayer and special notification tiles so the notifications grid flows as one section
