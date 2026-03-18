@@ -34,28 +34,8 @@ export const defaultNotificationPreferences = {
 };
 
 const hijriMonthFormatterCache = new Map();
-const timeFormatterCache = new Map();
-
 function getMiddayDate(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
-}
-
-function getTimeFormatter(timeZone) {
-  const key = timeZone || 'local';
-  if (!timeFormatterCache.has(key)) {
-    timeFormatterCache.set(key, new Intl.DateTimeFormat('en-CA', {
-      timeZone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }));
-  }
-
-  return timeFormatterCache.get(key);
 }
 
 function getHijriMonthFormatter(timeZone) {
@@ -86,93 +66,36 @@ function extractParts(formatter, date) {
   return values;
 }
 
-function getZonedUtcDate(date, timeZone) {
-  if (!timeZone) return new Date(date.getTime());
-
-  const target = {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-    hour: date.getHours(),
-    minute: date.getMinutes(),
-    second: date.getSeconds(),
-    millisecond: date.getMilliseconds()
-  };
-
-  let guess = new Date(Date.UTC(
-    target.year,
-    target.month - 1,
-    target.day,
-    target.hour,
-    target.minute,
-    target.second,
-    target.millisecond
-  ));
-
-  const formatter = getTimeFormatter(timeZone);
-
-  for (let attempt = 0; attempt < 4; attempt += 1) {
-    const zoned = extractParts(formatter, guess);
-    const zonedUtc = Date.UTC(
-      zoned.year,
-      (zoned.month || 1) - 1,
-      zoned.day || 1,
-      zoned.hour || 0,
-      zoned.minute || 0,
-      zoned.second || 0,
-      target.millisecond
-    );
-    const targetUtc = Date.UTC(
-      target.year,
-      target.month - 1,
-      target.day,
-      target.hour,
-      target.minute,
-      target.second,
-      target.millisecond
-    );
-    const diff = targetUtc - zonedUtc;
-
-    if (diff === 0) break;
-    guess = new Date(guess.getTime() + diff);
-  }
-
-  return guess;
-}
-
 function getHijriMonthKey(date, timeZone) {
   const parts = extractParts(getHijriMonthFormatter(timeZone), date);
   return `${parts.month}-${parts.year}`;
 }
 
-function createNightEvent(type, label, startTime, endTime, fraction, timeZone) {
+function createNightEvent(type, label, startTime, endTime, fraction) {
   if (!startTime || !endTime) return null;
 
   let durationMs = endTime.getTime() - startTime.getTime();
   if (durationMs < 0) durationMs += 24 * 60 * 60 * 1000;
 
   const eventTime = new Date(startTime.getTime() + (durationMs * fraction));
-  const utcDate = getZonedUtcDate(eventTime, timeZone);
 
   return {
-    id: `${type}-${utcDate.toISOString()}`,
+    id: `${type}-${eventTime.toISOString()}`,
     type,
     label,
-    timeUtc: utcDate.toISOString(),
+    timeUtc: eventTime.toISOString(),
     sent: false
   };
 }
 
-function createScheduleEvent(type, label, date, timeZone) {
+function createScheduleEvent(type, label, date) {
   if (!date) return null;
 
-  const utcDate = getZonedUtcDate(date, timeZone);
-
   return {
-    id: `${type}-${utcDate.toISOString()}`,
+    id: `${type}-${date.toISOString()}`,
     type,
     label,
-    timeUtc: utcDate.toISOString(),
+    timeUtc: date.toISOString(),
     sent: false
   };
 }
@@ -207,19 +130,19 @@ export function buildNotificationSchedule({
     const nextDay = prayerDays[index + 1];
     const { times } = currentDay;
 
-    if (types.fajr) schedule.push(createScheduleEvent('fajr', 'Fajr', times.fajr, timeZone));
-    if (types.dhuhr) schedule.push(createScheduleEvent('dhuhr', 'Dhuhr', times.dhuhr, timeZone));
-    if (types.asr) schedule.push(createScheduleEvent('asr', 'Asr', times.asr, timeZone));
-    if (types.maghrib) schedule.push(createScheduleEvent('maghrib', 'Maghrib', times.maghrib, timeZone));
-    if (types.isha) schedule.push(createScheduleEvent('isha', 'Isha', times.isha, timeZone));
-    if (types.sunrise) schedule.push(createScheduleEvent('sunrise', 'Sunrise', times.sunrise, timeZone));
+    if (types.fajr) schedule.push(createScheduleEvent('fajr', 'Fajr', times.fajr));
+    if (types.dhuhr) schedule.push(createScheduleEvent('dhuhr', 'Dhuhr', times.dhuhr));
+    if (types.asr) schedule.push(createScheduleEvent('asr', 'Asr', times.asr));
+    if (types.maghrib) schedule.push(createScheduleEvent('maghrib', 'Maghrib', times.maghrib));
+    if (types.isha) schedule.push(createScheduleEvent('isha', 'Isha', times.isha));
+    if (types.sunrise) schedule.push(createScheduleEvent('sunrise', 'Sunrise', times.sunrise));
 
     if (types.lastThird) {
-      schedule.push(createNightEvent('lastThird', 'Last Third', times.maghrib, nextDay.times.fajr, 2 / 3, timeZone));
+      schedule.push(createNightEvent('lastThird', 'Last Third', times.maghrib, nextDay.times.fajr, 2 / 3));
     }
 
     if (types.firstThirdEnd) {
-      schedule.push(createNightEvent('firstThirdEnd', '1st Third End', times.maghrib, nextDay.times.fajr, 1 / 3, timeZone));
+      schedule.push(createNightEvent('firstThirdEnd', '1st Third End', times.maghrib, nextDay.times.fajr, 1 / 3));
     }
 
     if (types.newIslamicMonth) {
@@ -227,7 +150,7 @@ export function buildNotificationSchedule({
       const nextHijriKey = getHijriMonthKey(nextDay.day, timeZone);
 
       if (currentHijriKey !== nextHijriKey) {
-        schedule.push(createScheduleEvent('newIslamicMonth', 'New Islamic Month', times.maghrib, timeZone));
+        schedule.push(createScheduleEvent('newIslamicMonth', 'New Islamic Month', times.maghrib));
       }
     }
   }

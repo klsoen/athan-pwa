@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.0.3 — 2026-03-18
+### Fix
+- Stopped reinterpreting already-correct prayer `Date` values during notification scheduling so synced UTC reminder times stay aligned with the selected city
+- Added a regression test covering Lahore prayer generation and UTC serialization for notification payloads
+
+---
+
 ## v2.5.0.2 — 2026-03-18
 ### Fix
 - Moved the prayer push cron configuration into the Netlify function so scheduled runs are registered on deploy
