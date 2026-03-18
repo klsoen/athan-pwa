@@ -176,7 +176,7 @@
   ></button>
 
   <!-- Floating content - no visible container -->
-  <div class="selector-content" on:click|stopPropagation role="dialog" aria-modal="true">
+  <div class="selector-content" role="dialog" aria-modal="true">
 
     <!-- Search bar -->
     <div class="search-bar" in:fly={{ y: -20, duration: 400, delay: 50, easing: cubicOut }}>

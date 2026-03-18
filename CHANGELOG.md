@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.0.1 — 2026-03-18
+### Fix
+- Removed the extra break between prayer and special notification tiles so the notifications grid flows as one section
+- Cleaned up the city selector accessibility warning and removed unused indicator CSS
+
+---
+
 ## v2.5.0.0 — 2026-03-18
 ### Feature
 - Added Netlify Functions and Blob-backed web push scaffolding for anonymous prayer reminder delivery
