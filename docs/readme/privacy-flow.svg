@@ -1,0 +1,73 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="32" fill="#080808"/>
+  <rect x="32" y="32" width="1136" height="656" rx="28" stroke="url(#border)" stroke-opacity="0.28"/>
+  <circle cx="1034" cy="118" r="118" fill="url(#glow)" fill-opacity="0.28"/>
+  <circle cx="190" cy="604" r="148" fill="url(#glow2)" fill-opacity="0.18"/>
+
+  <text x="72" y="94" fill="#F6E7B4" font-family="Georgia, serif" font-size="38" letter-spacing="0.8">Privacy-First Notification Flow</text>
+  <text x="72" y="132" fill="#B9B2A0" font-family="Arial, sans-serif" font-size="20">Prayer times are calculated on-device. The backend receives only anonymous push data and UTC reminder timestamps.</text>
+
+  <rect x="72" y="188" width="304" height="398" rx="28" fill="#111111" stroke="#D4AF37" stroke-opacity="0.48"/>
+  <text x="104" y="244" fill="#F4F1E8" font-family="Arial, sans-serif" font-size="28" font-weight="700">On the device</text>
+  <text x="104" y="284" fill="#D4AF37" font-family="Arial, sans-serif" font-size="20">What Athan keeps local</text>
+
+  <circle cx="132" cy="334" r="7" fill="#D4AF37"/>
+  <text x="154" y="341" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Selected city and timezone</text>
+  <circle cx="132" cy="388" r="7" fill="#D4AF37"/>
+  <text x="154" y="395" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Prayer calculation method</text>
+  <circle cx="132" cy="442" r="7" fill="#D4AF37"/>
+  <text x="154" y="449" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Qibla based on selected city</text>
+  <circle cx="132" cy="496" r="7" fill="#D4AF37"/>
+  <text x="154" y="503" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Local prayer schedule generation</text>
+
+  <rect x="104" y="532" width="240" height="34" rx="17" fill="#171717" stroke="#E6E1D0" stroke-opacity="0.22"/>
+  <text x="224" y="555" text-anchor="middle" fill="#F5F0E1" font-family="Arial, sans-serif" font-size="16">No GPS required</text>
+
+  <path d="M418 384H542" stroke="#D4AF37" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 12"/>
+  <path d="M527 370L553 384L527 398" stroke="#D4AF37" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="480" y="350" text-anchor="middle" fill="#B9B2A0" font-family="Arial, sans-serif" font-size="17">sync</text>
+
+  <rect x="560" y="188" width="272" height="398" rx="28" fill="#101010" stroke="#D4AF37" stroke-opacity="0.48"/>
+  <text x="592" y="244" fill="#F4F1E8" font-family="Arial, sans-serif" font-size="28" font-weight="700">Stored on Netlify</text>
+  <text x="592" y="284" fill="#D4AF37" font-family="Arial, sans-serif" font-size="20">Anonymous only</text>
+
+  <rect x="592" y="314" width="208" height="52" rx="18" fill="#171717" stroke="#E6E1D0" stroke-opacity="0.18"/>
+  <text x="612" y="347" fill="#E8E0CC" font-family="Courier New, monospace" font-size="18">deviceId</text>
+  <rect x="592" y="384" width="208" height="52" rx="18" fill="#171717" stroke="#E6E1D0" stroke-opacity="0.18"/>
+  <text x="612" y="417" fill="#E8E0CC" font-family="Courier New, monospace" font-size="18">subscription</text>
+  <rect x="592" y="454" width="208" height="52" rx="18" fill="#171717" stroke="#E6E1D0" stroke-opacity="0.18"/>
+  <text x="612" y="487" fill="#E8E0CC" font-family="Courier New, monospace" font-size="18">types</text>
+  <rect x="592" y="524" width="208" height="52" rx="18" fill="#171717" stroke="#E6E1D0" stroke-opacity="0.18"/>
+  <text x="612" y="557" fill="#E8E0CC" font-family="Courier New, monospace" font-size="18">schedule[timeUtc]</text>
+
+  <rect x="852" y="188" width="276" height="398" rx="28" fill="#111111" stroke="#D4AF37" stroke-opacity="0.48"/>
+  <text x="884" y="244" fill="#F4F1E8" font-family="Arial, sans-serif" font-size="28" font-weight="700">Never stored</text>
+  <text x="884" y="284" fill="#D4AF37" font-family="Arial, sans-serif" font-size="20">The privacy promise</text>
+
+  <circle cx="912" cy="334" r="7" fill="#F6E7B4"/>
+  <text x="934" y="341" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Exact location coordinates</text>
+  <circle cx="912" cy="388" r="7" fill="#F6E7B4"/>
+  <text x="934" y="395" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Live GPS updates</text>
+  <circle cx="912" cy="442" r="7" fill="#F6E7B4"/>
+  <text x="934" y="449" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">City name or rough region</text>
+  <circle cx="912" cy="496" r="7" fill="#F6E7B4"/>
+  <text x="934" y="503" fill="#E8E0CC" font-family="Arial, sans-serif" font-size="20">Identity, email, analytics</text>
+
+  <rect x="884" y="532" width="212" height="34" rx="17" fill="#171717" stroke="#E6E1D0" stroke-opacity="0.22"/>
+  <text x="990" y="555" text-anchor="middle" fill="#F5F0E1" font-family="Arial, sans-serif" font-size="16">Local-first by design</text>
+
+  <defs>
+    <linearGradient id="border" x1="88" y1="80" x2="1112" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D4AF37"/>
+      <stop offset="1" stop-color="#F1E6B6" stop-opacity="0.12"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1034 118) rotate(90) scale(118)">
+      <stop stop-color="#D4AF37"/>
+      <stop offset="1" stop-color="#D4AF37" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 604) rotate(90) scale(148)">
+      <stop stop-color="#F1E6B6"/>
+      <stop offset="1" stop-color="#F1E6B6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

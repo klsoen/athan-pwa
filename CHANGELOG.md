@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.1.0 — 2026-03-18
+### Feature
+- Rewrote the README around Azan's privacy-first product story, including the anonymous push architecture, local-first Qibla approach, and deployment guidance
+- Added a dedicated privacy flow diagram to visually explain what stays on-device, what Netlify stores, and what is never stored at all
+
+---
+
 ## v2.5.0.4 — 2026-03-18
 ### Fix
 - Added a dedicated monochrome notification badge asset so Android status bar notifications use a proper icon instead of a blank square
