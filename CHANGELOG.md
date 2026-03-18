@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.1.3 — 2026-03-18
+### Fix
+- Softened the notification settings syncing label so reminder updates read more naturally in the UI
+
+---
+
 ## v2.5.1.2 — 2026-03-18
 ### Fix
 - Reworded the notification settings helper text so the reminders section reads more clearly for end users

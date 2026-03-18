@@ -310,7 +310,7 @@
         <span class="indicator-name">{$notificationPreferences.enabled ? 'Notifications Enabled' : 'Enable Notifications'}</span>
         <span class="indicator-desc">
           {#if $notificationState.syncing}
-            Syncing reminders...
+            Updating reminders...
           {:else if $notificationPreferences.enabled}
             Prayer reminders update automatically
           {:else}
