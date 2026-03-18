@@ -28,7 +28,7 @@ function createNotificationPayload(entry: { type: string; label: string; timeUtc
     body,
     tag: `azan-${entry.type}`,
     icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    badge: '/notification-badge.svg',
     data: {
       type: entry.type,
       timeUtc: entry.timeUtc

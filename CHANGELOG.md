@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.5.0.4 — 2026-03-18
+### Fix
+- Added a dedicated monochrome notification badge asset so Android status bar notifications use a proper icon instead of a blank square
+- Updated push payloads and the service worker fallback badge to use the new badge asset while keeping the full app icon in expanded notifications
+
+---
+
 ## v2.5.0.3 — 2026-03-18
 ### Fix
 - Stopped reinterpreting already-correct prayer `Date` values during notification scheduling so synced UTC reminder times stay aligned with the selected city

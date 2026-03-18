@@ -72,7 +72,7 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification(title, {
       body: payload.body || 'A prayer reminder is ready.',
       icon: payload.icon || '/icon-192.png',
-      badge: payload.badge || '/icon-192.png',
+      badge: payload.badge || '/notification-badge.svg',
       tag: payload.tag || 'azan-reminder',
       data: payload.data || {}
     })
