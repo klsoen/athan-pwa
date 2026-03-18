@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "build"
 
+[functions]
+  directory = "netlify/functions"
+
+[[scheduled.functions]]
+  name = "send-prayer-push"
+  cron = "* * * * *"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

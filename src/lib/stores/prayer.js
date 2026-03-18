@@ -126,7 +126,7 @@ if (typeof window !== 'undefined') {
 
 // Get current time in city's timezone as a comparable Date
 // This converts the current moment to "what time is showing on a clock in that city"
-function getCityTime(cityTimezone) {
+export function getCityTime(cityTimezone) {
   if (!cityTimezone) return new Date();
 
   const now = new Date();
@@ -162,7 +162,7 @@ function isRamadan(date) {
   }
 }
 
-function createPrayerTimesForDate(loc, method, angles, date) {
+export function createPrayerTimesForDate(loc, method, angles, date) {
   const coords = new Coordinates(loc.latitude, loc.longitude);
   let params;
 

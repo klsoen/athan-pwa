@@ -1,5 +1,13 @@
 <script>
   import { calculationMethod, customAngles, settingsOpen, clockIndicators, labelSize } from '$lib/stores/prayer.js';
+  import {
+    disableNotifications,
+    enableNotifications,
+    notificationDefinitions,
+    notificationPreferences,
+    notificationState,
+    toggleNotificationType
+  } from '$lib/stores/notifications.js';
   import { darkThemes, lightThemes, currentThemeId, setTheme, themeMode, setThemeMode } from '$lib/stores/theme.js';
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
@@ -43,6 +51,12 @@
   let ishaAngle = 17;
   let showCustom = false;
   let qiblaPermissionNote = '';
+
+  const primaryNotificationIds = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha', 'sunrise'];
+  const specialNotificationIds = ['lastThird', 'firstThirdEnd', 'newIslamicMonth'];
+
+  $: primaryNotifications = notificationDefinitions.filter((definition) => primaryNotificationIds.includes(definition.id));
+  $: specialNotifications = notificationDefinitions.filter((definition) => specialNotificationIds.includes(definition.id));
 
   function emitQiblaPermission(status) {
     if (typeof window === 'undefined') return;
@@ -137,6 +151,19 @@
     if (e.key === 'Escape' && isOpen) {
       close();
     }
+  }
+
+  async function handleNotificationToggle() {
+    if ($notificationPreferences.enabled) {
+      await disableNotifications();
+      return;
+    }
+
+    await enableNotifications();
+  }
+
+  function handleNotificationTypeToggle(type) {
+    toggleNotificationType(type);
   }
 
   onMount(() => {
@@ -261,6 +288,56 @@
               <div class="preview-dot"></div>
             </div>
             <span class="theme-name">{theme.name}</span>
+          </button>
+        {/each}
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="section">
+      <span class="section-label">Notifications</span>
+      <button
+        class="notification-master indicator-toggle"
+        class:active={$notificationPreferences.enabled}
+        on:click={handleNotificationToggle}
+        type="button"
+      >
+        <span class="indicator-name">{$notificationPreferences.enabled ? 'Notifications Enabled' : 'Enable Notifications'}</span>
+        <span class="indicator-desc">
+          {#if $notificationState.syncing}
+            Syncing reminders...
+          {:else if $notificationPreferences.enabled}
+            Prayer times sync through Netlify Functions
+          {:else}
+            Anonymous prayer reminders only
+          {/if}
+        </span>
+      </button>
+
+      <div class="indicators-grid notification-grid">
+        {#each primaryNotifications as definition}
+          <button
+            class="indicator-toggle"
+            class:active={$notificationPreferences.types[definition.id]}
+            on:click={() => handleNotificationTypeToggle(definition.id)}
+            type="button"
+          >
+            <span class="indicator-name">{definition.label}</span>
+            <span class="indicator-desc">Prayer alert</span>
+          </button>
+        {/each}
+      </div>
+
+      <div class="indicators-grid notification-grid">
+        {#each specialNotifications as definition}
+          <button
+            class="indicator-toggle"
+            class:active={$notificationPreferences.types[definition.id]}
+            on:click={() => handleNotificationTypeToggle(definition.id)}
+            type="button"
+          >
+            <span class="indicator-name">{definition.label}</span>
+            <span class="indicator-desc">Special reminder</span>
           </button>
         {/each}
       </div>
@@ -948,6 +1025,17 @@
 
   .indicators-grid > :global(*) {
     width: calc((100% - 1rem) / 3);
+  }
+
+  .notification-master {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 0.75rem;
+    padding: 0.85rem 0.75rem;
+  }
+
+  .notification-grid + .notification-grid {
+    margin-top: 0.5rem;
   }
 
   .indicator-toggle {

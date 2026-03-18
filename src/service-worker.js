@@ -63,3 +63,34 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+self.addEventListener('push', (event) => {
+  const payload = event.data ? event.data.json() : {};
+  const title = payload.title || 'Azan';
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: payload.body || 'A prayer reminder is ready.',
+      icon: payload.icon || '/icon-192.png',
+      badge: payload.badge || '/icon-192.png',
+      tag: payload.tag || 'azan-reminder',
+      data: payload.data || {}
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      const appClient = clients.find((client) => 'focus' in client);
+
+      if (appClient) {
+        return appClient.focus();
+      }
+
+      return self.clients.openWindow('/');
+    })
+  );
+});
