@@ -488,13 +488,18 @@
   function formatCountdown(cd) {
     const fn = $formatNum;
     const ar = $language === 'ar';
-    const h = String(cd.hours);
-    const m = String(cd.minutes);
-    const s = String(Math.max(0, cd.seconds));
-    // Split each number into individual digit strings for fixed-width rendering
-    const digits = (val) => fn(val).split('');
-    if (cd.hours > 0) return { parts: [{ digits: digits(h), unit: ar ? 'س' : 'h' }, { digits: digits(m), unit: ar ? 'د' : 'm' }] };
-    return { parts: [{ digits: digits(m), unit: ar ? 'د' : 'm' }, { digits: digits(s), unit: ar ? 'ث' : 's' }] };
+    const h = cd.hours;
+    const m = cd.minutes;
+    const s = Math.max(0, cd.seconds);
+    if (h > 0) return [
+      { key: 'h', value: fn(String(h)), label: ar ? 'س' : 'h' },
+      { key: 'm', value: fn(String(m)), label: ar ? 'د' : 'm' },
+    ];
+    if (m > 0) return [
+      { key: 'm', value: fn(String(m)), label: ar ? 'د' : 'm' },
+      { key: 's', value: fn(String(s)), label: ar ? 'ث' : 's' },
+    ];
+    return [{ key: 's', value: fn(String(s)), label: ar ? 'ث' : 's' }];
   }
 
   function formatTime(date) {
@@ -1182,7 +1187,7 @@
             <div class="clock-center-english" in:fly={{ y: 6, duration: 500, delay: 200, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
           {/if}
         {/key}
-        <div class="clock-center-countdown">{#each fmtCountdown($todayCountdown).parts as p, i}{#if i > 0}<span class="cd-space"> </span>{/if}<span class="cd-pair">{#each p.digits as d}<span class="cd-digit">{d}</span>{/each}<span class="cd-unit">{p.unit}</span></span>{/each}</div>
+        <div class="clock-center-countdown">{#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}</div>
         {#key $todayCurrentPrayer.next}
           <div class="clock-center-next" in:fly={{ y: 4, duration: 500, delay: 250, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{$t('until')} {$isArabic ? prayerNames[$todayCurrentPrayer.next]?.ar : prayerNames[$todayCurrentPrayer.next]?.en}</div>
         {/key}
@@ -1444,7 +1449,7 @@
 
         <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
           <span class="divider-line"></span>
-          <span class="divider-countdown">{#each fmtCountdown($todayCountdown).parts as p, i}{#if i > 0}<span class="cd-space"> </span>{/if}<span class="cd-pair">{#each p.digits as d}<span class="cd-digit">{d}</span>{/each}<span class="cd-unit">{p.unit}</span></span>{/each}</span>
+          <span class="divider-countdown">{#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}</span>
           <span class="divider-line"></span>
         </div>
 
@@ -2067,12 +2072,17 @@
   }
 
   .divider-countdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
     font-family: 'Inter', sans-serif;
     font-size: 1.4rem;
     font-weight: 200;
     color: rgba(var(--theme-accent-rgb), 0.8);
-    letter-spacing: 0.1em;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
   /* ===== Arabic mode overrides — consistent Cairo, no Latin spacing ===== */
@@ -2112,9 +2122,17 @@
     letter-spacing: 0;
   }
 
-  .arabic-mode .divider-countdown {
+  .arabic-mode .divider-countdown,
+  .arabic-mode .clock-center-countdown {
+    direction: rtl;
+  }
+
+  .arabic-mode .cd-num {
     font-family: 'Noto Kufi Arabic', sans-serif;
-    letter-spacing: 0;
+  }
+
+  .arabic-mode .cd-label {
+    font-family: 'Noto Kufi Arabic', sans-serif;
   }
 
   .arabic-mode .date-offset {
@@ -2131,13 +2149,6 @@
     letter-spacing: 0;
   }
 
-  .arabic-mode .clock-center-countdown {
-    font-family: 'Noto Kufi Arabic', sans-serif;
-  }
-
-  .arabic-mode .cd-digit {
-    width: 0.68em;
-  }
 
   .arabic-mode .indicator-active {
     letter-spacing: 0;
@@ -2753,32 +2764,38 @@
   }
 
   .clock-center-countdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
     font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
     font-weight: 200;
     color: rgba(var(--theme-text-rgb), 0.8);
     margin-top: 0.6rem;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
-  .cd-pair {
+  .cd-block {
     display: inline-flex;
-    align-items: flex-end;
-    gap: 0.05em;
+    align-items: baseline;
+    gap: 0.1em;
   }
 
-  .cd-digit {
-    display: inline-block;
-    width: 0.62em;
-    text-align: center;
+  .cd-num {
+    width: 2ch;
+    text-align: right;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
-  .cd-unit {
+  .cd-label {
     color: rgba(var(--theme-accent-rgb), 0.5);
+    font-size: 0.72em;
     font-weight: 300;
-    font-size: 0.75em;
     line-height: 1;
-    padding-bottom: 0.05em;
   }
 
   .clock-center-next {

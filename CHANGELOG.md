@@ -8,6 +8,15 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.3 — 2026-04-05
+### Update
+- Countdown redesign: flex-centered, no layout shift, `width: 2ch` per number, `font-variant-numeric: tabular-nums` + `font-feature-settings: "tnum" 1`
+- Hide hours block when zero; hide minutes when zero (show seconds only); no leading zeros
+- Arabic mode: Noto Kufi Arabic for digits and labels, `direction: rtl`
+- Western numbers use Inter; Eastern Arabic numerals use Noto Kufi Arabic
+
+---
+
 ## v2.6.2 — 2026-04-05
 ### Update
 - Font overhaul: Lexend for all English UI, Inter for numeric displays (prayer times, countdown, calendar dates), Noto Kufi Arabic for all Arabic text
