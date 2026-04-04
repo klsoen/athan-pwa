@@ -1691,7 +1691,7 @@
   }
 
   .current-arabic {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     font-size: 4.5rem;
     color: var(--theme-accent-bright);
     line-height: 1.1;
@@ -2077,29 +2077,29 @@
 
   /* ===== Arabic mode overrides — consistent Cairo, no Latin spacing ===== */
   .arabic-mode .time-name {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .time-value {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .current-time {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .next-name {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .next-time {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     letter-spacing: 0;
   }
 
@@ -2113,18 +2113,18 @@
   }
 
   .arabic-mode .divider-countdown {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .date-offset {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .date-gregorian {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
   }
 
   .arabic-mode .clock-center-next {
@@ -2132,7 +2132,7 @@
   }
 
   .arabic-mode .clock-center-countdown {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
   }
 
   .arabic-mode .cd-digit {
@@ -2149,7 +2149,7 @@
   }
 
   .arabic-mode .clock-label-name {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     text-transform: none;
     letter-spacing: 0;
   }
@@ -2450,7 +2450,7 @@
   }
 
   .calendar-hijri-month {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     font-size: clamp(0.74rem, 2.1vw, 0.88rem);
     letter-spacing: 0.04em;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2560,7 +2560,7 @@
   }
 
   .calendar-day-hijri {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     font-size: clamp(0.5rem, 1.5vw, 0.62rem);
     line-height: 1;
     color: rgba(var(--theme-accent-rgb), 0.55);
@@ -2618,7 +2618,7 @@
   }
 
   .date-hijri {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     font-size: 0.74rem;
     color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
@@ -2735,7 +2735,7 @@
   }
 
   .clock-center-arabic {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Amiri', serif;
     font-size: 2.8rem;
     color: var(--theme-accent-bright);
     line-height: 1.2;

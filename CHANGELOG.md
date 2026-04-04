@@ -10,8 +10,9 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ## v2.6.1 — 2026-04-05
 ### Update
-- Reverted font changes to keep Amiri (Arabic) and Inter (English) as loaded in the main branch
-- Restored original Google Fonts link in `app.html` and `tailwind.config.js` arabic font family
+- Reverted all font changes to keep Amiri (Arabic) and Inter (English) from main branch
+- Restored original Google Fonts link in `app.html`, `+page.svelte`, and `tailwind.config.js`
+- Replaced all `font-family: 'Cairo'` references in `BreathDesign.svelte` and `CircleDesign.svelte` with `Amiri`
 
 ---
 
