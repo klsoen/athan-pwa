@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        arabic: ['Amiri', 'serif'],
-        sans: ['Inter', 'sans-serif']
+        arabic: ['Noto Kufi Arabic', 'sans-serif'],
+        sans: ['Lexend', 'sans-serif']
       },
       colors: {
         gold: {

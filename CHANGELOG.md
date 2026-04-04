@@ -8,6 +8,14 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.2 — 2026-04-05
+### Update
+- Font overhaul: Lexend for all English UI, Inter for numeric displays (prayer times, countdown, calendar dates), Noto Kufi Arabic for all Arabic text
+- Updated Google Fonts links in `app.html` and `+page.svelte`
+- Updated `tailwind.config.js` font families to match
+
+---
+
 ## v2.6.1 — 2026-04-05
 ### Update
 - Reverted all font changes to keep Amiri (Arabic) and Inter (English) from main branch

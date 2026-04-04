@@ -317,7 +317,7 @@
     border: none;
     color: white;
     font-size: 1rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     outline: none;
   }
 
@@ -326,7 +326,7 @@
   }
 
   .search-hint {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.7rem;
     color: rgba(var(--theme-accent-rgb), 0.45);
     letter-spacing: 0.08em;
@@ -382,7 +382,7 @@
   }
 
   .chip-name {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.9);
@@ -393,7 +393,7 @@
   }
 
   .chip-country {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.7rem;
     color: rgba(var(--theme-text-rgb), 0.4);
     margin-top: 0.15rem;
@@ -402,13 +402,13 @@
   .no-results {
     color: rgba(var(--theme-text-rgb), 0.4);
     font-size: 0.9rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     padding: 1rem;
   }
 
   /* Close hint */
   .close-hint {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.6rem;
     color: rgba(var(--theme-text-rgb), 0.2);
     letter-spacing: 0.1em;

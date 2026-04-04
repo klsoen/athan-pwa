@@ -1691,7 +1691,7 @@
   }
 
   .current-arabic {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     font-size: 4.5rem;
     color: var(--theme-accent-bright);
     line-height: 1.1;
@@ -2032,7 +2032,7 @@
   }
 
   .current-name {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 1rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2042,7 +2042,7 @@
   }
 
   .current-time {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(2rem, 5vw, 2.5rem);
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.85);
@@ -2067,7 +2067,7 @@
   }
 
   .divider-countdown {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.4rem;
     font-weight: 200;
     color: rgba(var(--theme-accent-rgb), 0.8);
@@ -2077,29 +2077,29 @@
 
   /* ===== Arabic mode overrides — consistent Cairo, no Latin spacing ===== */
   .arabic-mode .time-name {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .time-value {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .current-time {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .next-name {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .next-time {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     letter-spacing: 0;
   }
 
@@ -2113,18 +2113,18 @@
   }
 
   .arabic-mode .divider-countdown {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .date-offset {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .date-gregorian {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
   }
 
   .arabic-mode .clock-center-next {
@@ -2132,7 +2132,7 @@
   }
 
   .arabic-mode .clock-center-countdown {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
   }
 
   .arabic-mode .cd-digit {
@@ -2149,7 +2149,7 @@
   }
 
   .arabic-mode .clock-label-name {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
@@ -2175,7 +2175,7 @@
   }
 
   .next-label {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.85rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.3);
@@ -2184,7 +2184,7 @@
   }
 
   .next-name {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 1.3rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.6);
@@ -2193,7 +2193,7 @@
   }
 
   .next-time {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.85rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2228,7 +2228,7 @@
   }
 
   .time-name {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(0.85rem, 2.5vw, 1.1rem);
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2248,7 +2248,7 @@
   }
 
   .time-value {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(0.95rem, 2.8vw, 1.25rem);
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.7);
@@ -2377,7 +2377,7 @@
   }
 
   .date-offset {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.58rem;
     text-transform: uppercase;
     letter-spacing: 0.16em;
@@ -2427,7 +2427,7 @@
   }
 
   .calendar-month-label {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(1.3rem, 3.7vw, 1.9rem);
     letter-spacing: 0.06em;
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
@@ -2450,7 +2450,7 @@
   }
 
   .calendar-hijri-month {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     font-size: clamp(0.74rem, 2.1vw, 0.88rem);
     letter-spacing: 0.04em;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2499,7 +2499,7 @@
 
   .calendar-weekdays span {
     text-align: center;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(0.62rem, 1.8vw, 0.76rem);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -2540,7 +2540,7 @@
     border: 1px solid rgba(var(--theme-text-rgb), 0.09);
     background: rgba(var(--theme-text-rgb), 0.09);
     color: rgba(var(--theme-text-rgb), 0.78);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(0.85rem, 2.4vw, 1rem);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
@@ -2554,13 +2554,13 @@
   }
 
   .calendar-day-greg {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(0.84rem, 2.3vw, 1rem);
     line-height: 1;
   }
 
   .calendar-day-hijri {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     font-size: clamp(0.5rem, 1.5vw, 0.62rem);
     line-height: 1;
     color: rgba(var(--theme-accent-rgb), 0.55);
@@ -2603,7 +2603,7 @@
       rgba(var(--theme-text-rgb), 0.05)
     );
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(0.68rem, 1.8vw, 0.8rem);
     text-transform: uppercase;
     letter-spacing: 0.14em;
@@ -2618,7 +2618,7 @@
   }
 
   .date-hijri {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     font-size: 0.74rem;
     color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
@@ -2628,7 +2628,7 @@
   }
 
   .date-gregorian {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.7rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2663,7 +2663,7 @@
 
   .clock-label-name {
     display: block;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: calc(clamp(0.5rem, 1.8vw, 0.7rem) * var(--label-scale, 1));
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2674,7 +2674,7 @@
 
   .clock-label-time {
     display: block;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: calc(clamp(0.65rem, 2.2vw, 0.9rem) * var(--label-scale, 1));
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2735,7 +2735,7 @@
   }
 
   .clock-center-arabic {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Kufi Arabic', sans-serif;
     font-size: 2.8rem;
     color: var(--theme-accent-bright);
     line-height: 1.2;
@@ -2743,7 +2743,7 @@
   }
 
   .clock-center-english {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 1rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2753,7 +2753,7 @@
   }
 
   .clock-center-countdown {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
     font-weight: 200;
     color: rgba(var(--theme-text-rgb), 0.8);
@@ -2782,7 +2782,7 @@
   }
 
   .clock-center-next {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.75rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
     margin-top: 0.3rem;
@@ -2805,7 +2805,7 @@
   }
 
   .indicator-active {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.8rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.9);
@@ -2820,7 +2820,7 @@
     bottom: calc(max(1.25rem, env(safe-area-inset-bottom, 0px)) + clamp(4.75rem, 11vh, 6.25rem));
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.7rem;
     font-weight: 400;
     color: var(--theme-marker);
@@ -2846,7 +2846,7 @@
 
   /* Tap hint */
   .tap-hint {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.4);
