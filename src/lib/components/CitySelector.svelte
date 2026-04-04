@@ -1,17 +1,21 @@
 <script>
   import { location, citySelectorOpen, fetchTimezone } from '$lib/stores/prayer.js';
+  import { t } from '$lib/stores/locale.js';
   import { onMount } from 'svelte';
   import { fade, fly, scale } from 'svelte/transition';
   import { cubicOut, backOut } from 'svelte/easing';
 
-  // Popular cities shown when no search query
+  // Popular cities shown when no search query — global spread
   const popularCities = [
     { name: 'Mecca', country: 'Saudi Arabia', lat: 21.4225, lng: 39.8262 },
-    { name: 'Medina', country: 'Saudi Arabia', lat: 24.5247, lng: 39.5692 },
-    { name: 'Istanbul', country: 'Turkey', lat: 41.0082, lng: 28.9784 },
+    { name: 'London', country: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
+    { name: 'New York City', country: 'United States', lat: 40.7128, lng: -74.0060 },
+    { name: 'Los Angeles', country: 'United States', lat: 34.0522, lng: -118.2437 },
+    { name: 'São Paulo', country: 'Brazil', lat: -23.5505, lng: -46.6333 },
     { name: 'Cairo', country: 'Egypt', lat: 30.0444, lng: 31.2357 },
-    { name: 'Dubai', country: 'UAE', lat: 25.2048, lng: 55.2708 },
-    { name: 'London', country: 'UK', lat: 51.5074, lng: -0.1278 },
+    { name: 'Karachi', country: 'Pakistan', lat: 24.8607, lng: 67.0011 },
+    { name: 'Jakarta', country: 'Indonesia', lat: -6.2088, lng: 106.8456 },
+    { name: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093 },
   ];
 
   let isOpen = false;
@@ -20,7 +24,6 @@
   let searchResults = [];
   let isSearching = false;
   let searchTimeout;
-
   // Debounced search using Nominatim API
   async function searchCities(query) {
     if (!query || query.length < 2) {
@@ -188,7 +191,7 @@
         type="text"
         bind:value={searchQuery}
         on:input={handleSearchInput}
-        placeholder="Search city..."
+        placeholder={$t('searchCity')}
         class="search-input"
         autocomplete="off"
         autocorrect="off"
@@ -198,6 +201,13 @@
         <div class="search-spinner"></div>
       {/if}
     </div>
+
+    <!-- Search prompt hint -->
+    {#if searchQuery.length < 2}
+      <div class="search-hint" in:fade={{ duration: 300, delay: 150 }}>
+        {$t('searchHint')}
+      </div>
+    {/if}
 
     <!-- City chips -->
     <div class="city-chips" in:fade={{ duration: 300, delay: 100 }}>
@@ -215,13 +225,13 @@
       {/each}
 
       {#if searchQuery.length >= 2 && displayCities.length === 0 && !isSearching}
-        <div class="no-results" in:fade={{ duration: 200 }}>No cities found</div>
+        <div class="no-results" in:fade={{ duration: 200 }}>{$t('noCitiesFound')}</div>
       {/if}
     </div>
 
     <!-- Close hint -->
     <div class="close-hint" in:fade={{ duration: 300, delay: 350 }}>
-      tap anywhere to close
+      {$t('tapToClose')}
     </div>
   </div>
 {/if}
@@ -277,25 +287,26 @@
     max-width: 400px;
   }
 
-  /* Search bar - floating pill */
+  /* Search bar - floating pill, prominent */
   .search-bar {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 1.25rem;
-    background: rgba(var(--theme-text-rgb), 0.08);
-    border: 1px solid rgba(var(--theme-text-rgb), 0.12);
+    padding: 1rem 1.4rem;
+    background: rgba(var(--theme-text-rgb), 0.1);
+    border: 1px solid rgba(var(--theme-accent-rgb), 0.25);
     border-radius: 3rem;
     width: 100%;
-    max-width: 320px;
+    max-width: 340px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 20px rgba(var(--theme-accent-rgb), 0.06);
   }
 
   .search-icon {
-    width: 1.1rem;
-    height: 1.1rem;
-    color: rgba(var(--theme-accent-rgb), 0.6);
+    width: 1.2rem;
+    height: 1.2rem;
+    color: rgba(var(--theme-accent-rgb), 0.7);
     flex-shrink: 0;
   }
 
@@ -305,13 +316,21 @@
     background: none;
     border: none;
     color: white;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-family: 'Outfit', sans-serif;
     outline: none;
   }
 
   .search-input::placeholder {
-    color: rgba(var(--theme-text-rgb), 0.35);
+    color: rgba(var(--theme-text-rgb), 0.4);
+  }
+
+  .search-hint {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(var(--theme-accent-rgb), 0.45);
+    letter-spacing: 0.08em;
+    margin-top: -1rem;
   }
 
   .search-spinner {
@@ -333,8 +352,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.6rem;
-    max-width: 360px;
+    gap: 0.5rem;
+    max-width: 380px;
   }
 
   .city-chip {

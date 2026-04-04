@@ -1,6 +1,7 @@
 <script>
   import { calculationMethod, customAngles, settingsOpen, clockIndicators, labelSize } from '$lib/stores/prayer.js';
   import { darkThemes, lightThemes, currentThemeId, setTheme, themeMode, setThemeMode } from '$lib/stores/theme.js';
+  import { language, numeralOverride, formatNum, t, isArabic } from '$lib/stores/locale.js';
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
 
@@ -118,11 +119,11 @@
           clockIndicators.toggle('qibla');
           emitQiblaPermission('granted');
         } else {
-          qiblaPermissionNote = 'Compass permission was denied. Enable it in Safari settings to use Qibla.';
+          qiblaPermissionNote = 'compassDenied';
           emitQiblaPermission('denied');
         }
       } catch (error) {
-        qiblaPermissionNote = 'Could not request compass permission right now.';
+        qiblaPermissionNote = 'compassError';
         emitQiblaPermission('denied');
       }
       return;
@@ -167,7 +168,6 @@
     }
   });
 
-  $: currentMethod = methods.find(m => m.id === selectedMethod);
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -177,7 +177,7 @@
   class:open={isOpen}
   on:click|stopPropagation={() => isOpen ? close() : open()}
   type="button"
-  aria-label={isOpen ? 'Close settings' : 'Settings'}
+  aria-label={isOpen ? $t('closeSettings') : $t('settings')}
 >
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
     <!-- Gear icon -->
@@ -205,15 +205,15 @@
   <div class="settings-content" on:click={close} role="dialog" aria-modal="true">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="settings-inner" on:click|stopPropagation>
+    <div class="settings-inner" class:rtl={$isArabic} on:click|stopPropagation>
       <!-- Header -->
       <div class="settings-header">
-        <span class="settings-title">Settings</span>
+        <span class="settings-title">{$t('settings')}</span>
       </div>
 
       <!-- Theme Selector -->
       <div class="section">
-      <span class="section-label">Theme</span>
+      <span class="section-label">{$t('theme')}</span>
 
       <!-- Dark/Light/Texture Mode Switcher -->
       <div class="mode-switcher">
@@ -226,7 +226,7 @@
           <svg viewBox="0 0 24 24" fill="currentColor" class="mode-icon">
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
           </svg>
-          <span>Dark</span>
+          <span>{$t('dark')}</span>
         </button>
         <button
           class="mode-tab"
@@ -238,13 +238,13 @@
             <circle cx="12" cy="12" r="4"/>
             <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
           </svg>
-          <span>Light</span>
-          <span class="new-badge">NEW</span>
+          <span>{$t('light')}</span>
+          <span class="new-badge">{$t('newBadge')}</span>
         </button>
       </div>
 
       <div class="theme-grid">
-        {#each themeList as theme, i}
+        {#each themeList as theme}
           {@const isNewDarkTheme = $themeMode === 'dark' && (theme.id === 'sakura' || theme.id === 'ember')}
           <button
             class="theme-card"
@@ -254,7 +254,7 @@
             style="--preview-bg: {theme.bg}; --preview-accent: {theme.accent}; --preview-accent-bright: {theme.accentBright};"
           >
             {#if isNewDarkTheme}
-              <span class="new-badge theme-badge">NEW</span>
+              <span class="new-badge theme-badge">{$t('newBadge')}</span>
             {/if}
             <div class="theme-preview">
               <div class="preview-glow"></div>
@@ -266,9 +266,60 @@
       </div>
     </div>
 
+    <!-- Language & Numerals -->
+    <div class="section">
+      <span class="section-label">{$t('language')}</span>
+      <div class="lang-numeral-row">
+        <div class="mode-switcher">
+          <button
+            class="mode-tab"
+            class:active={$language === 'en'}
+            on:click={() => language.set('en')}
+            type="button"
+          >
+            <span>{$t('english')}</span>
+          </button>
+          <button
+            class="mode-tab"
+            class:active={$language === 'ar'}
+            on:click={() => language.set('ar')}
+            type="button"
+          >
+            <span>{$t('arabic')}</span>
+          </button>
+        </div>
+        <div class="mode-switcher">
+          <button
+            class="mode-tab"
+            class:active={$numeralOverride === 'western'}
+            on:click={() => numeralOverride.set('western')}
+            type="button"
+          >
+            <span>123</span>
+          </button>
+          <button
+            class="mode-tab"
+            class:active={$numeralOverride === ''}
+            on:click={() => numeralOverride.set('')}
+            type="button"
+          >
+            <span>{$t('auto')}</span>
+          </button>
+          <button
+            class="mode-tab"
+            class:active={$numeralOverride === 'arabic'}
+            on:click={() => numeralOverride.set('arabic')}
+            type="button"
+          >
+            <span>١٢٣</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Clock Indicators -->
     <div class="section">
-      <span class="section-label">Clock Indicators</span>
+      <span class="section-label">{$t('clockIndicators')}</span>
       <div class="indicators-grid">
         <button
           class="indicator-toggle"
@@ -276,7 +327,7 @@
           on:click={() => clockIndicators.toggle('sunrise')}
           type="button"
         >
-          <span class="indicator-name">Sunrise</span>
+          <span class="indicator-name">{$t('sunrise')}</span>
         </button>
         <button
           class="indicator-toggle"
@@ -284,8 +335,8 @@
           on:click={toggleQiblaIndicator}
           type="button"
         >
-          <span class="indicator-name">Qibla</span>
-          <span class="indicator-desc">Compass needle</span>
+          <span class="indicator-name">{$t('qibla')}</span>
+          <span class="indicator-desc">{$t('compassNeedle')}</span>
         </button>
         <button
           class="indicator-toggle"
@@ -293,8 +344,8 @@
           on:click={() => clockIndicators.toggle('lastThird')}
           type="button"
         >
-          <span class="indicator-name">Last Third</span>
-          <span class="indicator-desc">Best time for dua</span>
+          <span class="indicator-name">{$t('lastThird')}</span>
+          <span class="indicator-desc">{$t('bestTimeForDua')}</span>
         </button>
         <button
           class="indicator-toggle"
@@ -302,8 +353,8 @@
           on:click={() => clockIndicators.toggle('firstThirdEnd')}
           type="button"
         >
-          <span class="indicator-name">1st Third End</span>
-          <span class="indicator-desc">Isha preferred end</span>
+          <span class="indicator-name">{$t('firstThirdEnd')}</span>
+          <span class="indicator-desc">{$t('ishaPreferredEnd')}</span>
         </button>
         <button
           class="indicator-toggle"
@@ -311,8 +362,8 @@
           on:click={() => clockIndicators.toggle('fridayDua')}
           type="button"
         >
-          <span class="indicator-name">Jumu'ah Dua</span>
-          <span class="indicator-desc">Asr to Maghrib</span>
+          <span class="indicator-name">{$t('jumahDua')}</span>
+          <span class="indicator-desc">{$t('asrToMaghrib')}</span>
         </button>
         <button
           class="indicator-toggle"
@@ -320,8 +371,8 @@
           on:click={() => clockIndicators.toggle('duha')}
           type="button"
         >
-          <span class="indicator-name">Duha</span>
-          <span class="indicator-desc">Morning prayer</span>
+          <span class="indicator-name">{$t('duha')}</span>
+          <span class="indicator-desc">{$t('morningPrayer')}</span>
         </button>
         <button
           class="indicator-toggle"
@@ -329,59 +380,59 @@
           on:click={() => clockIndicators.toggle('qaylula')}
           type="button"
         >
-          <span class="indicator-name">Qaylula</span>
-          <span class="indicator-desc">Mid-day rest</span>
+          <span class="indicator-name">{$t('qaylula')}</span>
+          <span class="indicator-desc">{$t('middayRest')}</span>
         </button>
       </div>
       {#if $clockIndicators.qibla}
-        <p class="indicator-note">Qibla is based on your selected city—we never track your live location. May be inaccurate within Makkah or while travelling.</p>
+        <p class="indicator-note">{$t('qiblaNote')}</p>
       {/if}
       {#if qiblaPermissionNote}
-        <p class="indicator-note">{qiblaPermissionNote}</p>
+        <p class="indicator-note">{$t(qiblaPermissionNote)}</p>
       {/if}
     </div>
 
     <!-- Label Size -->
     <div class="section">
-      <span class="section-label">Clock Label Size</span>
+      <span class="section-label">{$t('clockLabelSize')}</span>
       <div class="size-options">
         <button
           class="size-option"
           class:active={$labelSize === 'small'}
           on:click={() => labelSize.set('small')}
           type="button"
-        >Small</button>
+        >{$t('small')}</button>
         <button
           class="size-option"
           class:active={$labelSize === 'medium'}
           on:click={() => labelSize.set('medium')}
           type="button"
-        >Medium</button>
+        >{$t('medium')}</button>
         <button
           class="size-option"
           class:active={$labelSize === 'large'}
           on:click={() => labelSize.set('large')}
           type="button"
-        >Large</button>
+        >{$t('large')}</button>
       </div>
     </div>
 
     <!-- Calculation Method -->
     <div class="section">
-      <span class="section-label">Calculation Method</span>
+      <span class="section-label">{$t('calculationMethod')}</span>
       <div class="method-grid">
-        {#each methods as method, i}
+        {#each methods as method}
           <button
             class="method-card"
             class:selected={selectedMethod === method.id}
             on:click={() => selectMethod(method)}
             type="button"
           >
-            <span class="method-name">{method.name}</span>
+            <span class="method-name">{$t(method.id)}</span>
             {#if method.id !== 'Custom'}
-              <span class="method-angles">{method.fajr}° / {typeof method.isha === 'string' ? method.isha : method.isha + '°'}</span>
+              <span class="method-angles">{$formatNum(method.fajr)}° / {typeof method.isha === 'string' ? method.isha : $formatNum(method.isha) + '°'}</span>
             {:else}
-              <span class="method-angles">Your angles</span>
+              <span class="method-angles">{$t('yourAngles')}</span>
             {/if}
           </button>
         {/each}
@@ -393,10 +444,10 @@
       class="section custom-section"
       class:expanded={showCustom || selectedMethod === 'Custom'}
     >
-      <span class="section-label">Custom Angles</span>
+      <span class="section-label">{$t('customAngles')}</span>
       <div class="angles-row">
         <div class="angle-input-group">
-          <label for="fajr-angle">Fajr</label>
+          <label for="fajr-angle">{$t('fajr')}</label>
           <div class="angle-control">
             <button
               class="angle-btn"
@@ -418,13 +469,13 @@
               type="button"
             >+</button>
           </div>
-          <span class="angle-unit">degrees</span>
+          <span class="angle-unit">{$t('degrees')}</span>
         </div>
 
         <div class="angle-divider"></div>
 
         <div class="angle-input-group">
-          <label for="isha-angle">Isha</label>
+          <label for="isha-angle">{$t('isha')}</label>
           <div class="angle-control">
             <button
               class="angle-btn"
@@ -446,10 +497,10 @@
               type="button"
             >+</button>
           </div>
-          <span class="angle-unit">degrees</span>
+          <span class="angle-unit">{$t('degrees')}</span>
         </div>
       </div>
-      <p class="angle-hint">Degrees below horizon for twilight calculation</p>
+      <p class="angle-hint">{$t('degreesHint')}</p>
     </div>
 
     <!-- About -->
@@ -458,7 +509,8 @@
         <img src="/images/azanicn.png" alt="Azan" class="about-logo" />
         <div class="about-text">
           <span class="about-name">Azan</span>
-          <span class="about-desc">Beautiful Islamic prayer times</span>
+          <span class="about-desc">{$t('beautifulPrayerTimes')}</span>
+          <span class="about-version">v3.0.0</span>
         </div>
       </div>
       <a
@@ -477,7 +529,7 @@
 
     <!-- Close hint -->
     <div class="close-hint">
-      tap anywhere to close
+      {$t('tapToClose')}
     </div>
   </div>
 {/if}
@@ -589,16 +641,22 @@
     cursor: default;
   }
 
+  .settings-inner.rtl {
+    direction: rtl;
+    text-align: right;
+  }
+
   .settings-header {
     text-align: center;
   }
 
   .settings-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.4rem;
-    font-weight: 500;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.9);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
   }
 
   .section {
@@ -617,7 +675,27 @@
     letter-spacing: 0.15em;
   }
 
-  /* Mode switcher (Light/Dark tabs) */
+  .lang-numeral-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    direction: ltr;
+  }
+
+  .lang-numeral-row .mode-switcher {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* Mode switcher tabs equal width */
+  .lang-numeral-row .mode-tab {
+    flex: 1;
+  }
+
+
   .mode-switcher {
     display: flex;
     background: rgba(var(--theme-text-rgb), 0.04);
@@ -914,6 +992,7 @@
     text-align: center;
     outline: none;
     -moz-appearance: textfield;
+    appearance: textfield;
   }
 
   .angle-input-group input::-webkit-outer-spin-button,
@@ -1083,6 +1162,15 @@
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.3);
     letter-spacing: 0.03em;
+  }
+
+  .about-version {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 300;
+    color: rgba(var(--theme-text-rgb), 0.18);
+    letter-spacing: 0.05em;
+    margin-top: 0.1rem;
   }
 
   .github-link {

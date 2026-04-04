@@ -15,7 +15,7 @@ This includes:
 
 This app follows a **Refined Islamic Minimalism** aesthetic:
 - **Color palette**: Monochromatic gold (#d4af37) on deep black (#080808)
-- **Typography**: Amiri for Arabic, Cormorant Garamond for English display, Outfit for UI
+- **Typography**: Cairo for Arabic, Outfit for all English UI
 - **Motion**: Subtle, purposeful animations - no bouncing or excessive effects
 - **Philosophy**: Less is more. Every element should be intentional.
 
@@ -31,8 +31,9 @@ This app follows a **Refined Islamic Minimalism** aesthetic:
 **Always update `CHANGELOG.md` before every commit — no exceptions.**
 
 - Read the current latest version at the top of the file
-- Increment appropriately: patch (`.x`) for fixes/small changes, minor (`x.0`) for new features, major for breaking changes
-- Add the new version block at the top of the file with today's date and a clear description of what changed, including any corrections made
+- Versioning is `MAJOR.FEATURE.UPDATE` (3-point): increment update for fixes/changes, feature for new functionality, major for overhauls
+- "Fix" and "Update" are the same category — use **Update** only
+- Add the new version block at the top of the file with today's date and a clear description of what changed
 - Stage `CHANGELOG.md` along with the other changed files
 
 ## Technical Notes

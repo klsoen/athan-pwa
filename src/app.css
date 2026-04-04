@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 /* =====================================================
+   ARABIC FONT OVERRIDE
+   Injects Cairo for Arabic characters into every font
+   family used in the app, so no per-element changes needed
+===================================================== */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/cairo/v31/SLXVc1nY6HkvangtZmpQdkhzfH5lkSscQyyS8p4_RHH1.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+
+/* =====================================================
    THEME SYSTEM
    CSS variables for dynamic theming
 ===================================================== */
@@ -35,7 +50,7 @@ html, body {
   height: 100%;
   height: var(--screen-height, 100%);
   overflow: hidden;
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Outfit', 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Prevent iOS from auto-scaling text */
