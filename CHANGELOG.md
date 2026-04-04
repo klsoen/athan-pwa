@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.1 — 2026-04-05
+### Update
+- Reverted font changes to keep Amiri (Arabic) and Inter (English) as loaded in the main branch
+- Restored original Google Fonts link in `app.html` and `tailwind.config.js` arabic font family
+
+---
+
 ## v2.6.0 — 2026-04-05
 ### Feature
 - Added full Arabic/English language toggle and Western/Arabic numeral (123/١٢٣) toggle in Settings

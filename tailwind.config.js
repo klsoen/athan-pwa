@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        arabic: ['Cairo', 'sans-serif'],
+        arabic: ['Amiri', 'serif'],
         sans: ['Inter', 'sans-serif']
       },
       colors: {
