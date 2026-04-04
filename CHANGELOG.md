@@ -1,10 +1,28 @@
 # Changelog
+---
 
-Versioning: `MAJOR.FEATURE.UPDATE.FIX`
+Versioning: `MAJOR.FEATURE.UPDATE`
 - **MAJOR** — complete overhauls or rebrands
 - **FEATURE** — new functionality added
-- **UPDATE** — meaningful changes to existing features
-- **FIX** — small corrections, tweaks, patches
+- **UPDATE** — changes, fixes, and corrections to existing features
+
+---
+
+## v2.6.0 — 2026-04-05
+### Feature
+- Added full Arabic/English language toggle and Western/Arabic numeral (123/١٢٣) toggle in Settings
+- Arabic mode shows only Arabic text throughout: prayer names, dates, labels, indicators, city selector
+- All translations centralized in `src/lib/stores/locale.js`
+- Numeral style applies to all numbers: prayer times, countdown, Hijri dates, Gregorian dates, calculation method angles
+- Arabic mode shows ص/م instead of AM/PM; RTL layout on next-prayer row
+- Numeral style auto-follows language; explicit override stored separately and persisted
+- Calendar weekday labels, month/year, and dates switch to Arabic locale in Arabic mode
+- Countdown uses per-digit fixed-width spans — layout never shifts as numbers tick; single digits show without zero-padding
+
+### Update
+- City selector: globally diverse default cities, prominent search bar with hint text
+- App version shown in Settings About section
+- Various rendering fixes: calendar glow no longer clipped at right edge, language switch fades smoothly, settings title and letter-spacing corrected for Arabic rendering
 
 ---
 
@@ -74,118 +92,57 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ## v2.4.0.2 — 2026-03-16
 ### Fix
-- Center orphan items in last row of theme, indicator, and calculation method grids
 - Match calculation method grid max-width to indicators grid (320px)
+- Updated `azanicn.png` settings logo
 
 ---
 
-## v2.4.0.1 — 2026-03-15
-### Fix
-- Updated `azanicn.png` settings logo with new version
-- Switched changelog versioning from 3-point to 4-point (`MAJOR.FEATURE.UPDATE.FIX`)
-
----
-
-## v2.4.0.0 — 2026-03-15
-### Feature
-- Husky pre-commit hook: blocks any commit where `CHANGELOG.md` was not staged/updated
-- `prepare` script in `package.json` so hooks install automatically for all contributors after `npm install`
-- Changelog rule added to `CLAUDE.md` so Claude always updates the changelog before committing
-
----
-
-## v2.3.0.3 — 2026-03-15
-### Fix
-- Updated `azanicn.png` settings logo with new version provided
-- Removed leftover file from project root
-
----
-
-## v2.3.0.2 — 2026-03-15
-### Fix
-- Moved countdown display to appear **below** "Next [prayer] [time]" line
-- Previous order: countdown → next prayer / New order: next prayer → countdown
-
----
-
-## v2.3.0.1 — 2026-03-15 (`c56bd8c`)
-### Fix
-- White dot glow on the clock was being cropped near the top during startup animation
-- SVG filter `softGlow` switched to `filterUnits="userSpaceOnUse"` with absolute bounds `x="-30" y="-30" width="160" height="160"`
-
----
-
-## v2.3.0.0 — 2026-03-15 (`df190a9`, `b69e460`)
+## v2.3.0 — 2026-03-15
 ### Feature
 - About section added at the bottom of Settings: logo, app name, tagline, GitHub button
+- Husky pre-commit hook: blocks any commit where `CHANGELOG.md` was not staged/updated
+- `prepare` script in `package.json` so hooks install automatically for all contributors after `npm install`
 
 ### Update
 - Settings about logo enlarged from `2rem` → `3rem`
 - Main page centered using flex column layout instead of absolute positioning
 - Prayer list fixed sizing — removed `clamp(Yvh)` values to prevent vertical stretching on tall phones
+- Countdown moved to appear below "Next [prayer] [time]" line
+- Countdown no longer shows seconds when hours remain (`HHh MMm` / `MMm SSs`)
+- Countdown unit label corrected from "hr" → "h"
+- White dot glow on clock no longer cropped — SVG filter switched to `filterUnits="userSpaceOnUse"`
 
 ---
 
-## v2.2.0.2 — 2026-03-15 (`dd4e7ca`)
-### Fix
-- Countdown unit label corrected from "hr" → "h" (e.g. `01h 23m`)
-
----
-
-## v2.2.0.1 — 2026-03-15 (`afe8b18`)
-### Fix
-- Countdown no longer shows seconds when hours remain
-  - Hours remaining: `HHh MMm`
-  - Under an hour: `MMm SSs`
-
----
-
-## v2.2.0.0 — 2026-03-15 (`d059f72`, `627f2c2`)
+## v2.2.0 — 2026-03-15
 ### Feature
 - Prayer row state styling: past = greyed, active = gold, future = whiter
 
 ### Update
 - Prayer list lines equal length on both sides using CSS Grid `display: contents` on `.time-row`
-  - Fixed: first attempt used fixed pixel widths which clipped times like "12:31 PM"
-  - Fixed: Maghrib line was shorter because each row was its own independent grid
 - Time values right-aligned
-- Countdown fixed-width — zero-padded, `tabular-nums`, `white-space: nowrap`
 - Next prayer layout: "Next" label left, name centered, time right
-  - Fixed: `grid-template-columns: 1fr auto 1fr` made margins too wide — reverted to flex with `gap: 0.6rem`
 
 ---
 
-## v2.1.0.0 — 2026-03-15 (`ee644f8`)
+## v2.1.0 — 2026-03-15
 ### Feature
-- Replaced all app icons with new Azan branding
-  - `azanapp.png` → `icon-192.png`, `icon-512.png`
-  - `azanfavicon.png` → `favicon.png`
-  - Icons regenerated with `sips`
+- Replaced all app icons with new Azan branding (`icon-192.png`, `icon-512.png`, `favicon.png`)
 - Created `static/images/` directory, moved all source images there
 
 ---
 
-## v2.0.0.1 — 2026-03-15
-### Fix
-- `manifest.json` and `app.html` had `!Azan` — removed the `!` prefix left over from prior branding
-
----
-
-## v2.0.0.0 — 2026-03-15 (`2912590`)
+## v2.0.0 — 2026-03-15
 ### Major — Complete rebrand from Athan to Azan
 - `package.json`: `name` → `azan-pwa`
 - `src/app.html`: `<title>` → `Azan`
 - `static/manifest.json`: `name` and `short_name` → `Azan`
 - `src/service-worker.js`: cache → `azan-v1`
-- `CitySelector.svelte`: `localStorage` keys `athan-city` → `azan-city`
-- `prayer.js`: `athan-indicators` → `azan-indicators`, `athan-label-size` → `azan-label-size`
-- `theme.js`: `athan-theme` → `azan-theme`, `athan-theme-mode` → `azan-theme-mode`
-- `Settings.svelte`: `athan-method` → `azan-method`, `athan-angles` → `azan-angles`, event → `azan:qibla-permission`
-- `BreathDesign.svelte`: event → `azan:qibla-permission`
+- All `localStorage` keys, store names, and custom events renamed from `athan-*` → `azan-*`
 
 ---
 
-## v1.0.0.0 — prior history
+## v1.0.0 — prior history
 
 | Commit | Description |
 |--------|-------------|
