@@ -8,6 +8,14 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.19 — 2026-04-05
+### Update
+- City selector: added Arabic names and country names for all 9 popular cities
+- City selector search: uses Arabic Accept-Language header when in Arabic mode, so search results return in Arabic
+- Fixed notification description labels (Prayer alert / Special reminder) not updating when language switches — replaced non-reactive function with a reactive `$:` map
+
+---
+
 ## v2.6.18 — 2026-04-05
 ### Update
 - Prayer time table: bumped name and time font sizes from 0.75rem → 0.9rem; wider column gap (16px) and row gap (14px)

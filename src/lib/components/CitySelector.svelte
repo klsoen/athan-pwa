@@ -7,15 +7,15 @@
 
   // Popular cities shown when no search query — global spread
   const popularCities = [
-    { name: 'Mecca', country: 'Saudi Arabia', lat: 21.4225, lng: 39.8262 },
-    { name: 'London', country: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
-    { name: 'New York City', country: 'United States', lat: 40.7128, lng: -74.0060 },
-    { name: 'Los Angeles', country: 'United States', lat: 34.0522, lng: -118.2437 },
-    { name: 'São Paulo', country: 'Brazil', lat: -23.5505, lng: -46.6333 },
-    { name: 'Cairo', country: 'Egypt', lat: 30.0444, lng: 31.2357 },
-    { name: 'Karachi', country: 'Pakistan', lat: 24.8607, lng: 67.0011 },
-    { name: 'Jakarta', country: 'Indonesia', lat: -6.2088, lng: 106.8456 },
-    { name: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093 },
+    { name: 'Mecca', nameAr: 'مكة المكرمة', country: 'Saudi Arabia', countryAr: 'المملكة العربية السعودية', lat: 21.4225, lng: 39.8262 },
+    { name: 'London', nameAr: 'لندن', country: 'United Kingdom', countryAr: 'المملكة المتحدة', lat: 51.5074, lng: -0.1278 },
+    { name: 'New York City', nameAr: 'نيويورك', country: 'United States', countryAr: 'الولايات المتحدة', lat: 40.7128, lng: -74.0060 },
+    { name: 'Los Angeles', nameAr: 'لوس أنجلوس', country: 'United States', countryAr: 'الولايات المتحدة', lat: 34.0522, lng: -118.2437 },
+    { name: 'São Paulo', nameAr: 'ساو باولو', country: 'Brazil', countryAr: 'البرازيل', lat: -23.5505, lng: -46.6333 },
+    { name: 'Cairo', nameAr: 'القاهرة', country: 'Egypt', countryAr: 'مصر', lat: 30.0444, lng: 31.2357 },
+    { name: 'Karachi', nameAr: 'كراتشي', country: 'Pakistan', countryAr: 'باكستان', lat: 24.8607, lng: 67.0011 },
+    { name: 'Jakarta', nameAr: 'جاكرتا', country: 'Indonesia', countryAr: 'إندونيسيا', lat: -6.2088, lng: 106.8456 },
+    { name: 'Sydney', nameAr: 'سيدني', country: 'Australia', countryAr: 'أستراليا', lat: -33.8688, lng: 151.2093 },
   ];
 
   let isOpen = false;
@@ -32,16 +32,17 @@
     }
 
     isSearching = true;
+    const lang = $isArabic ? 'ar' : 'en';
     try {
       // Search with both original query and "city" appended, merge results
       const [response1, response2] = await Promise.all([
         fetch(
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`,
-          { headers: { 'Accept-Language': 'en' } }
+          { headers: { 'Accept-Language': lang } }
         ),
         fetch(
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query + ' city')}&format=json&limit=10&addressdetails=1`,
-          { headers: { 'Accept-Language': 'en' } }
+          { headers: { 'Accept-Language': lang } }
         )
       ]);
 
@@ -219,8 +220,8 @@
           type="button"
           in:scale={{ duration: 300, delay: 120 + i * 40, start: 0.8, easing: backOut }}
         >
-          <span class="chip-name">{city.name}</span>
-          <span class="chip-country">{city.country}</span>
+          <span class="chip-name">{$isArabic && city.nameAr ? city.nameAr : city.name}</span>
+          <span class="chip-country">{$isArabic && city.countryAr ? city.countryAr : city.country}</span>
         </button>
       {/each}
 

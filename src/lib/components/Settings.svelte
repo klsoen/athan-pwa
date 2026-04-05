@@ -60,9 +60,9 @@
   $: specialNotifications = notificationDefinitions.filter((definition) => specialNotificationIds.includes(definition.id));
   $: notificationTiles = [...primaryNotifications, ...specialNotifications];
 
-  function getNotificationDescription(id) {
-    return specialNotificationIds.includes(id) ? $t('specialReminder') : $t('prayerAlert');
-  }
+  $: notificationDescriptions = Object.fromEntries(
+    notificationDefinitions.map(d => [d.id, specialNotificationIds.includes(d.id) ? $t('specialReminder') : $t('prayerAlert')])
+  );
 
   function emitQiblaPermission(status) {
     if (typeof window === 'undefined') return;
@@ -324,7 +324,7 @@
               type="button"
             >
               <span class="indicator-name">{$t(definition.id)}</span>
-              <span class="indicator-desc">{getNotificationDescription(definition.id)}</span>
+              <span class="indicator-desc">{notificationDescriptions[definition.id]}</span>
             </button>
           {/each}
         </div>
