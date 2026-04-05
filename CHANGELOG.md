@@ -10,7 +10,7 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ## v2.6.7 — 2026-04-05
 ### Update
-- Replaced Lexend with Montserrat throughout all English UI
+- Replaced Lexend and Inter with Montserrat throughout — single font for all English UI and numbers
 
 ---
 

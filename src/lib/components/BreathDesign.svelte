@@ -2058,7 +2058,7 @@
   }
 
   .current-time {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: clamp(2.2rem, 5.5vw, 2.75rem);
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.85);
@@ -2090,7 +2090,7 @@
     align-items: baseline;
     justify-content: center;
     gap: 0.6em;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.25rem;
     font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.8);
@@ -2219,7 +2219,7 @@
   }
 
   .next-time {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2275,7 +2275,7 @@
   }
 
   .time-value {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.75rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.7);
@@ -2568,7 +2568,7 @@
     border: 1px solid rgba(var(--theme-text-rgb), 0.09);
     background: rgba(var(--theme-text-rgb), 0.09);
     color: rgba(var(--theme-text-rgb), 0.78);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: clamp(0.85rem, 2.4vw, 1rem);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
@@ -2582,7 +2582,7 @@
   }
 
   .calendar-day-greg {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: clamp(0.84rem, 2.3vw, 1rem);
     line-height: 1;
   }
@@ -2785,7 +2785,7 @@
     align-items: baseline;
     justify-content: center;
     gap: 0.6em;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.5rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.8);
