@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.6 — 2026-04-05
+### Update
+- Reordered Settings sections: Language → Notifications → Clock Indicators → Label Size → Calculation Method → Custom Angles → Theme → About
+
+---
+
 ## v2.6.5 — 2026-04-05
 ### Update
 - Applied consistent 4/8/12/16/24/32px spacing scale across all vertical gaps
