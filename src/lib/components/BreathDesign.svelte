@@ -2073,12 +2073,12 @@
 
   .divider-countdown {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
-    gap: 0.55em;
+    gap: 0.6em;
     font-family: 'Inter', sans-serif;
     font-size: 1.4rem;
-    font-weight: 200;
+    font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.8);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
@@ -2765,12 +2765,12 @@
 
   .clock-center-countdown {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
-    gap: 0.55em;
+    gap: 0.6em;
     font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
-    font-weight: 200;
+    font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.8);
     margin-top: 0.6rem;
     font-variant-numeric: tabular-nums;
@@ -2780,7 +2780,7 @@
   .cd-block {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.1em;
+    gap: 0.15em;
   }
 
   .cd-num {
@@ -2792,8 +2792,7 @@
   }
 
   .cd-label {
-    color: rgba(var(--theme-accent-rgb), 0.5);
-    font-size: 0.72em;
+    font-size: 0.65em;
     font-weight: 300;
     line-height: 1;
   }

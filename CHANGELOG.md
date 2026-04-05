@@ -8,6 +8,15 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.4 — 2026-04-05
+### Update
+- Countdown: `align-items: baseline` on all containers so labels sit on the same baseline as numbers
+- Label color now inherits from parent (matches number color — no more faded secondary color)
+- Tightened internal `gap` between number and label to 0.15em; inter-unit gap 0.6em
+- Reduced label font-size to 0.65em for correct proportion without looking detached
+
+---
+
 ## v2.6.3 — 2026-04-05
 ### Update
 - Countdown redesign: flex-centered, no layout shift, `width: 2ch` per number, `font-variant-numeric: tabular-nums` + `font-feature-settings: "tnum" 1`
