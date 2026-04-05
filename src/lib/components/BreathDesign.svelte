@@ -2060,7 +2060,7 @@
   .current-time {
     font-family: var(--font-num);
     font-size: clamp(2.2rem, 5.5vw, 2.75rem);
-    font-weight: 300;
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.85);
     margin-top: 16px;
 
@@ -2092,7 +2092,7 @@
     gap: 0.6em;
     font-family: var(--font-num);
     font-size: 1.25rem;
-    font-weight: 300;
+    font-weight: 500;
     color: rgba(var(--theme-accent-rgb), 0.8);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
@@ -2219,7 +2219,7 @@
   .next-time {
     font-family: var(--font-num);
     font-size: 0.9rem;
-    font-weight: 300;
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
@@ -2274,7 +2274,7 @@
   .time-value {
     font-family: var(--font-num);
     font-size: 0.75rem;
-    font-weight: 300;
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
@@ -2564,7 +2564,7 @@
     color: rgba(var(--theme-text-rgb), 0.78);
     font-family: var(--font-num);
     font-size: clamp(0.85rem, 2.4vw, 1rem);
-    font-weight: 400;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
     transition: all 0.22s ease;
     padding: 0;
@@ -2776,7 +2776,7 @@
     gap: 0.6em;
     font-family: var(--font-num);
     font-size: 1.5rem;
-    font-weight: 300;
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.8);
     margin-top: 8px;
     font-variant-numeric: tabular-nums;
