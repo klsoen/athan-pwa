@@ -329,7 +329,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.7rem;
     color: rgba(var(--theme-accent-rgb), 0.45);
-    letter-spacing: 0.08em;
+
     margin-top: -1rem;
   }
 
@@ -411,7 +411,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.6rem;
     color: rgba(var(--theme-text-rgb), 0.2);
-    letter-spacing: 0.1em;
+
     margin-top: 0.5rem;
   }
 </style>

@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.9 — 2026-04-05
+### Update
+- Removed all letter-spacing declarations throughout the app
+
+---
+
 ## v2.6.8 — 2026-04-05
 ### Update
 - Replaced Noto Kufi Arabic with Noto Sans Arabic for all Arabic text throughout

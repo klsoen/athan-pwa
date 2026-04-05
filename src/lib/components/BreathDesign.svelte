@@ -2052,7 +2052,7 @@
     font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
-    letter-spacing: 0.22em;
+
     text-transform: uppercase;
     margin-top: 8px;
   }
@@ -2063,7 +2063,7 @@
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.85);
     margin-top: 16px;
-    letter-spacing: 0.04em;
+
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
@@ -2103,37 +2103,37 @@
   .arabic-mode .time-name {
     font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .time-value {
     font-family: 'Noto Sans Arabic', sans-serif;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .current-time {
     font-family: 'Noto Sans Arabic', sans-serif;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .next-name {
     font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .next-time {
     font-family: 'Noto Sans Arabic', sans-serif;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .next-label {
     text-transform: none;
-    letter-spacing: 0.04em;
+
   }
 
   .arabic-mode .tap-hint {
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .divider-countdown,
@@ -2152,7 +2152,7 @@
   .arabic-mode .date-offset {
     font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .date-gregorian {
@@ -2160,23 +2160,23 @@
   }
 
   .arabic-mode .clock-center-next {
-    letter-spacing: 0;
+
   }
 
 
   .arabic-mode .indicator-active {
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .calendar-today {
-    letter-spacing: 0;
+
     text-transform: none;
   }
 
   .arabic-mode .clock-label-name {
     font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
-    letter-spacing: 0;
+
   }
 
   .arabic-mode .all-times {
@@ -2206,7 +2206,7 @@
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.3);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+
   }
 
   .next-name {
@@ -2215,7 +2215,7 @@
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.6);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+
   }
 
   .next-time {
@@ -2261,7 +2261,7 @@
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+
     white-space: nowrap;
   }
 
@@ -2408,7 +2408,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.58rem;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+
     color: rgba(var(--theme-accent-bright-rgb), 0.56);
   }
 
@@ -2457,7 +2457,7 @@
   .calendar-month-label {
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(1.3rem, 3.7vw, 1.9rem);
-    letter-spacing: 0.06em;
+
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
   }
 
@@ -2480,7 +2480,7 @@
   .calendar-hijri-month {
     font-family: 'Noto Sans Arabic', sans-serif;
     font-size: clamp(0.74rem, 2.1vw, 0.88rem);
-    letter-spacing: 0.04em;
+
     color: rgba(var(--theme-text-rgb), 0.5);
     transition: color 0.2s ease, text-shadow 0.2s ease;
   }
@@ -2529,7 +2529,7 @@
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(0.62rem, 1.8vw, 0.76rem);
-    letter-spacing: 0.14em;
+
     text-transform: uppercase;
     color: rgba(var(--theme-text-rgb), 0.42);
   }
@@ -2634,7 +2634,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(0.68rem, 1.8vw, 0.8rem);
     text-transform: uppercase;
-    letter-spacing: 0.14em;
+
     padding: 0.66rem 1.2rem;
   }
 
@@ -2696,7 +2696,7 @@
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+
     margin-bottom: 0.15rem;
   }
 
@@ -2776,7 +2776,7 @@
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+
     margin-top: 0.2rem;
   }
 
@@ -2819,7 +2819,7 @@
     font-size: 0.68rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
     margin-top: 8px;
-    letter-spacing: 0.12em;
+
     text-transform: uppercase;
   }
 
@@ -2843,7 +2843,7 @@
     font-size: 0.8rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.9);
-    letter-spacing: 0.05em;
+
     padding: 0.4rem 0.8rem;
     background: rgba(var(--theme-accent-rgb), 0.1);
     border-radius: 1rem;
@@ -2858,7 +2858,7 @@
     font-size: 0.7rem;
     font-weight: 400;
     color: var(--theme-marker);
-    letter-spacing: 0.05em;
+
     padding: 0.4rem 0.8rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -2884,7 +2884,7 @@
     font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.4);
-    letter-spacing: 0.12em;
+
     text-transform: lowercase;
     margin-top: 8px;
     transition: filter 0.3s ease-out;
@@ -2948,7 +2948,7 @@
 
     .current-name {
       font-size: 1rem;
-      letter-spacing: 0.3em;
+  
     }
 
     .current-time {

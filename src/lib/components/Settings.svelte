@@ -723,7 +723,7 @@
     font-size: 1.3rem;
     font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.9);
-    letter-spacing: 0.25em;
+
     text-transform: uppercase;
   }
 
@@ -740,7 +740,7 @@
     font-size: 0.65rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+
   }
 
   .lang-numeral-row {
@@ -803,7 +803,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.72rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
+
   }
 
   .mode-icon {
@@ -821,7 +821,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.5rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+
     border-radius: 0.25rem;
     text-transform: uppercase;
   }
@@ -1016,7 +1016,7 @@
     font-weight: 500;
     color: rgba(var(--theme-accent-rgb), 0.7);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+
   }
 
   .angle-control {
@@ -1228,7 +1228,7 @@
     font-size: 0.85rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
-    letter-spacing: 0.05em;
+
   }
 
   .about-desc {
@@ -1236,7 +1236,7 @@
     font-size: 0.65rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.3);
-    letter-spacing: 0.03em;
+
   }
 
   .about-version {
@@ -1244,7 +1244,7 @@
     font-size: 0.6rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.18);
-    letter-spacing: 0.05em;
+
     margin-top: 0.1rem;
   }
 
@@ -1280,7 +1280,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.6rem;
     color: rgba(var(--theme-text-rgb), 0.2);
-    letter-spacing: 0.1em;
+
   }
 
   /* Responsive */
