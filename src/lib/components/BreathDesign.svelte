@@ -1440,18 +1440,21 @@
           {/key}
         </div>
 
-        <div class="next-prayer" class:rtl={$isArabic} in:fly={{ y: 12, duration: 400, delay: 250 }}>
+        <div class="next-block" class:rtl={$isArabic} in:fly={{ y: 12, duration: 400, delay: 250 }}>
           <span class="next-label">{$t('next')}</span>
+          <div class="next-name-row">
+            <span class="next-divider-line"></span>
+            {#key $todayCurrentPrayer.next}
+              <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{$isArabic ? prayerNames[$todayCurrentPrayer.next]?.ar : prayerNames[$todayCurrentPrayer.next]?.en}</span>
+            {/key}
+            <span class="next-divider-line"></span>
+          </div>
           {#key $todayCurrentPrayer.next}
-            <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{$isArabic ? prayerNames[$todayCurrentPrayer.next]?.ar : prayerNames[$todayCurrentPrayer.next]?.en}</span>
-            <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{fmtTime($todayPrayerTimes[$todayCurrentPrayer.next])}</span>
+            <div class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{fmtTime($todayPrayerTimes[$todayCurrentPrayer.next])}</div>
           {/key}
-        </div>
-
-        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
-          <span class="divider-line"></span>
-          <span class="divider-countdown">{#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}</span>
-          <span class="divider-line"></span>
+          <div class="next-countdown" in:fade={{ duration: 350, delay: 200 }}>
+            {#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}
+          </div>
         </div>
 
         <!-- All prayer times -->
@@ -2065,33 +2068,46 @@
     margin-top: 16px;
   }
 
-  /* Divider with countdown */
-  .prayer-divider {
+  /* Next prayer block */
+  .next-block {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin: 16px 0;
+    gap: 6px;
+    margin: 12px 0 20px;
     width: 100%;
     max-width: 300px;
   }
 
-  .divider-line {
-    flex: 0 0 44px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.3), transparent);
+  .next-block.rtl {
+    direction: rtl;
   }
 
-  .divider-countdown {
+  .next-divider-line {
+    flex: 0 0 32px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.25), transparent);
+  }
+
+  .next-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .next-countdown {
     display: flex;
     align-items: baseline;
     justify-content: center;
     gap: 0.6em;
     font-family: var(--font-num);
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 500;
-    color: rgba(var(--theme-accent-rgb), 0.8);
+    color: rgba(var(--theme-accent-rgb), 0.85);
     white-space: nowrap;
+    margin-top: 2px;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
@@ -2133,7 +2149,7 @@
     font-family: var(--font-ar);
   }
 
-  .arabic-mode .divider-countdown,
+  .arabic-mode .next-countdown,
   .arabic-mode .clock-center-countdown {
     direction: rtl;
   }
@@ -2182,40 +2198,26 @@
     text-align: left;
   }
 
-  /* Next prayer */
-  .next-prayer {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .next-prayer.rtl {
-    direction: rtl;
-  }
-
   .next-label {
-    font-size: 0.7rem;
+    font-size: 0.62rem;
     font-weight: 400;
-    color: rgba(var(--theme-text-rgb), 0.3);
+    color: rgba(var(--theme-text-rgb), 0.28);
     text-transform: uppercase;
-
   }
 
   .next-name {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 400;
-    color: rgba(var(--theme-text-rgb), 0.6);
+    color: rgba(var(--theme-text-rgb), 0.65);
     text-transform: uppercase;
-
+    white-space: nowrap;
   }
 
   .next-time {
     font-family: var(--font-num);
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-weight: 500;
-    color: rgba(var(--theme-text-rgb), 0.5);
+    color: rgba(var(--theme-text-rgb), 0.6);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
@@ -2886,12 +2888,12 @@
       font-size: 2rem;
     }
 
-    .divider-countdown {
-      font-size: 1.2rem;
+    .next-countdown {
+      font-size: 1.3rem;
     }
 
     .next-name {
-      font-size: 1.3rem;
+      font-size: 0.95rem;
     }
 
     .next-time {
@@ -2935,12 +2937,12 @@
       font-size: 1.75rem;
     }
 
-    .divider-countdown {
-      font-size: 1.1rem;
+    .next-countdown {
+      font-size: 1.2rem;
     }
 
     .next-name {
-      font-size: 1.2rem;
+      font-size: 0.9rem;
     }
 
     .clock-center-arabic {
@@ -2963,8 +2965,9 @@
   }
 
   @media (max-height: 700px) {
-    .prayer-divider {
-      margin: 1.25rem 0;
+    .next-block {
+      margin: 8px 0 14px;
+      gap: 4px;
     }
 
     .all-times-stage {

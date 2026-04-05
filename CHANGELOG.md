@@ -8,6 +8,15 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.21 — 2026-04-05
+### Update
+- Reorganized next prayer section into a unified stacked block: NEXT label → ── Name ── → time → countdown
+- Countdown is now the largest element (1.5rem, accent color) — most time-sensitive info is most prominent
+- Flanking lines moved from countdown to prayer name row for better visual rhythm
+- Removed scattered `.next-prayer` inline row and `.prayer-divider` separator; replaced with `.next-block` column layout
+
+---
+
 ## v2.6.20 — 2026-04-05
 ### Update
 - Fixed "العربية" language button using wrong font in English mode — it always uses var(--font-ar) now since the text is always Arabic
