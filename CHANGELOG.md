@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.27 — 2026-04-05
+### Update
+- Arabic prayer name now overlaps the bottom glow of the prayer icon with margin-top: -18px — layered depth effect
+
+---
+
 ## v2.6.26 — 2026-04-05
 ### Update
 - Replaced in:fly on current-prayer and next-block with in:fade — no more upward slide when returning to main view, everything fades in cleanly

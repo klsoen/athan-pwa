@@ -1713,6 +1713,9 @@
     color: var(--theme-accent-bright);
     line-height: 1.1;
     text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
+    margin-top: -18px;
+    position: relative;
+    z-index: 1;
   }
 
   /* Gentle reveal with golden glow */
@@ -1737,7 +1740,7 @@
 
   /* ===== PRAYER-SPECIFIC ICONS ===== */
   .prayer-icon {
-    margin-bottom: 4px;
+    margin-bottom: 0;
     height: 64px;
     display: flex;
     justify-content: center;
