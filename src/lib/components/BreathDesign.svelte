@@ -1707,7 +1707,7 @@
   }
 
   .current-arabic {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: 4.5rem;
     color: var(--theme-accent-bright);
     line-height: 1.1;
@@ -2101,29 +2101,29 @@
 
   /* ===== Arabic mode overrides — consistent Cairo, no Latin spacing ===== */
   .arabic-mode .time-name {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .time-value {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .current-time {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     letter-spacing: 0;
   }
 
   .arabic-mode .next-name {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .next-time {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     letter-spacing: 0;
   }
 
@@ -2142,21 +2142,21 @@
   }
 
   .arabic-mode .cd-num {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
   }
 
   .arabic-mode .cd-label {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
   }
 
   .arabic-mode .date-offset {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
 
   .arabic-mode .date-gregorian {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
   }
 
   .arabic-mode .clock-center-next {
@@ -2174,7 +2174,7 @@
   }
 
   .arabic-mode .clock-label-name {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     text-transform: none;
     letter-spacing: 0;
   }
@@ -2478,7 +2478,7 @@
   }
 
   .calendar-hijri-month {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: clamp(0.74rem, 2.1vw, 0.88rem);
     letter-spacing: 0.04em;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2588,7 +2588,7 @@
   }
 
   .calendar-day-hijri {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: clamp(0.5rem, 1.5vw, 0.62rem);
     line-height: 1;
     color: rgba(var(--theme-accent-rgb), 0.55);
@@ -2646,7 +2646,7 @@
   }
 
   .date-hijri {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: 0.74rem;
     color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
@@ -2763,7 +2763,7 @@
   }
 
   .clock-center-arabic {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: 2.8rem;
     color: var(--theme-accent-bright);
     line-height: 1.2;

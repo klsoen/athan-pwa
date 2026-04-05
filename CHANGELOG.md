@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.8 — 2026-04-05
+### Update
+- Replaced Noto Kufi Arabic with Noto Sans Arabic for all Arabic text throughout
+
+---
+
 ## v2.6.7 — 2026-04-05
 ### Update
 - Replaced Lexend and Inter with Montserrat throughout — single font for all English UI and numbers

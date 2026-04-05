@@ -242,7 +242,7 @@
   }
 
   .hijri-date {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: 0.85rem;
     color: rgba(212, 175, 55, 0.8);
     margin-top: 0.125rem;
@@ -305,7 +305,7 @@
   }
 
   .center-arabic {
-    font-family: 'Noto Kufi Arabic', sans-serif;
+    font-family: 'Noto Sans Arabic', sans-serif;
     font-size: 1.75rem;
     color: #d4af37;
     line-height: 1.2;

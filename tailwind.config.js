@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        arabic: ['Noto Kufi Arabic', 'sans-serif'],
+        arabic: ['Noto Sans Arabic', 'sans-serif'],
         sans: ['Montserrat', 'sans-serif']
       },
       colors: {
