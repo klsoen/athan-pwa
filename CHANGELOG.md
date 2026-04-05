@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.23 — 2026-04-05
+### Update
+- Tightened gap between countdown units from 0.6em → 0.3em; cd-num width:2ch preserved so digits never shift
+
+---
+
 ## v2.6.22 — 2026-04-05
 ### Update
 - Removed next prayer time display from next-block — only name and countdown remain

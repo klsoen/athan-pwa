@@ -2098,7 +2098,7 @@
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 0.6em;
+    gap: 0.3em;
     font-family: var(--font-num);
     font-size: 1.5rem;
     font-weight: 500;
