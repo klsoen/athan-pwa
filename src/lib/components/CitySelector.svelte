@@ -175,11 +175,11 @@
     on:click|stopPropagation={close}
     type="button"
     aria-label="Close"
-    transition:fade={{ duration: 200 }}
+    transition:fade={{ duration: 280 }}
   ></button>
 
   <!-- Floating content - no visible container -->
-  <div class="selector-content" class:rtl={$isArabic} role="dialog" aria-modal="true">
+  <div class="selector-content" class:rtl={$isArabic} role="dialog" aria-modal="true" transition:fade={{ duration: 280 }}>
 
     <!-- Search bar -->
     <div class="search-bar" in:fly={{ y: -20, duration: 400, delay: 50, easing: cubicOut }}>

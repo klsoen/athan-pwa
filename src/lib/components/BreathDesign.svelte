@@ -888,7 +888,7 @@
 
     {#if showFullClock}
       <!-- FULL CLOCK VIEW -->
-      <div class="full-clock" class:blurred={overlayOpen} style="--label-scale: {labelScale};" in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
+      <div class="full-clock" class:blurred={overlayOpen} style="--label-scale: {labelScale};" transition:fade={{ duration: 280 }}>
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
@@ -1223,7 +1223,7 @@
 
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
-      <div class="prayer-display" class:blurred={overlayOpen} in:scale={{ duration: 400, delay: 80, start: 0.95, opacity: 0 }} out:fade={{ duration: 120 }}>
+      <div class="prayer-display" class:blurred={overlayOpen} transition:fade={{ duration: 280 }}>
         <div class="current-prayer" in:fly={{ y: 15, duration: 450, delay: 120 }}>
           {#key showFullClock}
             <!-- Prayer-specific animated icon (using $currentPrayer.current for testing) -->
@@ -1510,7 +1510,7 @@
         type="button"
         aria-label="Close calendar"
         on:click|stopPropagation={closeCalendarToHome}
-        transition:fade={{ duration: 180 }}
+        transition:fade={{ duration: 280 }}
       ></button>
 
       <div
@@ -1523,7 +1523,7 @@
           class="calendar-sheet"
           on:touchstart={handleCalendarTouchStart}
           on:touchend={handleCalendarTouchEnd}
-          transition:scale={{ duration: 260, start: 0.96, opacity: 0 }}
+          transition:fade={{ duration: 280 }}
         >
           <div class="calendar-header">
             <button class="calendar-month-nav" type="button" aria-label="Previous month" on:click|stopPropagation={() => shiftCalendarMonth(-1)}>
