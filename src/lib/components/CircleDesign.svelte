@@ -339,7 +339,7 @@
   }
 
   .countdown-time {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 2.25rem;
     font-weight: 200;
     color: white;

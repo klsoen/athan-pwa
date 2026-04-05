@@ -5,7 +5,7 @@ export default {
     extend: {
       fontFamily: {
         arabic: ['Noto Kufi Arabic', 'sans-serif'],
-        sans: ['Lexend', 'sans-serif']
+        sans: ['Montserrat', 'sans-serif']
       },
       colors: {
         gold: {

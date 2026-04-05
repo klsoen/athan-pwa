@@ -719,7 +719,7 @@
   }
 
   .settings-title {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.3rem;
     font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.9);
@@ -736,7 +736,7 @@
   }
 
   .section-label {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.65rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
@@ -800,7 +800,7 @@
   }
 
   .mode-tab span:not(.new-badge) {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -818,7 +818,7 @@
     padding: 0.15rem 0.35rem;
     background: var(--theme-accent);
     color: var(--theme-bg);
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.5rem;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -906,7 +906,7 @@
   }
 
   .theme-name {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.6rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.6);
@@ -957,7 +957,7 @@
   }
 
   .method-name {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.72rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.8);
@@ -970,7 +970,7 @@
   }
 
   .method-angles {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.65rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     margin-top: 0.2rem;
@@ -1011,7 +1011,7 @@
   }
 
   .angle-input-group label {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.75rem;
     font-weight: 500;
     color: rgba(var(--theme-accent-rgb), 0.7);
@@ -1054,7 +1054,7 @@
     background: none;
     border: none;
     color: white;
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.1rem;
     font-weight: 500;
     text-align: center;
@@ -1070,13 +1070,13 @@
   }
 
   .angle-unit {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.6rem;
     color: rgba(var(--theme-text-rgb), 0.3);
   }
 
   .angle-hint {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.65rem;
     color: rgba(var(--theme-text-rgb), 0.25);
     text-align: center;
@@ -1130,7 +1130,7 @@
   }
 
   .indicator-name {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.65rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
@@ -1143,7 +1143,7 @@
   }
 
   .indicator-desc {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.55rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-align: center;
@@ -1154,7 +1154,7 @@
   }
 
   .indicator-note {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.7rem;
     color: rgba(var(--theme-accent-rgb), 0.8);
     text-align: center;
@@ -1173,7 +1173,7 @@
   }
 
   .size-option {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.75rem;
     font-weight: 400;
     padding: 0.5rem 1rem;
@@ -1224,7 +1224,7 @@
   }
 
   .about-name {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
@@ -1232,7 +1232,7 @@
   }
 
   .about-desc {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.65rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.3);
@@ -1240,7 +1240,7 @@
   }
 
   .about-version {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.6rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.18);
@@ -1272,12 +1272,12 @@
   }
 
   .github-link span {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.75rem;
   }
 
   .close-hint {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.6rem;
     color: rgba(var(--theme-text-rgb), 0.2);
     letter-spacing: 0.1em;

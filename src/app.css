@@ -35,7 +35,7 @@ html, body {
   height: 100%;
   height: var(--screen-height, 100%);
   overflow: hidden;
-  font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Prevent iOS from auto-scaling text */

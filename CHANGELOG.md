@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.7 — 2026-04-05
+### Update
+- Replaced Lexend with Montserrat throughout all English UI
+
+---
+
 ## v2.6.6 — 2026-04-05
 ### Update
 - Reordered Settings sections: Language → Notifications → Clock Indicators → Label Size → Calculation Method → Custom Angles → Theme → About
