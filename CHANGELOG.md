@@ -8,6 +8,19 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.5 — 2026-04-05
+### Update
+- Applied consistent 4/8/12/16/24/32px spacing scale across all vertical gaps
+- Prayer display uses flex column with centered alignment — no drift between elements
+- Standardized typography: current-name 0.75rem/0.22em tracking, time values 0.75rem tabular Inter, next-prayer labels 0.7rem
+- Current time uses Inter with tabular-nums for numeric stability
+- Prayer list grid: 12px column-gap and row-gap, max-width 280px matching divider
+- Active row no longer changes font-weight (no layout shift)
+- Divider lines now fluid width within fixed max-width container
+- clock-center-next and tap-hint use 8px margin-top on scale
+
+---
+
 ## v2.6.4 — 2026-04-05
 ### Update
 - Countdown: `align-items: baseline` on all containers so labels sit on the same baseline as numbers

@@ -1681,6 +1681,11 @@
     background: radial-gradient(circle, rgba(var(--theme-accent-rgb), 0.15) 0%, rgba(var(--theme-accent-rgb), 0.05) 45%, transparent 65%);
   }
 
+  /* ===== SPACING SCALE =====
+     --sp-1: 4px   --sp-2: 8px   --sp-3: 12px
+     --sp-4: 16px  --sp-5: 24px  --sp-6: 32px  --sp-7: 48px
+  ============================= */
+
   /* Main prayer display */
   .prayer-display {
     text-align: center;
@@ -1688,11 +1693,17 @@
     max-width: 320px;
     transition: filter 0.3s ease-out;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   /* Current prayer - hero section */
   .current-prayer {
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
   }
 
   .current-arabic {
@@ -1729,8 +1740,8 @@
 
   /* ===== PRAYER-SPECIFIC ICONS ===== */
   .prayer-icon {
-    margin-bottom: 0.5rem;
-    height: 80px;
+    margin-bottom: 8px;
+    height: 72px;
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -2038,21 +2049,23 @@
 
   .current-name {
     font-family: 'Lexend', sans-serif;
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
-    letter-spacing: 0.3em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    margin-top: 0.5rem;
+    margin-top: 8px;
   }
 
   .current-time {
-    font-family: 'Lexend', sans-serif;
-    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2.2rem, 5.5vw, 2.75rem);
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.85);
-    margin-top: clamp(0.5rem, 1.5vh, 1rem);
-    letter-spacing: 0.05em;
+    margin-top: 16px;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
   /* Divider with countdown */
@@ -2060,13 +2073,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin: clamp(1rem, 2.5vh, 1.75rem) 0;
+    gap: 16px;
+    margin: 16px 0;
+    width: 100%;
+    max-width: 280px;
   }
 
   .divider-line {
     flex: 1;
-    max-width: 60px;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.3), transparent);
   }
@@ -2077,7 +2091,7 @@
     justify-content: center;
     gap: 0.6em;
     font-family: 'Inter', sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.8);
     white-space: nowrap;
@@ -2178,7 +2192,8 @@
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 8px;
+    margin-top: 4px;
   }
 
   .next-prayer.rtl {
@@ -2187,7 +2202,7 @@
 
   .next-label {
     font-family: 'Lexend', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.3);
     text-transform: uppercase;
@@ -2196,26 +2211,28 @@
 
   .next-name {
     font-family: 'Lexend', sans-serif;
-    font-size: 1.3rem;
+    font-size: 0.9rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.6);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
   }
 
   .next-time {
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 400;
+    font-size: 0.9rem;
+    font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.5);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
   /* All prayer times list */
   .all-times-stage {
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 0;
     width: 100%;
-    max-width: min(320px, 85vw);
+    max-width: 280px;
     margin-left: auto;
     margin-right: auto;
     min-height: 15rem;
@@ -2228,8 +2245,8 @@
     inset: 0;
     display: grid;
     grid-template-columns: max-content 1fr max-content;
-    column-gap: 0.75rem;
-    row-gap: 0.75rem;
+    column-gap: 12px;
+    row-gap: 12px;
     align-content: flex-start;
     align-items: center;
   }
@@ -2240,11 +2257,11 @@
 
   .time-name {
     font-family: 'Lexend', sans-serif;
-    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     white-space: nowrap;
   }
 
@@ -2255,15 +2272,15 @@
       rgba(var(--theme-text-rgb), 0.05) 50%,
       rgba(var(--theme-text-rgb), 0.1) 100%
     );
-    background-size: 4px 1px;
   }
 
   .time-value {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.95rem, 2.8vw, 1.25rem);
+    font-size: 0.75rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     text-align: right;
     white-space: nowrap;
   }
@@ -2308,7 +2325,7 @@
 
   .time-row.active .time-value {
     color: rgba(var(--theme-accent-rgb), 0.9);
-    font-weight: 400;
+    font-weight: 300;
   }
 
   /* Dates row at bottom */
@@ -2772,7 +2789,7 @@
     font-size: 1.5rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.8);
-    margin-top: 0.6rem;
+    margin-top: 8px;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
@@ -2799,10 +2816,11 @@
 
   .clock-center-next {
     font-family: 'Lexend', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
-    margin-top: 0.3rem;
-    letter-spacing: 0.1em;
+    margin-top: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   /* Clock indicators info */
@@ -2868,7 +2886,7 @@
     color: rgba(var(--theme-accent-rgb), 0.4);
     letter-spacing: 0.12em;
     text-transform: lowercase;
-    margin-top: 0.75rem;
+    margin-top: 8px;
     transition: filter 0.3s ease-out;
   }
 
