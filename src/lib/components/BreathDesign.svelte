@@ -2063,9 +2063,6 @@
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.85);
     margin-top: 16px;
-
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum" 1;
   }
 
   /* Divider with countdown */

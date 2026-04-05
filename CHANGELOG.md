@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.14 — 2026-04-05
+### Update
+- Removed tabular-nums from main time display so digits render with natural proportional spacing
+
+---
+
 ## v2.6.13 — 2026-04-05
 ### Update
 - Bumped font-weight on all numeric elements (times, countdown, calendar) from 300/400 → 500
