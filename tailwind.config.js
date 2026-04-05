@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        arabic: ['Amiri', 'serif'],
-        sans: ['Inter', 'sans-serif']
+        arabic: ['Noto Sans Arabic', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif']
       },
       colors: {
         gold: {

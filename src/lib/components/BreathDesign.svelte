@@ -21,6 +21,7 @@
     dateOffset
   } from '$lib/stores/prayer.js';
   import { currentTheme } from '$lib/stores/theme.js';
+  import { language, numeralStyle, t, isArabic, formatNum } from '$lib/stores/locale.js';
   import CitySelector from './CitySelector.svelte';
   import Settings from './Settings.svelte';
 
@@ -30,6 +31,15 @@
   // Motion: Subtle, purposeful animations - no bouncing or excessive effects
 
   let calendarOpen = false;
+  let langFading = false;
+  let prevLang = '';
+
+  // Fade out/in when language changes
+  $: if ($language !== prevLang && prevLang !== '') {
+    langFading = true;
+    setTimeout(() => { langFading = false; }, 50);
+  }
+  $: prevLang = $language;
 
   // Combined overlay state for blur
   $: overlayOpen = $citySelectorOpen || $settingsOpen || calendarOpen;
@@ -57,7 +67,9 @@
   let breathPhase = 0;
   let dateSwipeDirection = 1;
   let calendarMonth = new Date();
-  const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const weekdayLabelsEn = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const weekdayLabelsAr = ['أح', 'إث', 'ثل', 'أر', 'خم', 'جم', 'سب'];
+  $: weekdayLabels = $isArabic ? weekdayLabelsAr : weekdayLabelsEn;
   let calendarTouchStartX = 0;
   let calendarTouchStartY = 0;
   let calendarTouchStartAt = 0;
@@ -474,26 +486,51 @@
 
 
   function formatCountdown(cd) {
-    const h = String(cd.hours).padStart(2, '0');
-    const m = String(cd.minutes).padStart(2, '0');
-    const s = String(Math.max(0, cd.seconds)).padStart(2, '0');
-    if (cd.hours > 0) return `${h}h ${m}m`;
-    return `${m}m ${s}s`;
+    const fn = $formatNum;
+    const ar = $language === 'ar';
+    const h = cd.hours;
+    const m = cd.minutes;
+    const s = Math.max(0, cd.seconds);
+    const pad = (n) => fn(String(n).padStart(2, '0'));
+    if (h > 0) return [
+      { key: 'h', value: pad(h), label: ar ? 'س' : 'h' },
+      { key: 'm', value: pad(m), label: ar ? 'د' : 'm' },
+    ];
+    if (m > 0) return [
+      { key: 'm', value: pad(m), label: ar ? 'د' : 'm' },
+      { key: 's', value: pad(s), label: ar ? 'ث' : 's' },
+    ];
+    return [{ key: 's', value: pad(s), label: ar ? 'ث' : 's' }];
   }
 
   function formatTime(date) {
     if (!date) return '--:--';
+    const fn = $formatNum;
+    const ar = $language === 'ar';
     const options = {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true
     };
-    // Use city's timezone if available
     if ($location.timezone) {
       options.timeZone = $location.timezone;
     }
-    return date.toLocaleTimeString('en-US', options);
+    // Use ar locale for Arabic AM/PM (ص/م), en-US otherwise
+    const raw = date.toLocaleTimeString(ar ? 'ar' : 'en-US', options);
+    // Normalize all digits to western first, then apply user's numeral preference
+    const western = raw.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+    if ($numeralStyle === 'arabic') {
+      return fn(western);
+    }
+    return western;
   }
+
+  // Reactive wrappers — Svelte only tracks explicit $store refs in template expressions.
+  // formatTime/$t reads happen inside the function body, invisible to the compiler.
+  // A reactive declaration forces a new function reference when deps change.
+  $: fmtTime = (() => { void $numeralStyle; void $language; void $formatNum; return (d) => formatTime(d); })();
+  $: fmtCountdown = (() => { void $numeralStyle; void $language; void $formatNum; return (cd) => formatCountdown(cd); })();
+  $: fmtOffset = (() => { void $t; void $formatNum; return (o) => getOffsetLabel(o); })();
 
   function normalizeDate(date) {
     const normalized = new Date(date);
@@ -578,11 +615,13 @@
     return cells;
   }
 
-  function getCalendarMonthLabel(date) {
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric'
-    });
+  function getCalendarMonthLabel(date, _lang) {
+    const locale = $language === 'ar' ? 'ar' : 'en-US';
+    const raw = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+    if ($numeralStyle === 'western' && $language === 'ar') {
+      return raw.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+    }
+    return raw;
   }
 
   function getHijriDayNumber(date) {
@@ -602,7 +641,8 @@
 
     const monthNum = parseInt(monthNumRaw, 10);
     const yearNum = yearRaw.replace(/[^\d]/g, '');
-    const name = hijriMonths[monthNum - 1] || monthNumRaw;
+    const months = $t('hijriMonths');
+    const name = months[monthNum - 1] || monthNumRaw;
 
     return {
       monthNum,
@@ -678,10 +718,12 @@
   }
 
   function getOffsetLabel(offset) {
-    if (offset === 0) return 'Today';
-    if (offset === 1) return 'Tomorrow';
-    if (offset === -1) return 'Yesterday';
-    return offset > 0 ? `${offset} days ahead` : `${Math.abs(offset)} days back`;
+    const tr = $t;
+    const fn = $formatNum;
+    if (offset === 0) return tr('today');
+    if (offset === 1) return tr('tomorrow');
+    if (offset === -1) return tr('yesterday');
+    return offset > 0 ? `${fn(offset)} ${tr('daysAhead')}` : `${fn(Math.abs(offset))} ${tr('daysBack')}`;
   }
 
   function dateListSlide(node, { direction = 1, duration = 430 } = {}) {
@@ -722,47 +764,49 @@
     : calendarHijriMonths[0]?.key;
 
   // Get Hijri date
-  const hijriMonths = [
-    'Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani',
-    'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', 'Shaban',
-    'Ramadan', 'Shawwal', 'Dhu al-Qadah', 'Dhu al-Hijjah'
-  ];
-
   function getHijriDate() {
     try {
       const date = getDateAnchor();
+      const fn = $formatNum;
+      const months = $t('hijriMonths');
 
       // Get Hijri date parts
       const day = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric', timeZone: $location.timezone }).format(date);
       const monthNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric', timeZone: $location.timezone }).format(date);
       const year = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { year: 'numeric', timeZone: $location.timezone }).format(date);
 
-      // Use our own month names (Android fallback)
-      const monthName = hijriMonths[parseInt(monthNum) - 1] || monthNum;
-
-      // Extract just the number from year (removes "AH" suffix if present)
+      const monthName = months[parseInt(monthNum) - 1] || monthNum;
       const yearNum = year.replace(/[^\d]/g, '');
 
-      return `${day} ${monthName} ${yearNum} AH`;
+      return `${fn(day)} ${monthName} ${fn(yearNum)} ${$t('ah')}`;
     } catch {
       return '';
     }
   }
 
-  $: hijriDate = ($currentTime, $prayerTimes.dhuhr, $dateOffset, getHijriDate());
+  $: hijriDate = ($currentTime, $prayerTimes.dhuhr, $dateOffset, $language, $numeralStyle, getHijriDate());
 
   // Get Gregorian date
   function getGregorianDate() {
     const date = getDateAnchor();
-    return date.toLocaleDateString('en-US', {
+    const locale = $language === 'ar' ? 'ar' : 'en-US';
+    const raw = date.toLocaleDateString(locale, {
       timeZone: $location.timezone,
       weekday: 'long',
       day: 'numeric',
       month: 'long'
     });
+    // Ensure numerals match user preference regardless of locale
+    if ($numeralStyle === 'arabic') {
+      return $formatNum(raw.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))));
+    }
+    if ($numeralStyle === 'western') {
+      return raw.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+    }
+    return raw;
   }
 
-  $: gregorianDate = ($currentTime, $prayerTimes.dhuhr, $dateOffset, getGregorianDate());
+  $: gregorianDate = ($currentTime, $prayerTimes.dhuhr, $dateOffset, $language, $numeralStyle, getGregorianDate());
 
   // Calculate current position on 24-hour clock (relative to Maghrib)
   $: currentTimeAngle = (() => {
@@ -824,7 +868,7 @@
 
 <svelte:window on:keydown={handleCalendarKeydown} />
 
-<div class="app-container" on:click={toggleClock} role="button" tabindex="0" on:keydown={(e) => e.key === 'Enter' && toggleClock()}>
+<div class="app-container" class:arabic-mode={$isArabic} class:lang-fading={langFading} on:click={toggleClock} role="button" tabindex="0" on:keydown={(e) => e.key === 'Enter' && toggleClock()}>
 
   <div class="home-view">
     <!-- Breathing glow effect -->
@@ -844,7 +888,7 @@
 
     {#if showFullClock}
       <!-- FULL CLOCK VIEW -->
-      <div class="full-clock" class:blurred={overlayOpen} style="--label-scale: {labelScale};" in:scale={{ duration: 300, start: 0.92, opacity: 0 }} out:fade={{ duration: 150 }}>
+      <div class="full-clock" class:blurred={overlayOpen} style="--label-scale: {labelScale};" transition:fade={{ duration: 420 }}>
         <svg viewBox="0 0 100 100" class="clock-svg">
           <defs>
             <!-- Soft atmospheric glow -->
@@ -1105,8 +1149,8 @@
             class:active={isActive}
             style="left: {labelPos.x}%; top: {labelPos.y}%;"
           >
-            <span class="clock-label-name">{prayerNames[prayer]?.en}</span>
-            <span class="clock-label-time">{formatTime($prayerTimes[prayer])}</span>
+            <span class="clock-label-name">{$isArabic ? prayerNames[prayer]?.ar : prayerNames[prayer]?.en}</span>
+            <span class="clock-label-time">{fmtTime($prayerTimes[prayer])}</span>
           </div>
         {/each}
 
@@ -1117,8 +1161,8 @@
             class:active={isInFirstThird}
             style="left: {firstThirdLabelPos.x}%; top: {firstThirdLabelPos.y}%;"
           >
-            <span class="clock-label-name">1st&nbsp;Third&nbsp;End</span>
-            <span class="clock-label-time">{formatTime(firstThirdEnd.time)}</span>
+            <span class="clock-label-name">{$t('firstThirdEnd')}</span>
+            <span class="clock-label-time">{fmtTime(firstThirdEnd.time)}</span>
           </div>
         {/if}
 
@@ -1129,8 +1173,8 @@
             class:active={isInLastThird}
             style="left: {lastThirdLabelPos.x}%; top: {lastThirdLabelPos.y}%;"
           >
-            <span class="clock-label-name">Last&nbsp;Third</span>
-            <span class="clock-label-time">{formatTime(lastThirdOfNight.startTime)}</span>
+            <span class="clock-label-name">{$t('lastThird')}</span>
+            <span class="clock-label-time">{fmtTime(lastThirdOfNight.startTime)}</span>
           </div>
         {/if}
 
@@ -1140,11 +1184,13 @@
       <div class="clock-center" class:blurred={overlayOpen}>
         {#key $currentPrayer.current}
           <div class="clock-center-arabic" in:fly={{ y: 8, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -8, duration: 200 }}>{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
-          <div class="clock-center-english" in:fly={{ y: 6, duration: 500, delay: 200, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+          {#if !$isArabic}
+            <div class="clock-center-english" in:fly={{ y: 6, duration: 500, delay: 200, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+          {/if}
         {/key}
-        <div class="clock-center-countdown">{formatCountdown($todayCountdown)}</div>
+        <div class="clock-center-countdown">{#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}</div>
         {#key $todayCurrentPrayer.next}
-          <div class="clock-center-next" in:fly={{ y: 4, duration: 500, delay: 250, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>until {prayerNames[$todayCurrentPrayer.next]?.en}</div>
+          <div class="clock-center-next" in:fly={{ y: 4, duration: 500, delay: 250, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{$t('until')} {$isArabic ? prayerNames[$todayCurrentPrayer.next]?.ar : prayerNames[$todayCurrentPrayer.next]?.en}</div>
         {/key}
       </div>
 
@@ -1152,33 +1198,33 @@
       {#if (isInDuha && $clockIndicators.duha) || (isInQaylula && $clockIndicators.qaylula) || (isInFridayDua && $clockIndicators.fridayDua) || (isInFirstThird && $clockIndicators.firstThirdEnd) || (isInLastThird && $clockIndicators.lastThird)}
         <div class="clock-indicators" class:blurred={overlayOpen}>
           {#if isInDuha && $clockIndicators.duha}
-            <span class="indicator-active">Duha until {formatTime(duhaTime.endTime)}</span>
+            <span class="indicator-active">{$t('duhaUntil')} {fmtTime(duhaTime.endTime)}</span>
           {:else if isInQaylula && $clockIndicators.qaylula}
-            <span class="indicator-active">Qaylula until {formatTime(qaylulaTime.endTime)}</span>
+            <span class="indicator-active">{$t('qaylulaUntil')} {fmtTime(qaylulaTime.endTime)}</span>
           {:else if isInFridayDua && $clockIndicators.fridayDua}
-            <span class="indicator-active">Jumu'ah Dua until Maghrib</span>
+            <span class="indicator-active">{$t('jumahDuaUntilMaghrib')}</span>
           {:else if isInFirstThird && $clockIndicators.firstThirdEnd}
-            <span class="indicator-active">1st Third until {formatTime(firstThirdEnd.time)}</span>
+            <span class="indicator-active">{$t('firstThirdUntil')} {fmtTime(firstThirdEnd.time)}</span>
           {:else if isInLastThird && $clockIndicators.lastThird}
-            <span class="indicator-active">Last Third until Fajr</span>
+            <span class="indicator-active">{$t('lastThirdUntilFajr')}</span>
           {/if}
         </div>
       {/if}
 
       {#if $clockIndicators.qibla && compassPermission === 'granted' && !compassEnabled}
         <div class="compass-enable" class:blurred={overlayOpen}>
-          Rotate device to calibrate...
+          {$t('rotateToCalibrate')}
         </div>
       {:else if $clockIndicators.qibla && compassPermission === 'denied'}
         <div class="compass-enable" class:blurred={overlayOpen}>
-          Compass permission denied
+          {$t('compassPermissionDenied')}
         </div>
       {/if}
 
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
-      <div class="prayer-display" class:blurred={overlayOpen} in:scale={{ duration: 400, delay: 80, start: 0.95, opacity: 0 }} out:fade={{ duration: 120 }}>
-        <div class="current-prayer" in:fly={{ y: 15, duration: 450, delay: 120 }}>
+      <div class="prayer-display" class:blurred={overlayOpen} transition:fade={{ duration: 420 }}>
+        <div class="current-prayer" in:fade={{ duration: 400, delay: 60 }}>
           {#key showFullClock}
             <!-- Prayer-specific animated icon (using $currentPrayer.current for testing) -->
             {#key $currentPrayer.current}
@@ -1384,26 +1430,28 @@
             </div>
             {/key}
             <div class="current-arabic engrave-in">{prayerNames[$currentPrayer.current]?.ar || 'العشاء'}</div>
-            <div class="current-name" in:fly={{ y: 6, duration: 500, delay: 100, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+            {#if !$isArabic}
+              <div class="current-name" in:fly={{ y: 6, duration: 500, delay: 100, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
+            {/if}
           {/key}
-          <div class="tap-hint" class:blurred={overlayOpen}>tap for full clock</div>
           {#key $currentPrayer.current}
-            <div class="current-time" in:fly={{ y: 4, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($prayerTimes[$currentPrayer.current])}</div>
+            <div class="current-time" in:fly={{ y: 4, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{fmtTime($prayerTimes[$currentPrayer.current])}</div>
           {/key}
+          <div class="tap-hint" class:blurred={overlayOpen}>{$t('tapForFullClock')}</div>
         </div>
 
-        <div class="next-prayer" in:fly={{ y: 12, duration: 400, delay: 250 }}>
-          <span class="next-label">Next</span>
-          {#key $todayCurrentPrayer.next}
-            <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{prayerNames[$todayCurrentPrayer.next]?.en}</span>
-            <span class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{formatTime($todayPrayerTimes[$todayCurrentPrayer.next])}</span>
-          {/key}
-        </div>
-
-        <div class="prayer-divider" in:fade={{ duration: 350, delay: 200 }}>
-          <span class="divider-line"></span>
-          <span class="divider-countdown">{formatCountdown($todayCountdown)}</span>
-          <span class="divider-line"></span>
+        <div class="next-block" class:rtl={$isArabic} in:fade={{ duration: 400, delay: 100 }}>
+          <span class="next-label">{$t('next')}</span>
+          <div class="next-name-row">
+            <span class="next-divider-line"></span>
+            {#key $todayCurrentPrayer.next}
+              <span class="next-name" in:fly={{ y: 4, duration: 500, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{$isArabic ? prayerNames[$todayCurrentPrayer.next]?.ar : prayerNames[$todayCurrentPrayer.next]?.en}</span>
+            {/key}
+            <span class="next-divider-line"></span>
+          </div>
+          <div class="next-countdown" in:fade={{ duration: 350, delay: 200 }}>
+            {#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}
+          </div>
         </div>
 
         <!-- All prayer times -->
@@ -1421,9 +1469,9 @@
                 {@const isPast = thisIndex < activeIndex}
                 {@const isFuture = thisIndex > activeIndex}
                 <div class="time-row" class:active={isActive} class:past={isPast} class:future={isFuture}>
-                  <span class="time-name">{prayerNames[prayer]?.en}</span>
+                  <span class="time-name">{$isArabic ? prayerNames[prayer]?.ar : prayerNames[prayer]?.en}</span>
                   <span class="time-dots"></span>
-                  <span class="time-value">{formatTime($prayerTimes[prayer])}</span>
+                  <span class="time-value">{fmtTime($prayerTimes[prayer])}</span>
                 </div>
               {/each}
             </div>
@@ -1441,7 +1489,7 @@
       </button>
 
       <button class="date-core" type="button" aria-label="Open calendar" on:click|stopPropagation={openCalendar}>
-        <span class="date-offset">{getOffsetLabel($dateOffset)}</span>
+        <span class="date-offset">{fmtOffset($dateOffset)}</span>
         <div class="date-line">
           <span class="date-hijri">{hijriDate}</span>
           <span class="date-separator">·</span>
@@ -1462,7 +1510,7 @@
         type="button"
         aria-label="Close calendar"
         on:click|stopPropagation={closeCalendarToHome}
-        transition:fade={{ duration: 180 }}
+        transition:fade={{ duration: 420 }}
       ></button>
 
       <div
@@ -1470,12 +1518,12 @@
         role="dialog"
         aria-modal="true"
         aria-label="Choose date"
+        transition:fade={{ duration: 420 }}
       >
         <div
           class="calendar-sheet"
           on:touchstart={handleCalendarTouchStart}
           on:touchend={handleCalendarTouchEnd}
-          transition:scale={{ duration: 260, start: 0.96, opacity: 0 }}
         >
           <div class="calendar-header">
             <button class="calendar-month-nav" type="button" aria-label="Previous month" on:click|stopPropagation={() => shiftCalendarMonth(-1)}>
@@ -1484,7 +1532,7 @@
               </svg>
             </button>
             <div class="calendar-month-titles">
-              <div class="calendar-month-label">{getCalendarMonthLabel(calendarMonth)}</div>
+              <div class="calendar-month-label">{getCalendarMonthLabel(calendarMonth, $language)}</div>
               <div class="calendar-hijri-months">
                 {#each calendarHijriMonths as month}
                   <span class="calendar-hijri-month" class:active={month.key === activeCalendarHijriMonthKey}>
@@ -1526,8 +1574,8 @@
                       type="button"
                       on:click|stopPropagation={() => selectCalendarDate(cell)}
                     >
-                      <span class="calendar-day-greg">{cell.getDate()}</span>
-                      <span class="calendar-day-hijri">{getHijriDayNumber(cell)}</span>
+                      <span class="calendar-day-greg">{$formatNum(cell.getDate())}</span>
+                      <span class="calendar-day-hijri">{$formatNum(getHijriDayNumber(cell))}</span>
                     </button>
                   {/each}
                 </div>
@@ -1536,7 +1584,7 @@
           </div>
 
           <button class="calendar-today" type="button" on:click|stopPropagation={jumpCalendarToToday}>
-            Back To Today
+            {$t('backToToday')}
           </button>
         </div>
       </div>
@@ -1555,6 +1603,18 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  /* Smooth crossfade when language switches — only affects text-bearing children, not the view itself */
+  .app-container.lang-fading .prayer-display,
+  .app-container.lang-fading .all-times-stage,
+  .app-container.lang-fading .dates-row {
+    opacity: 0;
+  }
+  .prayer-display,
+  .all-times-stage,
+  .dates-row {
+    transition: opacity 0.35s ease;
   }
 
   /* Qibla aligned pulse animation */
@@ -1622,6 +1682,11 @@
     background: radial-gradient(circle, rgba(var(--theme-accent-rgb), 0.15) 0%, rgba(var(--theme-accent-rgb), 0.05) 45%, transparent 65%);
   }
 
+  /* ===== SPACING SCALE =====
+     --sp-1: 4px   --sp-2: 8px   --sp-3: 12px
+     --sp-4: 16px  --sp-5: 24px  --sp-6: 32px  --sp-7: 48px
+  ============================= */
+
   /* Main prayer display */
   .prayer-display {
     text-align: center;
@@ -1629,56 +1694,61 @@
     max-width: 320px;
     transition: filter 0.3s ease-out;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   /* Current prayer - hero section */
   .current-prayer {
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
   }
 
   .current-arabic {
-    font-family: 'Amiri', serif;
+    font-family: var(--font-ar);
     font-size: 4.5rem;
     color: var(--theme-accent-bright);
     line-height: 1.1;
     text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
+    margin-top: -18px;
+    position: relative;
+    z-index: 1;
   }
 
-  /* Gentle reveal with golden glow pulse */
+  /* Gentle reveal with golden glow */
   .current-arabic.engrave-in {
-    animation: goldReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: 0.1s;
+    animation: goldReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.08s;
     opacity: 0;
   }
 
   @keyframes goldReveal {
     0% {
       opacity: 0;
-      transform: scale(0.94);
+      transform: scale(0.96);
       text-shadow: 0 0 0 rgba(var(--theme-accent-rgb), 0);
-    }
-    50% {
-      opacity: 1;
-      text-shadow: 0 0 40px rgba(var(--theme-accent-bright-rgb), 0.6);
     }
     100% {
       opacity: 1;
       transform: scale(1);
-      text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
+      text-shadow: 0 0 60px rgba(var(--theme-accent-rgb), 0.25);
     }
   }
 
   /* ===== PRAYER-SPECIFIC ICONS ===== */
   .prayer-icon {
-    margin-bottom: 0.5rem;
-    height: 80px;
+    margin-bottom: 0;
+    height: 64px;
     display: flex;
     justify-content: center;
     align-items: flex-end;
     opacity: 0;
     filter: blur(8px);
     transform: scale(0.92);
-    animation: iconReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    animation: iconReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
   }
 
   @keyframes iconReveal {
@@ -1978,85 +2048,182 @@
   }
 
   .current-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    color: rgba(var(--theme-text-rgb), 0.5);
-    letter-spacing: 0.5em;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(var(--theme-text-rgb), 0.65);
     text-transform: uppercase;
-    margin-top: 0.5rem;
+    margin-top: 6px;
   }
 
   .current-time {
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    font-weight: 300;
+    font-family: var(--font-num);
+    font-size: clamp(2.2rem, 5.5vw, 2.75rem);
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.85);
-    margin-top: clamp(0.5rem, 1.5vh, 1rem);
-    letter-spacing: 0.05em;
+    margin-top: 8px;
+    line-height: 1;
   }
 
-  /* Divider with countdown */
-  .prayer-divider {
+  /* Next prayer block */
+  .next-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 20px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .next-block.rtl {
+    direction: rtl;
+  }
+
+  .next-divider-line {
+    flex: 0 0 32px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.25), transparent);
+  }
+
+  .next-name-row {
     display: flex;
     align-items: center;
+    gap: 10px;
+    width: 100%;
     justify-content: center;
-    gap: 1rem;
-    margin: clamp(1rem, 2.5vh, 1.75rem) 0;
   }
 
-  .divider-line {
-    flex: 1;
-    max-width: 60px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.3), transparent);
-  }
-
-  .divider-countdown {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 200;
-    color: rgba(var(--theme-accent-rgb), 0.8);
-    letter-spacing: 0.1em;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  /* Next prayer */
-  .next-prayer {
+  .next-countdown {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0.3em;
+    font-family: var(--font-num);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: rgba(var(--theme-accent-rgb), 0.85);
+    white-space: nowrap;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* ===== Arabic mode overrides — consistent Cairo, no Latin spacing ===== */
+  .arabic-mode .time-name {
+    font-family: var(--font-ar);
+    text-transform: none;
+
+  }
+
+  .arabic-mode .time-value {
+    font-family: var(--font-ar);
+
+  }
+
+  .arabic-mode .current-time {
+    font-family: var(--font-ar);
+
+  }
+
+  .arabic-mode .next-name {
+    font-family: var(--font-ar);
+    text-transform: none;
+
+  }
+
+  .arabic-mode .next-time {
+    font-family: var(--font-ar);
+
+  }
+
+  .arabic-mode .next-label {
+    font-family: var(--font-ar);
+    text-transform: none;
+  }
+
+  .arabic-mode .tap-hint {
+    font-family: var(--font-ar);
+  }
+
+  .arabic-mode .next-countdown,
+  .arabic-mode .clock-center-countdown {
+    direction: rtl;
+  }
+
+  .arabic-mode .cd-num {
+    font-family: var(--font-ar);
+  }
+
+  .arabic-mode .cd-label {
+    font-family: var(--font-ar);
+  }
+
+  .arabic-mode .date-offset {
+    font-family: var(--font-ar);
+    text-transform: none;
+  }
+
+  .arabic-mode .date-gregorian {
+    font-family: var(--font-ar);
+  }
+
+  .arabic-mode .clock-center-next {
+    font-family: var(--font-ar);
+  }
+
+  .arabic-mode .indicator-active {
+    font-family: var(--font-ar);
+  }
+
+  .arabic-mode .calendar-today {
+    font-family: var(--font-ar);
+    text-transform: none;
+  }
+
+  .arabic-mode .clock-label-name {
+    font-family: var(--font-ar);
+    text-transform: none;
+
+  }
+
+  .arabic-mode .all-times {
+    direction: rtl;
+  }
+
+  .arabic-mode .time-value {
+    text-align: left;
   }
 
   .next-label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.62rem;
     font-weight: 400;
-    color: rgba(var(--theme-text-rgb), 0.3);
+    color: rgba(var(--theme-text-rgb), 0.28);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
   }
 
   .next-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
-    color: rgba(var(--theme-text-rgb), 0.6);
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(var(--theme-text-rgb), 0.65);
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .next-time {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 400;
-    color: rgba(var(--theme-text-rgb), 0.5);
+    font-family: var(--font-num);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(var(--theme-text-rgb), 0.6);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
   /* All prayer times list */
   .all-times-stage {
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
+    margin-top: 4px;
+    margin-bottom: 0;
     width: 100%;
-    max-width: min(320px, 85vw);
+    max-width: 300px;
     margin-left: auto;
     margin-right: auto;
     min-height: 15rem;
@@ -2069,8 +2236,8 @@
     inset: 0;
     display: grid;
     grid-template-columns: max-content 1fr max-content;
-    column-gap: 0.75rem;
-    row-gap: 0.75rem;
+    column-gap: 16px;
+    row-gap: 14px;
     align-content: flex-start;
     align-items: center;
   }
@@ -2080,12 +2247,11 @@
   }
 
   .time-name {
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    font-size: 0.9rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+
     white-space: nowrap;
   }
 
@@ -2096,15 +2262,15 @@
       rgba(var(--theme-text-rgb), 0.05) 50%,
       rgba(var(--theme-text-rgb), 0.1) 100%
     );
-    background-size: 4px 1px;
   }
 
   .time-value {
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(0.95rem, 2.8vw, 1.25rem);
-    font-weight: 300;
+    font-family: var(--font-num);
+    font-size: 0.9rem;
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     text-align: right;
     white-space: nowrap;
   }
@@ -2149,7 +2315,7 @@
 
   .time-row.active .time-value {
     color: rgba(var(--theme-accent-rgb), 0.9);
-    font-weight: 400;
+    font-weight: 300;
   }
 
   /* Dates row at bottom */
@@ -2206,7 +2372,7 @@
       rgba(var(--theme-accent-rgb), 0.08),
       rgba(var(--theme-text-rgb), 0.03)
     );
-    padding: 0.3rem 0.8rem 0.4rem;
+    padding: 0.35rem 0.8rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2229,10 +2395,9 @@
   }
 
   .date-offset {
-    font-family: 'Outfit', sans-serif;
     font-size: 0.58rem;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+
     color: rgba(var(--theme-accent-bright-rgb), 0.56);
   }
 
@@ -2279,9 +2444,8 @@
   }
 
   .calendar-month-label {
-    font-family: 'Cormorant Garamond', serif;
     font-size: clamp(1.3rem, 3.7vw, 1.9rem);
-    letter-spacing: 0.06em;
+
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
   }
 
@@ -2302,9 +2466,9 @@
   }
 
   .calendar-hijri-month {
-    font-family: 'Amiri', serif;
+    font-family: var(--font-ar);
     font-size: clamp(0.74rem, 2.1vw, 0.88rem);
-    letter-spacing: 0.04em;
+
     color: rgba(var(--theme-text-rgb), 0.5);
     transition: color 0.2s ease, text-shadow 0.2s ease;
   }
@@ -2351,9 +2515,8 @@
 
   .calendar-weekdays span {
     text-align: center;
-    font-family: 'Outfit', sans-serif;
     font-size: clamp(0.62rem, 1.8vw, 0.76rem);
-    letter-spacing: 0.14em;
+
     text-transform: uppercase;
     color: rgba(var(--theme-text-rgb), 0.42);
   }
@@ -2367,7 +2530,11 @@
   }
 
   .calendar-grid-stage {
-    width: 100%;
+    width: calc(100% + 60px);
+    margin-left: -30px;
+    margin-right: -30px;
+    padding-left: 30px;
+    padding-right: 30px;
     min-height: clamp(21rem, 54vh, 25rem);
     position: relative;
     overflow: hidden;
@@ -2375,7 +2542,7 @@
 
   .calendar-grid-sheet {
     position: absolute;
-    inset: 0;
+    inset: 0 30px;
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
@@ -2388,9 +2555,9 @@
     border: 1px solid rgba(var(--theme-text-rgb), 0.09);
     background: rgba(var(--theme-text-rgb), 0.09);
     color: rgba(var(--theme-text-rgb), 0.78);
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-num);
     font-size: clamp(0.85rem, 2.4vw, 1rem);
-    font-weight: 400;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
     transition: all 0.22s ease;
     padding: 0;
@@ -2402,13 +2569,13 @@
   }
 
   .calendar-day-greg {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-num);
     font-size: clamp(0.84rem, 2.3vw, 1rem);
     line-height: 1;
   }
 
   .calendar-day-hijri {
-    font-family: 'Amiri', serif;
+    font-family: var(--font-ar);
     font-size: clamp(0.5rem, 1.5vw, 0.62rem);
     line-height: 1;
     color: rgba(var(--theme-accent-rgb), 0.55);
@@ -2451,10 +2618,9 @@
       rgba(var(--theme-text-rgb), 0.05)
     );
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
-    font-family: 'Outfit', sans-serif;
     font-size: clamp(0.68rem, 1.8vw, 0.8rem);
     text-transform: uppercase;
-    letter-spacing: 0.14em;
+
     padding: 0.66rem 1.2rem;
   }
 
@@ -2466,7 +2632,7 @@
   }
 
   .date-hijri {
-    font-family: 'Amiri', serif;
+    font-family: var(--font-ar);
     font-size: 0.74rem;
     color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
@@ -2476,7 +2642,6 @@
   }
 
   .date-gregorian {
-    font-family: 'Outfit', sans-serif;
     font-size: 0.7rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2511,18 +2676,16 @@
 
   .clock-label-name {
     display: block;
-    font-family: 'Cormorant Garamond', serif;
     font-size: calc(clamp(0.5rem, 1.8vw, 0.7rem) * var(--label-scale, 1));
-    font-weight: 500;
+    font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+
     margin-bottom: 0.15rem;
   }
 
   .clock-label-time {
     display: block;
-    font-family: 'Outfit', sans-serif;
     font-size: calc(clamp(0.65rem, 2.2vw, 0.9rem) * var(--label-scale, 1));
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2583,7 +2746,7 @@
   }
 
   .clock-center-arabic {
-    font-family: 'Amiri', serif;
+    font-family: var(--font-ar);
     font-size: 2.8rem;
     color: var(--theme-accent-bright);
     line-height: 1.2;
@@ -2591,29 +2754,54 @@
   }
 
   .clock-center-english {
-    font-family: 'Cormorant Garamond', serif;
     font-size: 1rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+
     margin-top: 0.2rem;
   }
 
   .clock-center-countdown {
-    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.6em;
+    font-family: var(--font-num);
     font-size: 1.5rem;
-    font-weight: 200;
+    font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.8);
-    margin-top: 0.6rem;
+    margin-top: 8px;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .cd-block {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15em;
+  }
+
+  .cd-num {
+    width: 2ch;
+    text-align: right;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .cd-label {
+    font-size: 0.65em;
+    font-weight: 300;
+    line-height: 1;
   }
 
   .clock-center-next {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
-    margin-top: 0.3rem;
-    letter-spacing: 0.1em;
+    margin-top: 8px;
+
+    text-transform: uppercase;
   }
 
   /* Clock indicators info */
@@ -2632,11 +2820,10 @@
   }
 
   .indicator-active {
-    font-family: 'Outfit', sans-serif;
     font-size: 0.8rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.9);
-    letter-spacing: 0.05em;
+
     padding: 0.4rem 0.8rem;
     background: rgba(var(--theme-accent-rgb), 0.1);
     border-radius: 1rem;
@@ -2647,11 +2834,10 @@
     bottom: calc(max(1.25rem, env(safe-area-inset-bottom, 0px)) + clamp(4.75rem, 11vh, 6.25rem));
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Outfit', sans-serif;
     font-size: 0.7rem;
     font-weight: 400;
     color: var(--theme-marker);
-    letter-spacing: 0.05em;
+
     padding: 0.4rem 0.8rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -2673,13 +2859,11 @@
 
   /* Tap hint */
   .tap-hint {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 400;
-    color: rgba(var(--theme-accent-rgb), 0.4);
-    letter-spacing: 0.12em;
+    color: rgba(var(--theme-accent-rgb), 0.3);
     text-transform: lowercase;
-    margin-top: 0.75rem;
+    margin-top: 10px;
     transition: filter 0.3s ease-out;
   }
 
@@ -2699,12 +2883,12 @@
       font-size: 2rem;
     }
 
-    .divider-countdown {
-      font-size: 1.2rem;
+    .next-countdown {
+      font-size: 1.3rem;
     }
 
     .next-name {
-      font-size: 1.3rem;
+      font-size: 0.95rem;
     }
 
     .next-time {
@@ -2741,19 +2925,19 @@
 
     .current-name {
       font-size: 1rem;
-      letter-spacing: 0.3em;
+  
     }
 
     .current-time {
       font-size: 1.75rem;
     }
 
-    .divider-countdown {
-      font-size: 1.1rem;
+    .next-countdown {
+      font-size: 1.2rem;
     }
 
     .next-name {
-      font-size: 1.2rem;
+      font-size: 0.9rem;
     }
 
     .clock-center-arabic {
@@ -2776,8 +2960,9 @@
   }
 
   @media (max-height: 700px) {
-    .prayer-divider {
-      margin: 1.25rem 0;
+    .next-block {
+      margin: 8px 0 14px;
+      gap: 4px;
     }
 
     .all-times-stage {
@@ -2795,7 +2980,7 @@
     }
 
     .date-core {
-      padding: 0.24rem 0.68rem 0.32rem;
+      padding: 0.28rem 0.68rem;
     }
 
     .date-nav {
@@ -2826,7 +3011,7 @@
     }
 
     .time-name {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
     }
 
     .time-value {
