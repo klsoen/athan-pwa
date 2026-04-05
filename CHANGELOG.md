@@ -8,6 +8,16 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.24 — 2026-04-05
+### Update
+- Current prayer name (ASR etc): font-size 0.75rem → 1rem, weight 400 → 600 for stronger presence
+- Moved "tap for full clock" hint to below the current prayer time (was above it)
+- Added subtle bottom border to current-prayer section to visually separate it from next-block
+- Fixed goldReveal animation: removed 50% bright spike keyframe — now a clean linear fade from dark→light
+- Synchronized all entrance animations: icon, text, and next-block all arrive in one cohesive wave (~80–160ms delay window, 500–700ms duration)
+
+---
+
 ## v2.6.23 — 2026-04-05
 ### Update
 - Tightened gap between countdown units from 0.6em → 0.3em; cd-num width:2ch preserved so digits never shift

@@ -1224,7 +1224,7 @@
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
       <div class="prayer-display" class:blurred={overlayOpen} transition:fade={{ duration: 420 }}>
-        <div class="current-prayer" in:fly={{ y: 15, duration: 450, delay: 120 }}>
+        <div class="current-prayer" in:fly={{ y: 12, duration: 600, delay: 80, easing: cubicOut }}>
           {#key showFullClock}
             <!-- Prayer-specific animated icon (using $currentPrayer.current for testing) -->
             {#key $currentPrayer.current}
@@ -1434,13 +1434,13 @@
               <div class="current-name" in:fly={{ y: 6, duration: 500, delay: 100, easing: cubicOut }} out:fly={{ y: -6, duration: 200 }}>{prayerNames[$currentPrayer.current]?.en || 'Isha'}</div>
             {/if}
           {/key}
-          <div class="tap-hint" class:blurred={overlayOpen}>{$t('tapForFullClock')}</div>
           {#key $currentPrayer.current}
             <div class="current-time" in:fly={{ y: 4, duration: 500, delay: 150, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{fmtTime($prayerTimes[$currentPrayer.current])}</div>
           {/key}
+          <div class="tap-hint" class:blurred={overlayOpen}>{$t('tapForFullClock')}</div>
         </div>
 
-        <div class="next-block" class:rtl={$isArabic} in:fly={{ y: 12, duration: 400, delay: 250 }}>
+        <div class="next-block" class:rtl={$isArabic} in:fly={{ y: 10, duration: 500, delay: 160, easing: cubicOut }}>
           <span class="next-label">{$t('next')}</span>
           <div class="next-name-row">
             <span class="next-divider-line"></span>
@@ -1704,7 +1704,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(var(--theme-accent-rgb), 0.08);
   }
 
   .current-arabic {
@@ -1715,27 +1717,23 @@
     text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
   }
 
-  /* Gentle reveal with golden glow pulse */
+  /* Gentle reveal with golden glow */
   .current-arabic.engrave-in {
-    animation: goldReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: 0.1s;
+    animation: goldReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.08s;
     opacity: 0;
   }
 
   @keyframes goldReveal {
     0% {
       opacity: 0;
-      transform: scale(0.94);
+      transform: scale(0.96);
       text-shadow: 0 0 0 rgba(var(--theme-accent-rgb), 0);
-    }
-    50% {
-      opacity: 1;
-      text-shadow: 0 0 40px rgba(var(--theme-accent-bright-rgb), 0.6);
     }
     100% {
       opacity: 1;
       transform: scale(1);
-      text-shadow: 0 0 80px rgba(var(--theme-accent-rgb), 0.3);
+      text-shadow: 0 0 60px rgba(var(--theme-accent-rgb), 0.25);
     }
   }
 
@@ -1749,7 +1747,7 @@
     opacity: 0;
     filter: blur(8px);
     transform: scale(0.92);
-    animation: iconReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    animation: iconReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
   }
 
   @keyframes iconReveal {
@@ -2049,10 +2047,9 @@
   }
 
   .current-name {
-    font-size: 0.75rem;
-    font-weight: 400;
-    color: rgba(var(--theme-text-rgb), 0.5);
-
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(var(--theme-text-rgb), 0.65);
     text-transform: uppercase;
     margin-top: 8px;
   }
@@ -2860,12 +2857,11 @@
 
   /* Tap hint */
   .tap-hint {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 400;
-    color: rgba(var(--theme-accent-rgb), 0.4);
-
+    color: rgba(var(--theme-accent-rgb), 0.3);
     text-transform: lowercase;
-    margin-top: 8px;
+    margin-top: 10px;
     transition: filter 0.3s ease-out;
   }
 
