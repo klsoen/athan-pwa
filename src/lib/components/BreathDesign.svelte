@@ -1224,7 +1224,7 @@
     {:else}
       <!-- SIMPLE VIEW (default) - no clock, just prayer info -->
       <div class="prayer-display" class:blurred={overlayOpen} transition:fade={{ duration: 420 }}>
-        <div class="current-prayer" in:fly={{ y: 12, duration: 600, delay: 80, easing: cubicOut }}>
+        <div class="current-prayer" in:fade={{ duration: 400, delay: 60 }}>
           {#key showFullClock}
             <!-- Prayer-specific animated icon (using $currentPrayer.current for testing) -->
             {#key $currentPrayer.current}
@@ -1440,7 +1440,7 @@
           <div class="tap-hint" class:blurred={overlayOpen}>{$t('tapForFullClock')}</div>
         </div>
 
-        <div class="next-block" class:rtl={$isArabic} in:fly={{ y: 10, duration: 500, delay: 160, easing: cubicOut }}>
+        <div class="next-block" class:rtl={$isArabic} in:fade={{ duration: 400, delay: 100 }}>
           <span class="next-label">{$t('next')}</span>
           <div class="next-name-row">
             <span class="next-divider-line"></span>

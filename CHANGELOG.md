@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.26 — 2026-04-05
+### Update
+- Replaced in:fly on current-prayer and next-block with in:fade — no more upward slide when returning to main view, everything fades in cleanly
+
+---
+
 ## v2.6.25 — 2026-04-05
 ### Update
 - Tightened prayer display spacing: consistent 8px base unit throughout
