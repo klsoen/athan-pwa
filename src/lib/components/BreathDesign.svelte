@@ -1449,9 +1449,6 @@
             {/key}
             <span class="next-divider-line"></span>
           </div>
-          {#key $todayCurrentPrayer.next}
-            <div class="next-time" in:fly={{ y: 4, duration: 500, delay: 50, easing: cubicOut }} out:fly={{ y: -4, duration: 200 }}>{fmtTime($todayPrayerTimes[$todayCurrentPrayer.next])}</div>
-          {/key}
           <div class="next-countdown" in:fade={{ duration: 350, delay: 200 }}>
             {#each fmtCountdown($todayCountdown) as unit (unit.key)}<span class="cd-block"><span class="cd-num">{unit.value}</span><span class="cd-label">{unit.label}</span></span>{/each}
           </div>

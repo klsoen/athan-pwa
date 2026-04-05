@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.22 — 2026-04-05
+### Update
+- Removed next prayer time display from next-block — only name and countdown remain
+
+---
+
 ## v2.6.21 — 2026-04-05
 ### Update
 - Reorganized next prayer section into a unified stacked block: NEXT label → ── Name ── → time → countdown
