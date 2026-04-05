@@ -2049,7 +2049,6 @@
   }
 
   .current-name {
-    font-family: var(--font-en);
     font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2202,7 +2201,6 @@
   }
 
   .next-label {
-    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.3);
@@ -2211,7 +2209,6 @@
   }
 
   .next-name {
-    font-family: var(--font-en);
     font-size: 0.9rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.6);
@@ -2257,7 +2254,6 @@
   }
 
   .time-name {
-    font-family: var(--font-en);
     font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2406,7 +2402,6 @@
   }
 
   .date-offset {
-    font-family: var(--font-en);
     font-size: 0.58rem;
     text-transform: uppercase;
 
@@ -2456,7 +2451,6 @@
   }
 
   .calendar-month-label {
-    font-family: var(--font-en);
     font-size: clamp(1.3rem, 3.7vw, 1.9rem);
 
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
@@ -2528,7 +2522,6 @@
 
   .calendar-weekdays span {
     text-align: center;
-    font-family: var(--font-en);
     font-size: clamp(0.62rem, 1.8vw, 0.76rem);
 
     text-transform: uppercase;
@@ -2632,7 +2625,6 @@
       rgba(var(--theme-text-rgb), 0.05)
     );
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
-    font-family: var(--font-en);
     font-size: clamp(0.68rem, 1.8vw, 0.8rem);
     text-transform: uppercase;
 
@@ -2657,7 +2649,6 @@
   }
 
   .date-gregorian {
-    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2692,7 +2683,6 @@
 
   .clock-label-name {
     display: block;
-    font-family: var(--font-en);
     font-size: calc(clamp(0.5rem, 1.8vw, 0.7rem) * var(--label-scale, 1));
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2703,7 +2693,6 @@
 
   .clock-label-time {
     display: block;
-    font-family: var(--font-en);
     font-size: calc(clamp(0.65rem, 2.2vw, 0.9rem) * var(--label-scale, 1));
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2772,7 +2761,6 @@
   }
 
   .clock-center-english {
-    font-family: var(--font-en);
     font-size: 1rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2816,7 +2804,6 @@
   }
 
   .clock-center-next {
-    font-family: var(--font-en);
     font-size: 0.68rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
     margin-top: 8px;
@@ -2840,7 +2827,6 @@
   }
 
   .indicator-active {
-    font-family: var(--font-en);
     font-size: 0.8rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.9);
@@ -2855,7 +2841,6 @@
     bottom: calc(max(1.25rem, env(safe-area-inset-bottom, 0px)) + clamp(4.75rem, 11vh, 6.25rem));
     left: 50%;
     transform: translateX(-50%);
-    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 400;
     color: var(--theme-marker);
@@ -2881,7 +2866,6 @@
 
   /* Tap hint */
   .tap-hint {
-    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.4);

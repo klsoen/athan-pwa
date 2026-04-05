@@ -339,7 +339,6 @@
   }
 
   .countdown-time {
-    font-family: var(--font-en);
     font-size: 2.25rem;
     font-weight: 200;
     color: white;

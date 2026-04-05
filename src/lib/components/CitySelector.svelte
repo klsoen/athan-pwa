@@ -317,7 +317,6 @@
     border: none;
     color: white;
     font-size: 1rem;
-    font-family: var(--font-en);
     outline: none;
   }
 
@@ -326,7 +325,6 @@
   }
 
   .search-hint {
-    font-family: var(--font-en);
     font-size: 0.7rem;
     color: rgba(var(--theme-accent-rgb), 0.45);
 
@@ -382,7 +380,6 @@
   }
 
   .chip-name {
-    font-family: var(--font-en);
     font-size: 0.9rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.9);
@@ -393,7 +390,6 @@
   }
 
   .chip-country {
-    font-family: var(--font-en);
     font-size: 0.7rem;
     color: rgba(var(--theme-text-rgb), 0.4);
     margin-top: 0.15rem;
@@ -402,13 +398,11 @@
   .no-results {
     color: rgba(var(--theme-text-rgb), 0.4);
     font-size: 0.9rem;
-    font-family: var(--font-en);
     padding: 1rem;
   }
 
   /* Close hint */
   .close-hint {
-    font-family: var(--font-en);
     font-size: 0.6rem;
     color: rgba(var(--theme-text-rgb), 0.2);
 

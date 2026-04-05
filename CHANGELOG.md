@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.12 — 2026-04-05
+### Update
+- Removed all redundant `font-family: var(--font-en)` per-element declarations — everything now inherits from body
+- Only explicit overrides remain: `--font-ar` for Arabic text, `--font-num` for numbers
+
+---
+
 ## v2.6.11 — 2026-04-05
 ### Update
 - Introduced 3 font CSS variables in `:root`: `--font-en`, `--font-ar`, `--font-num`
