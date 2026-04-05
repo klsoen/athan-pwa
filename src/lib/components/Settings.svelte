@@ -61,7 +61,7 @@
   $: notificationTiles = [...primaryNotifications, ...specialNotifications];
 
   function getNotificationDescription(id) {
-    return specialNotificationIds.includes(id) ? 'Special reminder' : 'Prayer alert';
+    return specialNotificationIds.includes(id) ? $t('specialReminder') : $t('prayerAlert');
   }
 
   function emitQiblaPermission(status) {
@@ -296,21 +296,21 @@
 
       <!-- Notifications -->
       <div class="section">
-        <span class="section-label">Notifications</span>
+        <span class="section-label">{$t('notifications')}</span>
         <button
           class="notification-master indicator-toggle"
           class:active={$notificationPreferences.enabled}
           on:click={handleNotificationToggle}
           type="button"
         >
-          <span class="indicator-name">{$notificationPreferences.enabled ? 'Notifications Enabled' : 'Enable Notifications'}</span>
+          <span class="indicator-name">{$notificationPreferences.enabled ? $t('notificationsEnabled') : $t('enableNotifications')}</span>
           <span class="indicator-desc">
             {#if $notificationState.syncing}
-              Updating reminders...
+              {$t('updatingReminders')}
             {:else if $notificationPreferences.enabled}
-              Prayer reminders update automatically
+              {$t('remindersUpdateAuto')}
             {:else}
-              Get gentle reminders for each prayer
+              {$t('remindersPrompt')}
             {/if}
           </span>
         </button>
@@ -323,7 +323,7 @@
               on:click={() => handleNotificationTypeToggle(definition.id)}
               type="button"
             >
-              <span class="indicator-name">{definition.label}</span>
+              <span class="indicator-name">{$t(definition.id)}</span>
               <span class="indicator-desc">{getNotificationDescription(definition.id)}</span>
             </button>
           {/each}
@@ -712,6 +712,7 @@
   .settings-inner.rtl {
     direction: rtl;
     text-align: right;
+    font-family: var(--font-ar);
   }
 
   .settings-header {

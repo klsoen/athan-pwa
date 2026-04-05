@@ -8,6 +8,16 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.15 — 2026-04-05
+### Update
+- All notification UI strings in Settings now go through `$t()` — fully translated in Arabic mode
+- Added Arabic translations for all notification labels and descriptions to locale store
+- Fixed missing `var(--font-ar)` on tap-hint, next-label, clock-center-next, indicator-active, calendar-today in Arabic mode
+- Settings panel applies `var(--font-ar)` to all content when in Arabic mode via `.settings-inner.rtl`
+- CitySelector applies `var(--font-ar)` and RTL direction in Arabic mode
+
+---
+
 ## v2.6.14 — 2026-04-05
 ### Update
 - Removed tabular-nums from main time display so digits render with natural proportional spacing

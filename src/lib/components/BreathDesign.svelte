@@ -2125,12 +2125,12 @@
   }
 
   .arabic-mode .next-label {
+    font-family: var(--font-ar);
     text-transform: none;
-
   }
 
   .arabic-mode .tap-hint {
-
+    font-family: var(--font-ar);
   }
 
   .arabic-mode .divider-countdown,
@@ -2149,7 +2149,6 @@
   .arabic-mode .date-offset {
     font-family: var(--font-ar);
     text-transform: none;
-
   }
 
   .arabic-mode .date-gregorian {
@@ -2157,16 +2156,15 @@
   }
 
   .arabic-mode .clock-center-next {
-
+    font-family: var(--font-ar);
   }
 
-
   .arabic-mode .indicator-active {
-
+    font-family: var(--font-ar);
   }
 
   .arabic-mode .calendar-today {
-
+    font-family: var(--font-ar);
     text-transform: none;
   }
 

@@ -165,6 +165,17 @@ const translations = {
 
   backToToday: { en: 'Back To Today', ar: 'العودة لليوم' },
   newBadge: { en: 'NEW', ar: 'جديد' },
+
+  // Notifications
+  newIslamicMonth: { en: 'New Islamic Month', ar: 'بداية الشهر الهجري' },
+  notifications: { en: 'Notifications', ar: 'الإشعارات' },
+  notificationsEnabled: { en: 'Notifications Enabled', ar: 'الإشعارات مفعّلة' },
+  enableNotifications: { en: 'Enable Notifications', ar: 'تفعيل الإشعارات' },
+  updatingReminders: { en: 'Updating reminders...', ar: 'جارٍ تحديث التذكيرات...' },
+  remindersUpdateAuto: { en: 'Prayer reminders update automatically', ar: 'تتحدث تذكيرات الصلاة تلقائياً' },
+  remindersPrompt: { en: 'Get gentle reminders for each prayer', ar: 'احصل على تذكيرات لطيفة لكل صلاة' },
+  prayerAlert: { en: 'Prayer alert', ar: 'تنبيه صلاة' },
+  specialReminder: { en: 'Special reminder', ar: 'تذكير خاص' },
 };
 
 /**

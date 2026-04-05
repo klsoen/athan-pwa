@@ -1,6 +1,6 @@
 <script>
   import { location, citySelectorOpen, fetchTimezone } from '$lib/stores/prayer.js';
-  import { t } from '$lib/stores/locale.js';
+  import { t, isArabic } from '$lib/stores/locale.js';
   import { onMount } from 'svelte';
   import { fade, fly, scale } from 'svelte/transition';
   import { cubicOut, backOut } from 'svelte/easing';
@@ -179,7 +179,7 @@
   ></button>
 
   <!-- Floating content - no visible container -->
-  <div class="selector-content" role="dialog" aria-modal="true">
+  <div class="selector-content" class:rtl={$isArabic} role="dialog" aria-modal="true">
 
     <!-- Search bar -->
     <div class="search-bar" in:fly={{ y: -20, duration: 400, delay: 50, easing: cubicOut }}>
@@ -285,6 +285,11 @@
     padding: 1rem;
     width: 90vw;
     max-width: 400px;
+  }
+
+  .selector-content.rtl {
+    direction: rtl;
+    font-family: var(--font-ar);
   }
 
   /* Search bar - floating pill, prominent */
