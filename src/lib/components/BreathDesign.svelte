@@ -1704,9 +1704,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 32px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid rgba(var(--theme-accent-rgb), 0.08);
+    margin-bottom: 20px;
   }
 
   .current-arabic {
@@ -1739,8 +1737,8 @@
 
   /* ===== PRAYER-SPECIFIC ICONS ===== */
   .prayer-icon {
-    margin-bottom: 8px;
-    height: 72px;
+    margin-bottom: 4px;
+    height: 64px;
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -2051,7 +2049,7 @@
     font-weight: 600;
     color: rgba(var(--theme-text-rgb), 0.65);
     text-transform: uppercase;
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .current-time {
@@ -2059,7 +2057,8 @@
     font-size: clamp(2.2rem, 5.5vw, 2.75rem);
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.85);
-    margin-top: 16px;
+    margin-top: 8px;
+    line-height: 1;
   }
 
   /* Next prayer block */
@@ -2067,8 +2066,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    margin: 12px 0 20px;
+    gap: 4px;
+    margin: 0 0 20px;
     width: 100%;
     max-width: 300px;
   }
@@ -2101,7 +2100,7 @@
     font-weight: 500;
     color: rgba(var(--theme-accent-rgb), 0.85);
     white-space: nowrap;
-    margin-top: 2px;
+    margin-top: 4px;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
@@ -2218,7 +2217,7 @@
 
   /* All prayer times list */
   .all-times-stage {
-    margin-top: 0;
+    margin-top: 4px;
     margin-bottom: 0;
     width: 100%;
     max-width: 300px;

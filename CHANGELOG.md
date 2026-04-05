@@ -8,6 +8,17 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.25 — 2026-04-05
+### Update
+- Tightened prayer display spacing: consistent 8px base unit throughout
+- Removed border-bottom from current-prayer — whitespace separation alone is cleaner
+- current-prayer margin-bottom 32px → 20px; padding-bottom removed
+- current-name margin-top 8px → 6px; current-time margin-top 16px → 8px with line-height:1
+- next-block top margin removed (was 12px), internal gap 6px → 4px
+- Prayer icon height 72px → 64px, margin-bottom 8px → 4px
+
+---
+
 ## v2.6.24 — 2026-04-05
 ### Update
 - Current prayer name (ASR etc): font-size 0.75rem → 1rem, weight 400 → 600 for stronger presence
