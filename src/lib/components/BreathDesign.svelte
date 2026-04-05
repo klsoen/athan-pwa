@@ -1708,7 +1708,7 @@
   }
 
   .current-arabic {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     font-size: 4.5rem;
     color: var(--theme-accent-bright);
     line-height: 1.1;
@@ -2049,7 +2049,7 @@
   }
 
   .current-name {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2059,7 +2059,7 @@
   }
 
   .current-time {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: clamp(2.2rem, 5.5vw, 2.75rem);
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.85);
@@ -2091,7 +2091,7 @@
     align-items: baseline;
     justify-content: center;
     gap: 0.6em;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: 1.25rem;
     font-weight: 300;
     color: rgba(var(--theme-accent-rgb), 0.8);
@@ -2102,29 +2102,29 @@
 
   /* ===== Arabic mode overrides — consistent Cairo, no Latin spacing ===== */
   .arabic-mode .time-name {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     text-transform: none;
 
   }
 
   .arabic-mode .time-value {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
 
   }
 
   .arabic-mode .current-time {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
 
   }
 
   .arabic-mode .next-name {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     text-transform: none;
 
   }
 
   .arabic-mode .next-time {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
 
   }
 
@@ -2143,21 +2143,21 @@
   }
 
   .arabic-mode .cd-num {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
   }
 
   .arabic-mode .cd-label {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
   }
 
   .arabic-mode .date-offset {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     text-transform: none;
 
   }
 
   .arabic-mode .date-gregorian {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
   }
 
   .arabic-mode .clock-center-next {
@@ -2175,7 +2175,7 @@
   }
 
   .arabic-mode .clock-label-name {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     text-transform: none;
 
   }
@@ -2202,7 +2202,7 @@
   }
 
   .next-label {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.3);
@@ -2211,7 +2211,7 @@
   }
 
   .next-name {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.9rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.6);
@@ -2220,7 +2220,7 @@
   }
 
   .next-time {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: 0.9rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2257,7 +2257,7 @@
   }
 
   .time-name {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.75rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2276,7 +2276,7 @@
   }
 
   .time-value {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: 0.75rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.7);
@@ -2406,7 +2406,7 @@
   }
 
   .date-offset {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.58rem;
     text-transform: uppercase;
 
@@ -2456,7 +2456,7 @@
   }
 
   .calendar-month-label {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: clamp(1.3rem, 3.7vw, 1.9rem);
 
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
@@ -2479,7 +2479,7 @@
   }
 
   .calendar-hijri-month {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     font-size: clamp(0.74rem, 2.1vw, 0.88rem);
 
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2528,7 +2528,7 @@
 
   .calendar-weekdays span {
     text-align: center;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: clamp(0.62rem, 1.8vw, 0.76rem);
 
     text-transform: uppercase;
@@ -2569,7 +2569,7 @@
     border: 1px solid rgba(var(--theme-text-rgb), 0.09);
     background: rgba(var(--theme-text-rgb), 0.09);
     color: rgba(var(--theme-text-rgb), 0.78);
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: clamp(0.85rem, 2.4vw, 1rem);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
@@ -2583,13 +2583,13 @@
   }
 
   .calendar-day-greg {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: clamp(0.84rem, 2.3vw, 1rem);
     line-height: 1;
   }
 
   .calendar-day-hijri {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     font-size: clamp(0.5rem, 1.5vw, 0.62rem);
     line-height: 1;
     color: rgba(var(--theme-accent-rgb), 0.55);
@@ -2632,7 +2632,7 @@
       rgba(var(--theme-text-rgb), 0.05)
     );
     color: rgba(var(--theme-accent-bright-rgb), 0.9);
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: clamp(0.68rem, 1.8vw, 0.8rem);
     text-transform: uppercase;
 
@@ -2647,7 +2647,7 @@
   }
 
   .date-hijri {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     font-size: 0.74rem;
     color: rgba(var(--theme-accent-bright-rgb), 0.5);
   }
@@ -2657,7 +2657,7 @@
   }
 
   .date-gregorian {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2692,7 +2692,7 @@
 
   .clock-label-name {
     display: block;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: calc(clamp(0.5rem, 1.8vw, 0.7rem) * var(--label-scale, 1));
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.35);
@@ -2703,7 +2703,7 @@
 
   .clock-label-time {
     display: block;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: calc(clamp(0.65rem, 2.2vw, 0.9rem) * var(--label-scale, 1));
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.55);
@@ -2764,7 +2764,7 @@
   }
 
   .clock-center-arabic {
-    font-family: 'Noto Sans Arabic', sans-serif;
+    font-family: var(--font-ar);
     font-size: 2.8rem;
     color: var(--theme-accent-bright);
     line-height: 1.2;
@@ -2772,7 +2772,7 @@
   }
 
   .clock-center-english {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 1rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.5);
@@ -2786,7 +2786,7 @@
     align-items: baseline;
     justify-content: center;
     gap: 0.6em;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-num);
     font-size: 1.5rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.8);
@@ -2816,7 +2816,7 @@
   }
 
   .clock-center-next {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.68rem;
     color: rgba(var(--theme-accent-rgb), 0.6);
     margin-top: 8px;
@@ -2840,7 +2840,7 @@
   }
 
   .indicator-active {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.8rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.9);
@@ -2855,7 +2855,7 @@
     bottom: calc(max(1.25rem, env(safe-area-inset-bottom, 0px)) + clamp(4.75rem, 11vh, 6.25rem));
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 400;
     color: var(--theme-marker);
@@ -2881,7 +2881,7 @@
 
   /* Tap hint */
   .tap-hint {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-en);
     font-size: 0.7rem;
     font-weight: 400;
     color: rgba(var(--theme-accent-rgb), 0.4);

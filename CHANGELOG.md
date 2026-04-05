@@ -8,6 +8,13 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.11 — 2026-04-05
+### Update
+- Introduced 3 font CSS variables in `:root`: `--font-en`, `--font-ar`, `--font-num`
+- All font-family declarations now use variables instead of hardcoded names
+
+---
+
 ## v2.6.10 — 2026-04-05
 ### Update
 - Countdown numbers zero-padded to 2 digits (e.g. 05m 09s)

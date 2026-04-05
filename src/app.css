@@ -7,6 +7,11 @@
    CSS variables for dynamic theming
 ===================================================== */
 :root {
+  /* Font system */
+  --font-en: 'Montserrat', sans-serif;
+  --font-ar: 'Noto Sans Arabic', sans-serif;
+  --font-num: 'Montserrat', sans-serif;
+
   /* Default theme: Refined Gold */
   --theme-bg: #080808;
   --theme-bg-gradient: none;
@@ -35,7 +40,7 @@ html, body {
   height: 100%;
   height: var(--screen-height, 100%);
   overflow: hidden;
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-en);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Prevent iOS from auto-scaling text */
