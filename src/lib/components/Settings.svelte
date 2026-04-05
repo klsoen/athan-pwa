@@ -736,7 +736,7 @@
   }
 
   .section-label {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-transform: uppercase;
 
@@ -799,7 +799,7 @@
   }
 
   .mode-tab span:not(.new-badge) {
-    font-size: 0.72rem;
+    font-size: 0.84rem;
     font-weight: 500;
 
   }
@@ -903,7 +903,7 @@
   }
 
   .theme-name {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.6);
     text-align: center;
@@ -953,7 +953,7 @@
   }
 
   .method-name {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.8);
     text-align: center;
@@ -965,7 +965,7 @@
   }
 
   .method-angles {
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     margin-top: 0.2rem;
   }
@@ -1120,7 +1120,7 @@
   }
 
   .indicator-name {
-    font-size: 0.65rem;
+    font-size: 0.76rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
     text-align: center;
@@ -1132,7 +1132,7 @@
   }
 
   .indicator-desc {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     color: rgba(var(--theme-text-rgb), 0.35);
     text-align: center;
   }
@@ -1142,7 +1142,7 @@
   }
 
   .indicator-note {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     color: rgba(var(--theme-accent-rgb), 0.8);
     text-align: center;
     margin-top: 0.75rem;
@@ -1160,7 +1160,7 @@
   }
 
   .size-option {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 400;
     padding: 0.5rem 1rem;
     background: rgba(var(--theme-text-rgb), 0.05);
@@ -1210,14 +1210,14 @@
   }
 
   .about-name {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
 
   }
 
   .about-desc {
-    font-size: 0.65rem;
+    font-size: 0.74rem;
     font-weight: 300;
     color: rgba(var(--theme-text-rgb), 0.3);
 

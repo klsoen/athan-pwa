@@ -2073,11 +2073,11 @@
     gap: 16px;
     margin: 16px 0;
     width: 100%;
-    max-width: 280px;
+    max-width: 300px;
   }
 
   .divider-line {
-    flex: 1;
+    flex: 0 0 44px;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(var(--theme-accent-rgb), 0.3), transparent);
   }
@@ -2225,7 +2225,7 @@
     margin-top: 0;
     margin-bottom: 0;
     width: 100%;
-    max-width: 280px;
+    max-width: 300px;
     margin-left: auto;
     margin-right: auto;
     min-height: 15rem;
@@ -2238,8 +2238,8 @@
     inset: 0;
     display: grid;
     grid-template-columns: max-content 1fr max-content;
-    column-gap: 12px;
-    row-gap: 12px;
+    column-gap: 16px;
+    row-gap: 14px;
     align-content: flex-start;
     align-items: center;
   }
@@ -2249,7 +2249,7 @@
   }
 
   .time-name {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 400;
     color: rgba(var(--theme-text-rgb), 0.55);
     text-transform: uppercase;
@@ -2268,7 +2268,7 @@
 
   .time-value {
     font-family: var(--font-num);
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: rgba(var(--theme-text-rgb), 0.7);
     font-variant-numeric: tabular-nums;
@@ -3013,7 +3013,7 @@
     }
 
     .time-name {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
     }
 
     .time-value {

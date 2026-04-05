@@ -8,6 +8,14 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.18 — 2026-04-05
+### Update
+- Prayer time table: bumped name and time font sizes from 0.75rem → 0.9rem; wider column gap (16px) and row gap (14px)
+- Divider lines between prayer table sections: changed from flex-fill to fixed 44px — short accent lines flanking the countdown
+- Settings: increased all text sizes ~15-20% across section labels, tab text, indicator names/descs, method names, theme names, size options, about section
+
+---
+
 ## v2.6.17 — 2026-04-05
 ### Update
 - Bumped all overlay fade durations to 420ms — backdrop, calendar dialog, calendar sheet, Settings, CitySelector
