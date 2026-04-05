@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.10 — 2026-04-05
+### Update
+- Countdown numbers zero-padded to 2 digits (e.g. 05m 09s)
+
+---
+
 ## v2.6.9 — 2026-04-05
 ### Update
 - Removed all letter-spacing declarations throughout the app

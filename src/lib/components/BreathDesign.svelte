@@ -491,15 +491,16 @@
     const h = cd.hours;
     const m = cd.minutes;
     const s = Math.max(0, cd.seconds);
+    const pad = (n) => fn(String(n).padStart(2, '0'));
     if (h > 0) return [
-      { key: 'h', value: fn(String(h)), label: ar ? 'س' : 'h' },
-      { key: 'm', value: fn(String(m)), label: ar ? 'د' : 'm' },
+      { key: 'h', value: pad(h), label: ar ? 'س' : 'h' },
+      { key: 'm', value: pad(m), label: ar ? 'د' : 'm' },
     ];
     if (m > 0) return [
-      { key: 'm', value: fn(String(m)), label: ar ? 'د' : 'm' },
-      { key: 's', value: fn(String(s)), label: ar ? 'ث' : 's' },
+      { key: 'm', value: pad(m), label: ar ? 'د' : 'm' },
+      { key: 's', value: pad(s), label: ar ? 'ث' : 's' },
     ];
-    return [{ key: 's', value: fn(String(s)), label: ar ? 'ث' : 's' }];
+    return [{ key: 's', value: pad(s), label: ar ? 'ث' : 's' }];
   }
 
   function formatTime(date) {
