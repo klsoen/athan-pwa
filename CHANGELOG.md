@@ -8,6 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
+## v2.6.20 — 2026-04-05
+### Update
+- Fixed "العربية" language button using wrong font in English mode — it always uses var(--font-ar) now since the text is always Arabic
+
+---
+
 ## v2.6.19 — 2026-04-05
 ### Update
 - City selector: added Arabic names and country names for all 9 popular cities

@@ -262,7 +262,7 @@
               on:click={() => language.set('ar')}
               type="button"
             >
-              <span>{$t('arabic')}</span>
+              <span class="arabic-label">{$t('arabic')}</span>
             </button>
           </div>
           <div class="mode-switcher">
@@ -807,6 +807,11 @@
   .mode-icon {
     width: 0.9rem;
     height: 0.9rem;
+  }
+
+  /* Arabic label always uses Arabic font regardless of current language */
+  .arabic-label {
+    font-family: var(--font-ar) !important;
   }
 
   .new-badge {
