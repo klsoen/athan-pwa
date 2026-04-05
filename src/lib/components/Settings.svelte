@@ -229,12 +229,12 @@
     on:click|stopPropagation={close}
     type="button"
     aria-label="Close"
-    transition:fade={{ duration: 280 }}
+    transition:fade={{ duration: 420 }}
   ></button>
 
   <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="settings-content" on:click={close} role="dialog" aria-modal="true" transition:fade={{ duration: 280 }}>
+  <div class="settings-content" on:click|stopPropagation={close} role="dialog" aria-modal="true" transition:fade={{ duration: 420 }}>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="settings-inner" class:rtl={$isArabic} on:click|stopPropagation>

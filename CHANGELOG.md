@@ -8,12 +8,12 @@ Versioning: `MAJOR.FEATURE.UPDATE`
 
 ---
 
-## v2.6.16 — 2026-04-05
+## v2.6.17 — 2026-04-05
 ### Update
-- Unified all overlay fade durations to 280ms: Settings panel, City Selector, Calendar sheet, and their backdrops now all fade in/out identically
-- Added missing `transition:fade` to Settings content and CitySelector content containers (they had no exit animation before — just snapped shut)
-- Calendar sheet replaced `transition:scale` with `transition:fade` — no more jarring scale-on-close
-- Full clock and prayer display views now use symmetric `transition:fade={{ duration: 280 }}` instead of mismatched scale-in / quick-fade-out
+- Bumped all overlay fade durations to 420ms — backdrop, calendar dialog, calendar sheet, Settings, CitySelector
+- Moved `transition:fade` from calendar-sheet (inner) to calendar-dialog (outer wrapper) so the container stays alive for the full fade duration — fixes the cut on close
+- Unified all overlay fade durations: Settings panel, City Selector, Calendar, backdrops all at 420ms
+- Fixed settings close tap bleeding through to main screen — `settings-content` now stops propagation so closing settings no longer accidentally triggers clock toggle
 
 ---
 
