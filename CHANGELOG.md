@@ -8,6 +8,34 @@ Versioning: `MAJOR.FEATURE.UPDATE.FIX`
 
 ---
 
+## v2.7.0.0 — 2026-04-06
+### Feature
+- Full Arabic/English language toggle in Settings — prayer names, dates, labels, all UI strings switch instantly
+- Arabic numeral toggle (١٢٣ / 123) with Auto mode that follows language; manual override persisted
+- All translations centralized in `src/lib/stores/locale.js`
+- City selector: Arabic city/country names for popular cities; search returns Arabic-locale results in Arabic mode
+- Notification tile labels and descriptions fully translated; descriptions update reactively on language switch
+- `--font-en`, `--font-ar`, `--font-num` CSS variable system for clean font inheritance throughout
+
+### Update
+- Countdown redesign: stable fixed-width layout (no layout shift), zero-padded digits, Arabic support
+- Reorganized next prayer section: stacked NEXT → ── Name ── → countdown block
+- Current prayer name (ASR etc.) larger and bolder; Arabic name overlaps icon glow for depth
+- Prayer icon reveal, text, and next-block all fade in together on page entry
+- Settings: reordered sections — Language → Notifications → Clock Indicators → Label Size → Calc Method → Angles → Theme → About
+- Prayer table and settings text sizes increased for readability
+- "العربية" language button always uses Arabic font regardless of active language
+
+### Fix
+- All overlay fades unified to 420ms (Settings, CitySelector, Calendar, backdrops)
+- Calendar fade: transition moved to outer wrapper — no more hard cut at end of close
+- Settings close tap no longer bleeds through to toggle the clock view
+- Page-entry fly animations replaced with fade — no more upward slide when returning to main view
+- Notification description labels now update immediately on language switch (was stale until reload)
+- Font coverage audit: all Arabic-mode text elements explicitly assigned `var(--font-ar)`
+
+---
+
 ## v2.5.1.3 — 2026-03-18
 ### Fix
 - Softened the notification settings syncing label so reminder updates read more naturally in the UI
